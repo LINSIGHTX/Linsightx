@@ -1,0 +1,114 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Platform</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f3f6fb;
+  color: #1e293b;
+}
+header {
+  background: #12346b;
+  color: white;
+  padding: 24px 16px;
+  text-align: center;
+}
+header h1 { margin: 0 0 8px; }
+nav {
+  background: #fff;
+  padding: 14px 8px;
+  text-align: center;
+}
+nav a {
+  display: inline-block;
+  color: #12346b;
+  text-decoration: none;
+  font-weight: bold;
+  margin: 6px 8px;
+}
+main {
+  max-width: 900px;
+  margin: 24px auto;
+  padding: 0 14px;
+}
+.welcome {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.card {
+  background: white;
+  padding: 22px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #0000000d;
+}
+.card h3 { color: #12346b; }
+button {
+  background: #1765d1;
+  color: white;
+  border: 0;
+  padding: 11px 16px;
+  border-radius: 6px;
+  font-size: 15px;
+}
+footer {
+  text-align: center;
+  padding: 24px;
+  color: #64748b;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Business Platform</h1>
+  <p>Your hub for jobs, business intelligence, networking and news.</p>
+</header><nav>
+  <a href="#jobs">Jobs</a>
+  <a href="#markets">Market Intelligence</a>
+  <a href="#network">B2B Network</a>
+  <a href="#feed">Social Feed</a>
+</nav><main>
+  <section class="welcome">
+    <h2>Welcome to Your Business World</h2>
+    <p>Discover opportunities, connect with companies and stay informed.</p>
+    <p><strong>One platform. Four powerful tools.</strong></p>
+  </section>  <div class="cards">
+    <section class="card" id="jobs">
+      <h3>💼 Recruitment & Jobs</h3>
+      <p>Discover career opportunities and connect employers with talent.</p>
+      <button onclick="alert('The jobs feature will be built next!')">Explore Jobs</button>
+    </section><section class="card" id="markets">
+  <h3>📊 Market Intelligence</h3>
+  <p>Explore industries, business trends, competitors and market insights.</p>
+  <button onclick="alert('The market intelligence feature will be built next!')">Explore Markets</button>
+</section>
+
+<section class="card" id="network">
+  <h3>🤝 B2B Network</h3>
+  <p>Find businesses, discover partners and build professional connections.</p>
+  <button onclick="alert('The B2B networking feature will be built next!')">Find Businesses</button>
+</section>
+
+<section class="card" id="feed">
+  <h3>📰 Business Social Feed</h3>
+  <p>Share updates, discuss ideas and follow business news.</p>
+  <button onclick="alert('The social feed feature will be built next!')">Open Feed</button>
+</section>
+
+  </div>
+</main><footer>
+  <p>© 2026 Business Platform | Connecting Business and Opportunity</p>
+</footer>
+</body>
+</html>
