@@ -484,7 +484,7 @@ function createPost() {
 }
 function showJobListings() {
   const jobsContent = document.getElementById('jobsContent');
-  const jobs = document.querySelectorAll('#feed .post[data-category="Jobs"]');
+  const jobs = document.querySelectorAll('#feed .post[data-job-listing="true"]');
 
   if (jobs.length === 0) {
     jobsContent.innerHTML = `
