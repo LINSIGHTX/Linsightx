@@ -482,7 +482,29 @@ function createPost() {
   notice.textContent = 'Post added to this page. This prototype does not publish posts to other users.';
   applyFilters();
 }
+function showJobListings() {
+  const jobsContent = document.getElementById('jobsContent');
+  const jobs = document.querySelectorAll('#feed .post[data-category="Jobs"]');
 
+  if (jobs.length === 0) {
+    jobsContent.innerHTML = `
+      <div style="text-align:center; padding:40px 20px;">
+        <h2>No jobs available yet</h2>
+        <p>Be the first to post a job!</p>
+      </div>
+    `;
+    return;
+  }
+
+  jobsContent.innerHTML = '';
+
+  jobs.forEach(job => {
+    const card = job.cloneNode(true);
+    card.style.display = 'block';
+    card.style.marginBottom = '16px';
+    jobsContent.appendChild(card);
+  });
+}
   function showJobForm() {
   const formArea = document.getElementById('jobFormArea');
 
