@@ -489,7 +489,7 @@ document.querySelectorAll('[data-feed]').forEach(button => {
 
 document.getElementById('search').addEventListener('input', applyFilters);
 
-function mobileView(view) {
+function mobileview(view) {
   currentView = view;
   document.querySelectorAll('.navitem').forEach(item => {
     item.classList.toggle('active', item.dataset.view === view);
