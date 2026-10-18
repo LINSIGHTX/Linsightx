@@ -407,6 +407,41 @@ function createPost() {
   applyFilters();
 }
 
+  function showJobForm() {
+const title = prompt('Enter the job title:');
+if (!title || !title.trim()) return;
+
+const company = prompt('Enter the company name:');
+if (!company || !company.trim()) return;
+
+const location = prompt('Enter the job location:');
+if (!location || !location.trim()) return;
+
+const description = prompt('Enter the job description:');
+if (!description || !description.trim()) return;
+
+const article = document.createElement('article');
+article.className = 'post';
+article.dataset.category = 'Jobs';
+
+const heading = document.createElement('h3');
+heading.textContent = title.trim();
+
+const companyInfo = document.createElement('p');
+companyInfo.textContent = '🏢 ' + company.trim() + ' · 📍 ' + location.trim();
+
+const details = document.createElement('p');
+details.textContent = description.trim();
+
+article.append(heading, companyInfo, details);
+feed.prepend(article);
+
+notice.textContent = 'Job added to this page!';
+currentView = 'Jobs';
+applyFilters();
+window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function likePost(button) {
   const count = button.querySelector('span');
   let n = Number(count.textContent);
