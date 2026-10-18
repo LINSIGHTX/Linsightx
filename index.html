@@ -466,7 +466,7 @@ function applyFilters() {
     post.style.display = matchesSearch && matchesView ? '' : 'none';
   });
   document.getElementById('pageTitle').textContent =
-    currentView === 'Home' ? 'Your Business Feed' : currentView;
+    currentView === 'Home' ? '' : currentView;
 }
 
 document.querySelectorAll('.navitem').forEach(button => {
