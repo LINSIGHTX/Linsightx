@@ -2,113 +2,500 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Business Platform</title>
+<title>BusinessHub | Business Network</title>
 <style>
+:root {
+  --blue: #175cd3;
+  --dark: #172b4d;
+  --muted: #667085;
+  --border: #e4e7ec;
+  --bg: #f7f9fc;
+}
 * { box-sizing: border-box; }
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #f3f6fb;
-  color: #1e293b;
+  color: var(--dark);
+  background: var(--bg);
 }
-header {
-  background: #12346b;
-  color: white;
-  padding: 24px 16px;
-  text-align: center;
+button, textarea { font: inherit; }
+button { cursor: pointer; }
+.topbar {
+  height: 65px;
+  background: white;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+  position: sticky;
+  top: 0;
+  z-index: 5;
 }
-header h1 { margin: 0 0 8px; }
-nav {
-  background: #fff;
-  padding: 14px 8px;
-  text-align: center;
+.logo { font-size: 22px; font-weight: 800; color: var(--blue); }
+.logo span { color: var(--dark); }
+.search {
+  width: 36%;
+  padding: 11px 15px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--bg);
 }
-nav a {
-  display: inline-block;
-  color: #12346b;
-  text-decoration: none;
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #dbeafe;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-weight: bold;
-  margin: 6px 8px;
+  color: var(--blue);
+  flex-shrink: 0;
 }
-main {
-  max-width: 900px;
-  margin: 24px auto;
-  padding: 0 14px;
-}
-.welcome {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  text-align: center;
-  margin-bottom: 20px;
-}
-.cards {
+.layout {
+  max-width: 1250px;
+  margin: 22px auto;
+  padding: 0 16px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: 205px minmax(0, 1fr) 265px;
+  gap: 22px;
 }
-.card {
+.sidebar, .panel, .post, .composer, .feedtabs {
   background: white;
-  padding: 22px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px #0000000d;
+  border: 1px solid var(--border);
+  border-radius: 14px;
 }
-.card h3 { color: #12346b; }
-button {
-  background: #1765d1;
-  color: white;
+.sidebar {
+  padding: 14px;
+  height: fit-content;
+  position: sticky;
+  top: 85px;
+}
+.navitem {
+  display: block;
+  width: 100%;
+  padding: 13px 10px;
+  margin: 3px 0;
   border: 0;
-  padding: 11px 16px;
-  border-radius: 6px;
+  background: transparent;
+  border-radius: 9px;
+  text-align: left;
+  color: var(--dark);
   font-size: 15px;
 }
-footer {
-  text-align: center;
-  padding: 24px;
-  color: #64748b;
+.navitem:hover, .navitem.active {
+  background: #eff6ff;
+  color: var(--blue);
+  font-weight: bold;
+}
+.primary {
+  width: 100%;
+  background: var(--blue);
+  color: white;
+  border: 0;
+  border-radius: 24px;
+  padding: 13px;
+  margin: 14px 0;
+  font-weight: bold;
+}
+.smallnote { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.feedtabs {
+  display: flex;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.feedtabs button {
+  flex: 1;
+  padding: 15px 5px;
+  border: 0;
+  background: white;
+  color: var(--muted);
+  font-weight: bold;
+}
+.feedtabs button.active {
+  color: var(--blue);
+  border-bottom: 3px solid var(--blue);
+}
+.composer { padding: 17px; margin-bottom: 14px; }
+.compose-row { display: flex; gap: 12px; }
+textarea {
+  width: 100%;
+  border: 0;
+  outline: none;
+  resize: vertical;
+  min-height: 72px;
+  font-size: 15px;
+  padding: 8px 0;
+}
+.compose-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.compose-bottom span { color: var(--muted); font-size: 12px; }
+.postbtn {
+  border: 0;
+  background: var(--blue);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 22px;
+  font-weight: bold;
+}
+.post { padding: 17px; margin-bottom: 14px; }
+.posthead { display: flex; gap: 11px; align-items: center; }
+.person { font-weight: bold; font-size: 14px; }
+.handle { color: var(--muted); font-size: 12px; margin-top: 4px; }
+.postbody { line-height: 1.6; font-size: 14px; margin: 15px 0; overflow-wrap: anywhere; }
+.tag { color: var(--blue); }
+.postlabel {
+  display: inline-block;
+  padding: 5px 8px;
+  border-radius: 5px;
+  background: #eff6ff;
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 9px;
+}
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.actions button {
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 5px 2px;
+}
+.actions button:hover { color: var(--blue); }
+.panel { padding: 17px; margin-bottom: 15px; }
+.panel h3 { margin: 0 0 15px; font-size: 16px; }
+.trend { padding: 11px 0; border-bottom: 1px solid var(--border); }
+.trend:last-child { border-bottom: 0; }
+.trend small { color: var(--muted); }
+.trend strong { display: block; margin: 5px 0; font-size: 13px; }
+.company {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+.follow {
+  margin-left: auto;
+  border: 1px solid var(--blue);
+  color: var(--blue);
+  background: white;
+  border-radius: 18px;
+  padding: 7px 10px;
+  font-size: 12px;
+}
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px; }
+.mobile-nav { display: none; }
+.section-title { font-size: 21px; margin: 4px 0 15px; }
+.empty { text-align: center; color: var(--muted); padding: 30px 12px; }
+@media(max-width: 950px) {
+  .layout { grid-template-columns: 175px minmax(0,1fr); }
+  .rightcol { display: none; }
+}
+@media(max-width: 600px) {
+  .topbar { padding: 0 13px; height: 58px; }
+  .logo { font-size: 19px; }
+  .search { width: 39%; padding: 9px; font-size: 12px; }
+  .topbar .avatar { width: 34px; height: 34px; }
+  .layout { display: block; margin: 12px auto; padding: 0 9px 75px; }
+  .leftcol { display: none; }
+  .feedtabs button { font-size: 13px; }
+  .post, .composer { padding: 14px; }
+  .mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid var(--border);
+    justify-content: space-around;
+    padding: 10px 2px;
+    z-index: 10;
+  }
+  .mobile-nav button {
+    border: 0;
+    background: white;
+    color: var(--muted);
+    font-size: 11px;
+  }
 }
 </style>
 </head>
 <body>
-<header>
-  <h1>Business Platform</h1>
-  <p>Your hub for jobs, business intelligence, networking and news.</p>
-</header><nav>
-  <a href="#jobs">Jobs</a>
-  <a href="#markets">Market Intelligence</a>
-  <a href="#network">B2B Network</a>
-  <a href="#feed">Social Feed</a>
-</nav><main>
-  <section class="welcome">
-    <h2>Welcome to Your Business World</h2>
-    <p>Discover opportunities, connect with companies and stay informed.</p>
-    <p><strong>One platform. Four powerful tools.</strong></p>
-  </section>  <div class="cards">
-    <section class="card" id="jobs">
-      <h3>💼 Recruitment & Jobs</h3>
-      <p>Discover career opportunities and connect employers with talent.</p>
-      <button onclick="alert('The jobs feature will be built next!')">Explore Jobs</button>
-    </section><section class="card" id="markets">
-  <h3>📊 Market Intelligence</h3>
-  <p>Explore industries, business trends, competitors and market insights.</p>
-  <button onclick="alert('The market intelligence feature will be built next!')">Explore Markets</button>
-</section>
-
-<section class="card" id="network">
-  <h3>🤝 B2B Network</h3>
-  <p>Find businesses, discover partners and build professional connections.</p>
-  <button onclick="alert('The B2B networking feature will be built next!')">Find Businesses</button>
-</section>
-
-<section class="card" id="feed">
-  <h3>📰 Business Social Feed</h3>
-  <p>Share updates, discuss ideas and follow business news.</p>
-  <button onclick="alert('The social feed feature will be built next!')">Open Feed</button>
-</section>
-
+<header class="topbar">
+  <div class="logo">Business<span>Hub</span></div>
+  <input class="search" id="search" placeholder="Search business..." aria-label="Search posts">
+  <div class="avatar">B</div>
+</header><div class="layout">
+  <aside class="leftcol">
+    <nav class="sidebar">
+      <button class="navitem active" data-view="Home">🏠 Home Feed</button>
+      <button class="navitem" data-view="Jobs">💼 Jobs</button>
+      <button class="navitem" data-view="Market Intelligence">📊 Market Intelligence</button>
+      <button class="navitem" data-view="B2B Network">🤝 B2B Network</button>
+      <button class="navitem" data-view="Bookmarks">🔖 Bookmarks</button>
+      <button class="navitem" data-view="Profile">👤 My Profile</button>
+      <button class="primary" onclick="focusComposer()">＋ Create a post</button>
+      <p class="smallnote">One place for business conversations, opportunities and insights.</p>
+    </nav>
+  </aside>  <main>
+    <h2 class="section-title" id="pageTitle">Your Business Feed</h2>
+    <div class="feedtabs">
+      <button class="active" data-feed="For you">For you</button>
+      <button data-feed="Following">Following</button>
+      <button data-feed="Latest">Latest</button>
+    </div><section class="composer" id="composer">
+  <div class="compose-row">
+    <div class="avatar">B</div>
+    <textarea id="postText" maxlength="500" placeholder="What's happening in your business world? Share an insight, opportunity or update..."></textarea>
   </div>
-</main><footer>
-  <p>© 2026 Business Platform | Connecting Business and Opportunity</p>
-</footer>
-</body>
+  <div class="compose-bottom">
+    <span id="charCount">0 / 500 characters</span>
+    <button class="postbtn" onclick="createPost()">Post</button>
+  </div>
+</section>
+
+<div id="feed">
+  <article class="post" data-category="Market Intelligence">
+    <div class="posthead">
+      <div class="avatar">M</div>
+      <div><div class="person">Market Insights Daily</div><div class="handle">@marketinsights · Sample post</div></div>
+    </div>
+    <div class="postbody">
+      <span class="postlabel">MARKET INTELLIGENCE</span><br>
+      Understanding your customers is the foundation of sustainable business growth. What market trends are shaping your industry this year?<br><br>
+      <span class="tag">#MarketResearch #BusinessGrowth</span>
+    </div>
+    <div class="actions">
+      <button onclick="replyPost(this)">💬 Reply</button>
+      <button onclick="repost(this)">🔁 Repost</button>
+      <button onclick="likePost(this)">♡ Like <span>0</span></button>
+      <button onclick="bookmarkPost(this)">🔖 Save</button>
+    </div>
+  </article>
+
+  <article class="post" data-category="Jobs">
+    <div class="posthead">
+      <div class="avatar">T</div>
+      <div><div class="person">Talent Connect</div><div class="handle">@talentconnect · Sample post</div></div>
+    </div>
+    <div class="postbody">
+      <span class="postlabel">HIRING & CAREERS</span><br>
+      Hiring is about finding the right people and helping them grow. Employers: what skills are you looking for in your next great hire?<br><br>
+      <span class="tag">#Recruitment #Careers #Hiring</span>
+    </div>
+    <div class="actions">
+      <button onclick="replyPost(this)">💬 Reply</button>
+      <button onclick="repost(this)">🔁 Repost</button>
+      <button onclick="likePost(this)">♡ Like <span>0</span></button>
+      <button onclick="bookmarkPost(this)">🔖 Save</button>
+    </div>
+  </article>
+
+  <article class="post" data-category="B2B Network">
+    <div class="posthead">
+      <div class="avatar">N</div>
+      <div><div class="person">Business Network</div><div class="handle">@businessnetwork · Sample post</div></div>
+    </div>
+    <div class="postbody">
+      <span class="postlabel">B2B OPPORTUNITIES</span><br>
+      Great partnerships begin with a conversation. Introduce your business, explain what you do, and tell the community what kind of partners you hope to meet.<br><br>
+      <span class="tag">#B2B #Partnerships #Networking</span>
+    </div>
+    <div class="actions">
+      <button onclick="replyPost(this)">💬 Reply</button>
+      <button onclick="repost(this)">🔁 Repost</button>
+      <button onclick="likePost(this)">♡ Like <span>0</span></button>
+      <button onclick="bookmarkPost(this)">🔖 Save</button>
+    </div>
+  </article>
+</div>
+<div id="notice" class="smallnote" role="status"></div>
+
+  </main>  <aside class="rightcol">
+    <section class="panel">
+      <h3>🔥 Trending in Business</h3>
+      <div class="trend"><small>Industry · Trending</small><strong>#BusinessGrowth</strong><small>Strategy and expansion</small></div>
+      <div class="trend"><small>Careers · Trending</small><strong>#FutureOfWork</strong><small>Skills and recruitment</small></div>
+      <div class="trend"><small>Markets · Trending</small><strong>#MarketInsights</strong><small>Industry analysis</small></div>
+      <div class="trend"><small>Networking · Trending</small><strong>#B2BPartnerships</strong><small>Building connections</small></div>
+    </section><section class="panel">
+  <h3>🏢 Discover Businesses</h3>
+  <div class="company"><div class="avatar">S</div><div><strong style="font-size:13px">Startup Circle</strong><div class="handle">Entrepreneurship</div></div><button class="follow" onclick="followCompany(this)">Follow</button></div>
+  <div class="company"><div class="avatar">I</div><div><strong style="font-size:13px">Industry Connect</strong><div class="handle">B2B Network</div></div><button class="follow" onclick="followCompany(this)">Follow</button></div>
+  <p class="smallnote">Sample suggestions. Real company discovery will be added later.</p>
+</section>
+<section class="panel">
+  <h3>About BusinessHub</h3>
+  <p class="smallnote">A unified place to explore jobs, share market insights, discover businesses and connect with professionals.</p>
+  <p class="smallnote">© 2026 BusinessHub</p>
+</section>
+
+  </aside>
+</div><nav class="mobile-nav">
+  <button onclick="mobileView('Home')">🏠<br>Home</button>
+  <button onclick="mobileView('Jobs')">💼<br>Jobs</button>
+  <button onclick="focusComposer()">✚<br>Post</button>
+  <button onclick="mobileView('Market Intelligence')">📊<br>Markets</button>
+  <button onclick="mobileView('B2B Network')">🤝<br>Network</button>
+</nav><footer>BusinessHub · A connected business world</footer><script>
+const postText = document.getElementById('postText');
+const charCount = document.getElementById('charCount');
+const feed = document.getElementById('feed');
+const notice = document.getElementById('notice');
+let currentView = 'Home';
+let currentFeed = 'For you';
+
+postText.addEventListener('input', () => {
+  charCount.textContent = postText.value.length + ' / 500 characters';
+});
+
+function focusComposer() {
+  document.getElementById('composer').scrollIntoView({behavior:'smooth'});
+  postText.focus();
+}
+
+function createPost() {
+  const text = postText.value.trim();
+  if (!text) {
+    notice.textContent = 'Please write something before posting.';
+    postText.focus();
+    return;
+  }
+  const article = document.createElement('article');
+  article.className = 'post';
+  article.dataset.category = 'Home';
+  const head = document.createElement('div');
+  head.className = 'posthead';
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar';
+  avatar.textContent = 'B';
+  const identity = document.createElement('div');
+  const name = document.createElement('div');
+  name.className = 'person';
+  name.textContent = 'BusinessHub Member';
+  const handle = document.createElement('div');
+  handle.className = 'handle';
+  handle.textContent = '@you · Just now';
+  identity.append(name, handle);
+  head.append(avatar, identity);
+  const body = document.createElement('div');
+  body.className = 'postbody';
+  body.textContent = text;
+  const actions = document.createElement('div');
+  actions.className = 'actions';
+  actions.innerHTML = '<button onclick="replyPost(this)">💬 Reply</button><button onclick="repost(this)">🔁 Repost</button><button onclick="likePost(this)">♡ Like <span>0</span></button><button onclick="bookmarkPost(this)">🔖 Save</button>';
+  article.append(head, body, actions);
+  feed.prepend(article);
+  postText.value = '';
+  charCount.textContent = '0 / 500 characters';
+  notice.textContent = 'Post added to this page. This prototype does not publish posts to other users.';
+  applyFilters();
+}
+
+function likePost(button) {
+  const count = button.querySelector('span');
+  let n = Number(count.textContent);
+  if (button.dataset.liked === 'true') {
+    n--;
+    button.dataset.liked = 'false';
+    button.firstChild.textContent = '♡ Like ';
+  } else {
+    n++;
+    button.dataset.liked = 'true';
+    button.firstChild.textContent = '♥ Liked ';
+  }
+  count.textContent = n;
+}
+
+function repost(button) {
+  notice.textContent = 'Repost is a demonstration. Shared reposts require a backend.';
+}
+
+function replyPost(button) {
+  const reply = prompt('Write a reply:');
+  if (reply && reply.trim()) {
+    const box = document.createElement('div');
+    box.className = 'smallnote';
+    box.style.marginTop = '10px';
+    box.textContent = 'Your reply (local demo): ' + reply.trim();
+    button.closest('.post').append(box);
+  }
+}
+
+function bookmarkPost(button) {
+  if (button.dataset.saved === 'true') {
+    button.dataset.saved = 'false';
+    button.textContent = '🔖 Save';
+    notice.textContent = 'Removed from demo bookmarks.';
+  } else {
+    button.dataset.saved = 'true';
+    button.textContent = '✓ Saved';
+    notice.textContent = 'Saved in this page demo.';
+  }
+}
+
+function followCompany(button) {
+  button.textContent = button.textContent === 'Follow' ? 'Following' : 'Follow';
+}
+
+function applyFilters() {
+  const search = document.getElementById('search').value.toLowerCase();
+  document.querySelectorAll('#feed .post').forEach(post => {
+    const matchesSearch = post.innerText.toLowerCase().includes(search);
+    const matchesView = currentView === 'Home' ||
+      currentView === 'Profile' ||
+      (currentView === 'Bookmarks' && post.querySelector('[data-saved="true"]')) ||
+      (currentView === 'Jobs' && post.dataset.category === 'Jobs') ||
+      (currentView === 'Market Intelligence' && post.dataset.category === 'Market Intelligence') ||
+      (currentView === 'B2B Network' && post.dataset.category === 'B2B Network');
+    post.style.display = matchesSearch && matchesView ? '' : 'none';
+  });
+  document.getElementById('pageTitle').textContent =
+    currentView === 'Home' ? 'Your Business Feed' : currentView;
+}
+
+document.querySelectorAll('.navitem').forEach(button => {
+  button.addEventListener('click', () => {
+    currentView = button.dataset.view;
+    document.querySelectorAll('.navitem').forEach(item => item.classList.remove('active'));
+    button.classList.add('active');
+    applyFilters();
+  });
+});
+
+document.querySelectorAll('[data-feed]').forEach(button => {
+  button.addEventListener('click', () => {
+    currentFeed = button.dataset.feed;
+    document.querySelectorAll('[data-feed]').forEach(item => item.classList.remove('active'));
+    button.classList.add('active');
+    notice.textContent = currentFeed + ' feed selected. Personalized feeds require a backend.';
+  });
+});
+
+document.getElementById('search').addEventListener('input', applyFilters);
+
+function mobileView(view) {
+  currentView = view;
+  document.querySelectorAll('.navitem').forEach(item => {
+    item.classList.toggle('active', item.dataset.view === view);
+  });
+  applyFilters();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script></body>
 </html>
