@@ -487,22 +487,31 @@ function createPost() {
   const formArea = document.getElementById('jobFormArea');
 
   formArea.innerHTML = `
-    <h2>Post a Job</h2>
+  <h2>Post a Job</h2>
 
-    <form id="jobForm">
-      <label>Job Title</label>
+  <form id="jobForm">
+    <div class="form-row">
+      <label for="jobTitle">Job Title</label>
       <input type="text" id="jobTitle" placeholder="e.g. Marketing Manager" required>
+    </div>
 
-      <label>Company Name</label>
+    <div class="form-row">
+      <label for="jobCompany">Company Name</label>
       <input type="text" id="jobCompany" placeholder="Enter company name" required>
+    </div>
 
-      <label>Location</label>
+    <div class="form-row">
+      <label for="jobLocation">Location</label>
       <input type="text" id="jobLocation" placeholder="e.g. Bengaluru, India" required>
+    </div>
 
-      <label>Salary (optional)</label>
+    <div class="form-row">
+      <label for="jobSalary">Salary (optional)</label>
       <input type="text" id="jobSalary" placeholder="e.g. ₹30,000–₹50,000/month">
+    </div>
 
-      <label>Job Type</label>
+    <div class="form-row">
+      <label for="jobType">Job Type</label>
       <select id="jobType" required>
         <option value="">Select job type</option>
         <option>Full-time</option>
@@ -511,16 +520,21 @@ function createPost() {
         <option>Contract</option>
         <option>Remote</option>
       </select>
+    </div>
 
-      <label>Job Description</label>
+    <div class="form-row">
+      <label for="jobDescription">Job Description</label>
       <textarea id="jobDescription" placeholder="Describe the job and responsibilities" required></textarea>
+    </div>
 
-      <label>How to Apply</label>
+    <div class="form-row">
+      <label for="jobApply">How to Apply</label>
       <input type="text" id="jobApply" placeholder="Email or application instructions" required>
+    </div>
 
-      <button type="submit" class="postbtn">Publish Job</button>
-    </form>
-  `;
+    <button type="submit" class="postbtn">Publish Job</button>
+  </form>
+`;
 
   formArea.style.display = 'block';
   formArea.scrollIntoView({ behavior: 'smooth' });
