@@ -253,7 +253,13 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px
       <p class="smallnote">One place for business conversations, opportunities and insights.</p>
     </nav>
   </aside>  <main>
-    
+    <div id="jobsPage" style="display:none;">
+  <div class="jobsActionBar">
+    <button onclick="showJobListings()">Apply for Job</button>
+    <button onclick="showJobForm()">Post a Job</button>
+  </div>
+  <div id="jobsContent"></div>
+    </div>
     <div class="feedtabs">
       <button class="active" data-feed="For you">For you</button>
       <button data-feed="Following">Following</button>
