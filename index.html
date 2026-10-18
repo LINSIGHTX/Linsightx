@@ -546,19 +546,54 @@ function followCompany(button) {
 }
 
 function applyFilters() {
+  const jobsPage = document.getElementById('jobsPage');
+  const feedTabs = document.querySelector('.feedtabs');
+  const composer = document.getElementById('composer');
+  const feed = document.getElementById('feed');
+  const notice = document.getElementById('notice');
+  const jobFormArea = document.getElementById('jobFormArea');
+
+  if (currentView === 'Jobs') {
+    jobsPage.style.display = 'block';
+    feedTabs.style.display = 'none';
+    composer.style.display = 'none';
+    feed.style.display = 'none';
+    notice.style.display = 'none';
+    jobFormArea.style.display = 'none';
+    return;
+  }
+
+  jobsPage.style.display = 'none';
+  feedTabs.style.display = '';
+  composer.style.display = '';
+  feed.style.display = '';
+  notice.style.display = '';
+  jobFormArea.style.display = '';
+
   const search = document.getElementById('search').value.toLowerCase();
+
   document.querySelectorAll('#feed .post').forEach(post => {
     const matchesSearch = post.innerText.toLowerCase().includes(search);
-    const matchesView = currentView === 'Home' ||
+
+    const matchesView =
+      currentView === 'Home' ||
       currentView === 'Profile' ||
-      (currentView === 'Bookmarks' && post.querySelector('[data-saved="true"]')) ||
-      (currentView === 'Jobs' && post.dataset.category === 'Jobs') ||
-      (currentView === 'Market Intelligence' && post.dataset.category === 'Market Intelligence') ||
-      (currentView === 'B2B Network' && post.dataset.category === 'B2B Network');
+      (currentView === 'Bookmarks' &&
+        post.querySelector('[data-saved="true"]')) ||
+      (currentView === 'Jobs' &&
+        post.dataset.category === 'Jobs') ||
+      (currentView === 'Market Intelligence' &&
+        post.dataset.category === 'Market Intelligence') ||
+      (currentView === 'B2B Network' &&
+        post.dataset.category === 'B2B Network');
+
     post.style.display = matchesSearch && matchesView ? '' : 'none';
   });
-  document.getElementById('pageTitle').textContent =
-    currentView === 'Home' ? '' : currentView;
+
+  const pageTitle = document.getElementById('pageTitle');
+  if (pageTitle) {
+    pageTitle.textContent = currentView === 'Home' ? '' : currentView;
+  }
 }
 
 document.querySelectorAll('.navitem').forEach(button => {
