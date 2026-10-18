@@ -645,12 +645,13 @@ function applyFilters() {
     return;
   }
 
-  jobsPage.style.display = 'none';
+    jobsPage.style.display = 'none';
   feedTabs.style.display = '';
   composer.style.display = '';
   feed.style.display = '';
   notice.style.display = '';
-  jobFormArea.style.display = '';
+  jobFormArea.style.display = 'none';
+  jobFormArea.innerHTML = '';
 
   const search = document.getElementById('search').value.toLowerCase();
 
