@@ -727,6 +727,9 @@ function mobileview(view) {
     item.classList.toggle('active', item.dataset.view === view);
   });
   applyFilters();
+  if (view === 'Jobs') {
+  showJobListings();
+  }
   window.scrollTo({top:0, behavior:'smooth'});
 }
 </script></body>
