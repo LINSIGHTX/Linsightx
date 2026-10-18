@@ -20,6 +20,46 @@ body {
 }
 button, textarea { font: inherit; }
 button { cursor: pointer; }
+  #jobForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 700px;
+}
+
+#jobForm .form-row {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+}
+
+#jobForm label {
+  font-weight: bold;
+}
+
+#jobForm input,
+#jobForm select,
+#jobForm textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid #d0d5dd;
+  border-radius: 7px;
+  font: inherit;
+}
+
+#jobForm textarea {
+  height: 130px;
+  resize: vertical;
+}
+
+@media (max-width: 520px) {
+  #jobForm .form-row {
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 8px;
+  }
+}
   .jobsActionBar {
   display: flex;
   justify-content: space-between;
