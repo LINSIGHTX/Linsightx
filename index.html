@@ -410,39 +410,88 @@ function createPost() {
 }
 
   function showJobForm() {
-const title = prompt('Enter the job title:');
-if (!title || !title.trim()) return;
+  const formArea = document.getElementById('jobFormArea');
 
-const company = prompt('Enter the company name:');
-if (!company || !company.trim()) return;
+  formArea.innerHTML = `
+    <h2>Post a Job</h2>
 
-const location = prompt('Enter the job location:');
-if (!location || !location.trim()) return;
+    <form id="jobForm">
+      <label>Job Title</label>
+      <input type="text" id="jobTitle" placeholder="e.g. Marketing Manager" required>
 
-const description = prompt('Enter the job description:');
-if (!description || !description.trim()) return;
+      <label>Company Name</label>
+      <input type="text" id="jobCompany" placeholder="Enter company name" required>
 
-const article = document.createElement('article');
-article.className = 'post';
-article.dataset.category = 'Jobs';
+      <label>Location</label>
+      <input type="text" id="jobLocation" placeholder="e.g. Bengaluru, India" required>
 
-const heading = document.createElement('h3');
-heading.textContent = title.trim();
+      <label>Salary (optional)</label>
+      <input type="text" id="jobSalary" placeholder="e.g. ₹30,000–₹50,000/month">
 
-const companyInfo = document.createElement('p');
-companyInfo.textContent = '🏢 ' + company.trim() + ' · 📍 ' + location.trim();
+      <label>Job Type</label>
+      <select id="jobType" required>
+        <option value="">Select job type</option>
+        <option>Full-time</option>
+        <option>Part-time</option>
+        <option>Internship</option>
+        <option>Contract</option>
+        <option>Remote</option>
+      </select>
 
-const details = document.createElement('p');
-details.textContent = description.trim();
+      <label>Job Description</label>
+      <textarea id="jobDescription" placeholder="Describe the job and responsibilities" required></textarea>
 
-article.append(heading, companyInfo, details);
-feed.prepend(article);
+      <label>How to Apply</label>
+      <input type="text" id="jobApply" placeholder="Email or application instructions" required>
 
-notice.textContent = 'Job added to this page!';
-currentView = 'Jobs';
-applyFilters();
-window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+      <button type="submit" class="postbtn">Publish Job</button>
+    </form>
+  `;
+
+  formArea.style.display = 'block';
+  formArea.scrollIntoView({ behavior: 'smooth' });
+
+  document.getElementById('jobForm').onsubmit = function(event) {
+    event.preventDefault();
+
+    const title = document.getElementById('jobTitle').value.trim();
+    const company = document.getElementById('jobCompany').value.trim();
+    const location = document.getElementById('jobLocation').value.trim();
+    const salary = document.getElementById('jobSalary').value.trim();
+    const type = document.getElementById('jobType').value;
+    const description = document.getElementById('jobDescription').value.trim();
+    const apply = document.getElementById('jobApply').value.trim();
+
+    const article = document.createElement('article');
+    article.className = 'post';
+    article.dataset.category = 'Jobs';
+
+    const heading = document.createElement('h3');
+    heading.textContent = title;
+
+    const companyInfo = document.createElement('p');
+    companyInfo.textContent = '🏢 ' + company + ' · 📍 ' + location;
+
+    const jobInfo = document.createElement('p');
+    jobInfo.textContent = '💼 ' + type + (salary ? ' · 💰 ' + salary : '');
+
+    const details = document.createElement('p');
+    details.textContent = description;
+
+    const applyInfo = document.createElement('p');
+    applyInfo.textContent = 'How to apply: ' + apply;
+
+    article.append(heading, companyInfo, jobInfo, details, applyInfo);
+    feed.prepend(article);
+
+    formArea.style.display = 'none';
+    formArea.innerHTML = '';
+    notice.textContent = 'Job added to this page!';
+    currentView = 'Jobs';
+    applyFilters();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  }
 
 function likePost(button) {
   const count = button.querySelector('span');
