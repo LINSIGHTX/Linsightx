@@ -353,14 +353,14 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px
   <button onclick="mobileview('B2B Network')">🤝<br>Network</button>
 </nav><footer>SIGHTX · A connected business world</footer><script>
 const postText = document.getElementById('postText');
-const charCount = document.getElementById('charCount');
+
 const feed = document.getElementById('feed');
 const notice = document.getElementById('notice');
 let currentView = 'Home';
 let currentFeed = 'For you';
 
 postText.addEventListener('input', () => {
-  charCount.textContent = postText.value.length + ' / 500 characters';
+  
 });
 
 function focusComposer() {
@@ -401,7 +401,7 @@ function createPost() {
   article.append(head, body, actions);
   feed.prepend(article);
   postText.value = '';
-  charCount.textContent = '0 / 500 characters';
+  
   notice.textContent = 'Post added to this page. This prototype does not publish posts to other users.';
   applyFilters();
 }
