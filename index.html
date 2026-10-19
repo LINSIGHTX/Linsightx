@@ -599,6 +599,7 @@ function showJobListings() {
     notice.textContent = 'Job added to this page!';
     currentView = 'Jobs';
     applyFilters();
+    showJobListings();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   }
