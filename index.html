@@ -478,6 +478,38 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px
     </div>
 <div id="notice"></div>
 <div id="jobFormArea" style="display:none;"></div>
+    <div id="postJobPage" style="display:none; max-width:600px; margin:30px auto; padding:24px; background:white; border-radius:12px;">
+  <h2>Post a Job</h2>
+  <p>Fill in the required details marked with <span style="color:red;">*</span>.</p>  <form id="newJobForm">
+    <label for="newJobTitle">Job Title <span style="color:red;">*</span></label>
+    <input id="newJobTitle" name="title" type="text" placeholder="e.g. Marketing Manager" required style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;"><label for="newJobCompany">Company Name <span style="color:red;">*</span></label>
+<input id="newJobCompany" name="company" type="text" placeholder="Enter company name" required style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;">
+
+<label for="newJobLocation">Location <span style="color:red;">*</span></label>
+<input id="newJobLocation" name="location" type="text" placeholder="e.g. Bengaluru or Remote" required style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;">
+
+<label for="newJobType">Job Type <span style="color:red;">*</span></label>
+<select id="newJobType" name="type" required style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;">
+  <option value="">Choose job type</option>
+  <option>Full-time</option>
+  <option>Part-time</option>
+  <option>Contract</option>
+  <option>Internship</option>
+  <option>Remote</option>
+</select>
+
+<label for="newJobSalary">Salary (Optional)</label>
+<input id="newJobSalary" name="salary" type="text" placeholder="e.g. ₹5–8 LPA" style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;">
+
+<label for="newJobDescription">Job Description <span style="color:red;">*</span></label>
+<textarea id="newJobDescription" name="description" rows="5" placeholder="Describe the role and responsibilities" required style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;"></textarea>
+
+<button type="submit" style="padding:12px 24px;background:#10b981;color:white;border:0;border-radius:8px;font-weight:bold;">Publish Job</button>
+
+<button type="button" onclick="document.getElementById('postJobPage').style.display='none';document.getElementById('jobsPage').style.display='block';" style="padding:12px 24px;margin-left:8px;">Back to Jobs</button>
+
+  </form>
+    </div>
     <div id="applyJobPage" style="display:none; max-width:600px; margin:30px auto; padding:24px; background:white; border-radius:12px;">
   <h2>Apply for a Job</h2>
   <p>Fill in all required fields marked with <span style="color:red;">*</span>.</p>  <form id="jobApplicationForm">
