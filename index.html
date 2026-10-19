@@ -597,7 +597,8 @@ details.textContent =
   (job.salary ? ' · 💰 ' + job.salary : '');
 
     const description = document.createElement('p');
-    description.textContent = job.description;
+description.className = 'job-description';
+description.textContent = job.description;
 
     const apply = document.createElement('p');
     apply.textContent = 'How to apply: ' + job.apply;
