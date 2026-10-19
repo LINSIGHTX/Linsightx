@@ -1027,22 +1027,29 @@ document.querySelectorAll('[data-feed]').forEach(button => {
 document.getElementById('search').addEventListener('input', applyFilters);
 
 function mobileview(view) {
-currentView = view;
-sessionStorage.setItem('sightxCurrentView', view);
+  currentView = view;
+  sessionStorage.setItem('sightxCurrentView', view);
 
-document.querySelectorAll('.navitem').forEach(item => {
-item.classList.toggle('active', item.dataset.view === view);
-});
+  document.querySelectorAll('.navitem').forEach(item => {
+    item.classList.toggle('active', item.dataset.view === view);
+  });
 
-document.getElementById('applyJobPage').style.display = 'none';
-document.getElementById('postJobPage').style.display = 'none';
+  document.getElementById('applyJobPage').style.display = 'none';
+  document.getElementById('postJobPage').style.display = 'none';
 
-if (view === 'Jobs') {
-document.getElementById('jobsPage').style.display = 'block';
-showJobListings();
-}
+  if (view === 'Jobs') {
+    document.getElementById('jobsPage').style.display = 'block';
+  } else {
+    document.getElementById('jobsPage').style.display = 'none';
+  }
 
-window.scrollTo({ top: 0, behavior: 'smooth' });
+  applyFilters();
+
+  if (view === 'Jobs') {
+    showJobListings();
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 applyFilters();
