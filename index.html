@@ -632,8 +632,55 @@ apply.onclick = function() {
 };
 
     card.append(title, company, location, details, description, apply);
-    jobsContent.appendChild(card);
-  });
+    function showApplicationForm(job) {
+  const jobsContent = document.getElementById('jobsContent');
+
+  jobsContent.innerHTML = '';
+
+  const heading = document.createElement('h2');
+  heading.textContent = 'Apply for: ' + job.title;
+  jobsContent.appendChild(heading);
+
+  const form = document.createElement('form');
+  form.id = 'applicationForm';
+
+  form.innerHTML = `
+    <div class="form-row">
+      <label for="applicantName">Full Name</label>
+      <input id="applicantName" name="name" type="text" required>
+    </div>
+
+    <div class="form-row">
+      <label for="applicantEmail">Email Address</label>
+      <input id="applicantEmail" name="email" type="email" required>
+    </div>
+
+    <div class="form-row">
+      <label for="applicantPhone">Phone Number</label>
+      <input id="applicantPhone" name="phone" type="tel" required>
+    </div>
+
+    <div class="form-row">
+      <label for="applicantResume">Resume Link</label>
+      <input id="applicantResume" name="resume" type="url" required>
+    </div>
+
+    <div class="form-row">
+      <label for="applicantCover">Cover Letter (Optional)</label>
+      <textarea id="applicantCover" name="coverLetter"></textarea>
+    </div>
+
+    <button type="submit" class="apply-job-btn">
+      Submit Application
+    </button>
+
+    <button type="button" class="apply-job-btn"
+      onclick="showJobListings()">
+      Back to Jobs
+    </button>
+  `;
+
+  jobsContent.appendChild(form);
 }
   function showJobForm() {
   const formArea = document.getElementById('jobFormArea');
