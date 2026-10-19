@@ -552,7 +552,7 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px
 
   </form>
       <script>
-document.getElementById('jobApplicationForm').addEventListener('submit', function(event) {
+document.getElementById('jobApplicationForm').addEventListener('submit', async function(event) {
   event.preventDefault();
 
   const resumeFile = document.getElementById('appResume').files[0];
@@ -578,6 +578,37 @@ document.getElementById('jobApplicationForm').addEventListener('submit', functio
     'sightxApplications',
     JSON.stringify(applications)
   );
+    try {
+    const { createClient } = await import(
+      'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+    );
+
+    const supabaseClient = createClient(
+      'https://ycfnsufdxztkmtyuceqy.supabase.co',
+      'sb_publishable_EbJZKeEdRR6l_UsRucmpnA_yzWHmVXJ'
+    );
+
+    const { error } = await supabaseClient
+      .from('applications')
+      .insert([{
+        applicant_name: application.name,
+        applicant_email: application.email,
+        applicant_phone: application.phone,
+        job_title: application.jobTitle,
+        resume_file_name: application.resumeFileName,
+        cover_letter: application.coverLetter
+      }]);
+
+    if (error) {
+      throw error;
+    }
+
+    alert('Application submitted online successfully!');
+
+  } catch (error) {
+    console.error('Supabase submission failed:', error);
+    alert('Online submission failed. Please try again.');
+  }
 
   document.getElementById('applicationMessage').textContent =
     'Application saved successfully on this device!';
