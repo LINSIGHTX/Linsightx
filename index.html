@@ -1027,16 +1027,22 @@ document.querySelectorAll('[data-feed]').forEach(button => {
 document.getElementById('search').addEventListener('input', applyFilters);
 
 function mobileview(view) {
-  currentView = view;
-  sessionStorage.setItem('sightxCurrentView', view);
-  document.querySelectorAll('.navitem').forEach(item => {
-    item.classList.toggle('active', item.dataset.view === view);
-  });
-  applyFilters();
-  if (view === 'Jobs') {
-  showJobListings();
-  }
-    window.scrollTo({top:0, behavior:'smooth'});
+currentView = view;
+sessionStorage.setItem('sightxCurrentView', view);
+
+document.querySelectorAll('.navitem').forEach(item => {
+item.classList.toggle('active', item.dataset.view === view);
+});
+
+document.getElementById('applyJobPage').style.display = 'none';
+document.getElementById('postJobPage').style.display = 'none';
+
+if (view === 'Jobs') {
+document.getElementById('jobsPage').style.display = 'block';
+showJobListings();
+}
+
+window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 applyFilters();
