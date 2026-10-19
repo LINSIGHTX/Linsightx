@@ -761,6 +761,7 @@ document.getElementById('search').addEventListener('input', applyFilters);
 
 function mobileview(view) {
   currentView = view;
+  sessionStorage.setItem('sightxCurrentView', view);
   document.querySelectorAll('.navitem').forEach(item => {
     item.classList.toggle('active', item.dataset.view === view);
   });
