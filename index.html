@@ -654,33 +654,37 @@ function showJobListings() {
     title.textContent = job.title;
 
     const company = document.createElement('p');
-company.className = 'job-company';
-company.textContent = '🏢 ' + job.company;
+    company.className = 'job-company';
+    company.textContent = '🏢 ' + job.company;
 
-const location = document.createElement('p');
-location.className = 'job-location';
-location.textContent = '📍 ' + job.location;
+    const location = document.createElement('p');
+    location.className = 'job-location';
+    location.textContent = '📍 ' + job.location;
 
     const details = document.createElement('p');
-details.className = 'job-details';
-details.textContent =
-  '💼 ' + job.type +
-  (job.salary ? ' · 💰 ' + job.salary : '');
+    details.className = 'job-details';
+    details.textContent =
+      '💼 ' + job.type +
+      (job.salary ? ' · 💰 ' + job.salary : '');
 
     const description = document.createElement('p');
-description.className = 'job-description';
-description.textContent = job.description;
+    description.className = 'job-description';
+    description.textContent = job.description;
 
     const apply = document.createElement('button');
-apply.textContent = 'Apply Now';
-apply.className = 'apply-job-btn';
+    apply.textContent = 'Apply Now';
+    apply.className = 'apply-job-btn';
 
-apply.onclick = function() {
-  showApplicationForm(job);
-};
+    apply.onclick = function() {
+      showApplicationForm(job);
+    };
 
     card.append(title, company, location, details, description, apply);
-    function showApplicationForm(job) {
+    jobsContent.appendChild(card);
+  });
+}
+
+function showApplicationForm(job) {
   const jobsContent = document.getElementById('jobsContent');
 
   jobsContent.innerHTML = '';
@@ -734,7 +738,6 @@ apply.onclick = function() {
     event.preventDefault();
     alert('Your application form was submitted!');
   });
-
 }
   function showJobForm() {
   const formArea = document.getElementById('jobFormArea');
