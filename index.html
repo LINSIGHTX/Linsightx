@@ -26,6 +26,54 @@ button { cursor: pointer; }
   gap: 14px;
   max-width: 700px;
 }
+  #applicationForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 700px;
+  margin-top: 20px;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e4e7ec;
+  border-radius: 12px;
+}
+
+#applicationForm .form-row {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+}
+
+#applicationForm label {
+  font-weight: 600;
+}
+
+#applicationForm input,
+#applicationForm textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid #d0d5dd;
+  border-radius: 7px;
+  font: inherit;
+}
+
+#applicationForm textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+@media (max-width: 520px) {
+  #applicationForm {
+    padding: 16px;
+  }
+
+  #applicationForm .form-row {
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 8px;
+  }
+}
 
 #jobForm .form-row {
   display: grid;
