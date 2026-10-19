@@ -588,20 +588,46 @@ document.getElementById('jobApplicationForm').addEventListener('submit', async f
       'sb_publishable_EbJZKeEdRR6l_UsRucmpnA_yzWHmVXJ'
     );
 
-    const { error } = await supabaseClient
-      .from('applications')
-      .insert([{
-        applicant_name: application.name,
-        applicant_email: application.email,
-        applicant_phone: application.phone,
-        job_title: application.jobTitle,
-        resume_file_name: application.resumeFileName,
-        cover_letter: application.coverLetter
-      }]);
+    // Upload the actual resume file
+if (!resumeFile) {
+  throw new Error('Please select a resume file.');
+}
 
-    if (error) {
-      throw error;
-    }
+const safeFileName = resumeFile.name.replace(
+  /[^a-zA-Z0-9._-]/g,
+  '_'
+);
+
+const resumePath = `${Date.now()}-${safeFileName}`;
+
+const { error: uploadError } = await supabaseClient
+  .storage
+  .from('resumes')
+  .upload(resumePath, resumeFile, {
+    contentType: resumeFile.type,
+    upsert: false
+  });
+
+if (uploadError) {
+  throw uploadError;
+}
+
+// Save the application and resume path in the database
+const { error: insertError } = await supabaseClient
+  .from('applications')
+  .insert([{
+    applicant_name: application.name,
+    applicant_email: application.email,
+    applicant_phone: application.phone,
+    job_title: application.jobTitle,
+    resume_file_name: resumeFile.name,
+    resume_file_path: resumePath,
+    cover_letter: application.coverLetter
+  }]);
+
+if (insertError) {
+  throw insertError;
+}
 
     alert('Application submitted online successfully!');
 
