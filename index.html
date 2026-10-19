@@ -433,7 +433,7 @@ const postText = document.getElementById('postText');
 
 const feed = document.getElementById('feed');
 const notice = document.getElementById('notice');
-let currentView = 'Home';
+let currentView = sessionStorage.getItem('sightxCurrentView') || 'Home';
 let currentFeed = 'For you';
 
 postText.addEventListener('input', () => {
