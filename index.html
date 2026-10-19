@@ -478,6 +478,31 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px
     </div>
 <div id="notice"></div>
 <div id="jobFormArea" style="display:none;"></div>
+    <div id="applyJobPage" style="display:none; max-width:600px; margin:30px auto; padding:24px; background:white; border-radius:12px;">
+  <h2>Apply for a Job</h2>
+  <p>Fill in all required fields marked with <span style="color:red;">*</span>.</p>  <form id="jobApplicationForm">
+    <label for="appFullName">Full Name <span style="color:red;">*</span></label>
+    <input id="appFullName" name="fullName" type="text" placeholder="Enter your full name" required style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;"><label for="appEmail">Email Address <span style="color:red;">*</span></label>
+<input id="appEmail" name="email" type="email" placeholder="Enter your email address" required style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;">
+
+<label for="appPhone">Phone Number <span style="color:red;">*</span></label>
+<input id="appPhone" name="phone" type="tel" placeholder="Enter your phone number" required style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;">
+
+<label for="appJobTitle">Job Title <span style="color:red;">*</span></label>
+<input id="appJobTitle" name="jobTitle" type="text" placeholder="Enter the job title" required style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;">
+
+<label for="appResume">Upload Resume <span style="color:red;">*</span></label>
+<input id="appResume" name="resume" type="file" accept=".pdf,.doc,.docx" required style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;">
+
+<label for="appCoverLetter">Cover Letter (Optional)</label>
+<textarea id="appCoverLetter" name="coverLetter" rows="5" placeholder="Tell us why you're suitable for this job" style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;"></textarea>
+
+<button type="submit" style="padding:12px 24px;background:#10b981;color:white;border:0;border-radius:8px;font-weight:bold;">Submit Application</button>
+<button type="button" onclick="document.getElementById('applyJobPage').style.display='none';document.getElementById('jobsPage').style.display='block';" style="padding:12px 24px;margin-left:8px;">Back to Jobs</button>
+
+  </form>
+  <p id="applicationMessage" role="status"></p>
+    </div>
 <section class="composer" id="composer">
   <div class="compose-row">
     <div class="avatar">B</div>
