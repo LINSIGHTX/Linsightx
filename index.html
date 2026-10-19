@@ -761,7 +761,6 @@ function showJobListings() {
 
 function showApplicationForm(job) {
   const jobsContent = document.getElementById('jobsContent');
-
   jobsContent.innerHTML = '';
 
   const heading = document.createElement('h2');
@@ -801,17 +800,47 @@ function showApplicationForm(job) {
       Submit Application
     </button>
 
-    <button type="button" class="apply-job-btn"
-      onclick="showJobListings()">
+    <button type="button" id="backToJobs" class="apply-job-btn">
       Back to Jobs
     </button>
   `;
 
   jobsContent.appendChild(form);
 
+  document.getElementById('backToJobs').addEventListener('click', function() {
+    showJobListings();
+  });
+
   form.addEventListener('submit', function(event) {
     event.preventDefault();
-    alert('Your application form was submitted!');
+
+    const application = {
+      id: Date.now(),
+      jobId: job.id,
+      jobTitle: job.title,
+      company: job.company,
+      name: document.getElementById('applicantName').value.trim(),
+      email: document.getElementById('applicantEmail').value.trim(),
+      phone: document.getElementById('applicantPhone').value.trim(),
+      resume: document.getElementById('applicantResume').value.trim(),
+      coverLetter: document.getElementById('applicantCover').value.trim(),
+      submittedAt: new Date().toISOString()
+    };
+
+    const applications = JSON.parse(
+      localStorage.getItem('sightxApplications') || '[]'
+    );
+
+    applications.unshift(application);
+
+    localStorage.setItem(
+      'sightxApplications',
+      JSON.stringify(applications)
+    );
+
+    alert('Application saved on this device!');
+
+    showJobListings();
   });
 }
   function showJobForm() {
