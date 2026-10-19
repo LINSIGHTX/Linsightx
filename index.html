@@ -628,11 +628,7 @@ apply.textContent = 'Apply Now';
 apply.className = 'apply-job-btn';
 
 apply.onclick = function() {
-  if (job.apply.startsWith('http')) {
-    window.open(job.apply, '_blank');
-  } else {
-    alert('How to apply: ' + job.apply);
-  }
+  showApplicationForm(job);
 };
 
     card.append(title, company, location, details, description, apply);
