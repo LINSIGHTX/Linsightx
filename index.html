@@ -901,13 +901,14 @@ function showApplicationForm(job) {
       }
 
       console.log('Application saved to Supabase.');
+      alert('Application submitted online successfully!');
 
     } catch (error) {
       console.error('Supabase submission failed:', error);
       alert('Online submission failed. Please try again.');
     }
 
-    alert('Application saved on this device!');
+    alert('Application saved on this device. Check whether online submission succeeded.');
 
     showJobListings();
   });
