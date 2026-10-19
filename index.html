@@ -592,6 +592,19 @@ function showJobListings() {
     applyInfo.textContent = 'How to apply: ' + apply;
 
     article.append(heading, companyInfo, jobInfo, details, applyInfo);
+    const savedJobs = JSON.parse(localStorage.getItem('sightxJobs') || '[]');
+
+savedJobs.unshift({
+  title: title,
+  company: company,
+  location: location,
+  salary: salary,
+  type: type,
+  description: description,
+  apply: apply
+});
+
+localStorage.setItem('sightxJobs', JSON.stringify(savedJobs));
     feed.prepend(article);
 
     formArea.style.display = 'none';
