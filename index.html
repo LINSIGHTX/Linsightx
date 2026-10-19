@@ -605,8 +605,17 @@ details.textContent =
 description.className = 'job-description';
 description.textContent = job.description;
 
-    const apply = document.createElement('p');
-    apply.textContent = 'How to apply: ' + job.apply;
+    const apply = document.createElement('button');
+apply.textContent = 'Apply Now';
+apply.className = 'apply-job-btn';
+
+apply.onclick = function() {
+  if (job.apply.startsWith('http')) {
+    window.open(job.apply, '_blank');
+  } else {
+    alert('How to apply: ' + job.apply);
+  }
+};
 
     card.append(title, company, location, details, description, apply);
     jobsContent.appendChild(card);
