@@ -729,6 +729,12 @@ apply.onclick = function() {
   `;
 
   jobsContent.appendChild(form);
+
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+    alert('Your application form was submitted!');
+  });
+
 }
   function showJobForm() {
   const formArea = document.getElementById('jobFormArea');
