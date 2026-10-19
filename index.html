@@ -580,7 +580,7 @@ location.textContent = '📍 ' + job.location;
     const apply = document.createElement('p');
     apply.textContent = 'How to apply: ' + job.apply;
 
-    card.append(title, company, details, description, apply);
+    card.append(title, company, location, details, description, apply);
     jobsContent.appendChild(card);
   });
 }
