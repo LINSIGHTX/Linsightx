@@ -769,7 +769,14 @@ function mobileview(view) {
   if (view === 'Jobs') {
   showJobListings();
   }
-  window.scrollTo({top:0, behavior:'smooth'});
+    window.scrollTo({top:0, behavior:'smooth'});
 }
+
+applyFilters();
+
+if (currentView === 'Jobs') {
+  showJobListings();
+}
+
 </script></body>
 </html>
