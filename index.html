@@ -1075,6 +1075,33 @@ applyFilters();
 if (currentView === 'Jobs') {
   showJobListings();
 }
+document.getElementById('newJobForm').addEventListener('submit', function(event) {
+  event.preventDefault();
 
+  const newJob = {
+    id: Date.now(),
+    title: document.getElementById('newJobTitle').value.trim(),
+    company: document.getElementById('newJobCompany').value.trim(),
+    location: document.getElementById('newJobLocation').value.trim(),
+    type: document.getElementById('newJobType').value,
+    salary: document.getElementById('newJobSalary').value.trim(),
+    description: document.getElementById('newJobDescription').value.trim()
+  };
+
+  const savedJobs = JSON.parse(localStorage.getItem('sightxJobs') || '[]');
+
+  savedJobs.unshift(newJob);
+
+  localStorage.setItem('sightxJobs', JSON.stringify(savedJobs));
+
+  this.reset();
+
+  document.getElementById('postJobPage').style.display = 'none';
+  document.getElementById('jobsPage').style.display = 'block';
+
+  showJobListings();
+
+  alert('Job posted successfully!');
+});
 </script></body>
 </html>
