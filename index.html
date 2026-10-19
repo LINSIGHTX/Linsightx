@@ -562,8 +562,12 @@ function showJobListings() {
     title.textContent = job.title;
 
     const company = document.createElement('p');
-    company.textContent =
-      '🏢 ' + job.company + ' · 📍 ' + job.location;
+company.className = 'job-company';
+company.textContent = '🏢 ' + job.company;
+
+const location = document.createElement('p');
+location.className = 'job-location';
+location.textContent = '📍 ' + job.location;
 
     const details = document.createElement('p');
     details.textContent =
