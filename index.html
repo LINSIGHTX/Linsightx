@@ -812,6 +812,7 @@ function showApplicationForm(job) {
   });
 
   form.addEventListener('submit', function(event) {
+    form.onsubmit = function() { alert('Application form detected'); return false; };
     event.preventDefault();
     alert('TEST: Submit button clicked!');
 
