@@ -484,9 +484,14 @@ function createPost() {
 }
 function showJobListings() {
   const jobsContent = document.getElementById('jobsContent');
-  const jobs = document.querySelectorAll('#feed .post[data-job-listing="true"]');
 
-  if (jobs.length === 0) {
+  const savedJobs = JSON.parse(
+    localStorage.getItem('sightxJobs') || '[]'
+  );
+
+  jobsContent.innerHTML = '';
+
+  if (savedJobs.length === 0) {
     jobsContent.innerHTML = `
       <div style="text-align:center; padding:40px 20px;">
         <h2>No jobs available yet</h2>
@@ -496,12 +501,31 @@ function showJobListings() {
     return;
   }
 
-  jobsContent.innerHTML = '';
-
-  jobs.forEach(job => {
-    const card = job.cloneNode(true);
+  savedJobs.forEach(job => {
+    const card = document.createElement('article');
+    card.className = 'post';
     card.style.display = 'block';
     card.style.marginBottom = '16px';
+
+    const title = document.createElement('h3');
+    title.textContent = job.title;
+
+    const company = document.createElement('p');
+    company.textContent =
+      '🏢 ' + job.company + ' · 📍 ' + job.location;
+
+    const details = document.createElement('p');
+    details.textContent =
+      '💼 ' + job.type +
+      (job.salary ? ' · 💰 ' + job.salary : '');
+
+    const description = document.createElement('p');
+    description.textContent = job.description;
+
+    const apply = document.createElement('p');
+    apply.textContent = 'How to apply: ' + job.apply;
+
+    card.append(title, company, details, description, apply);
     jobsContent.appendChild(card);
   });
 }
