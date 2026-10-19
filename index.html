@@ -582,9 +582,10 @@ location.className = 'job-location';
 location.textContent = '📍 ' + job.location;
 
     const details = document.createElement('p');
-    details.textContent =
-      '💼 ' + job.type +
-      (job.salary ? ' · 💰 ' + job.salary : '');
+details.className = 'job-details';
+details.textContent =
+  '💼 ' + job.type +
+  (job.salary ? ' · 💰 ' + job.salary : '');
 
     const description = document.createElement('p');
     description.textContent = job.description;
