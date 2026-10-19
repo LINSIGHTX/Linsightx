@@ -551,6 +551,42 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px
 <button type="button" onclick="document.getElementById('applyJobPage').style.display='none';document.getElementById('jobsPage').style.display='block';" style="padding:12px 24px;margin-left:8px;">Back to Jobs</button>
 
   </form>
+      <script>
+document.getElementById('jobApplicationForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  const resumeFile = document.getElementById('appResume').files[0];
+
+  const application = {
+    id: Date.now(),
+    name: document.getElementById('appFullName').value.trim(),
+    email: document.getElementById('appEmail').value.trim(),
+    phone: document.getElementById('appPhone').value.trim(),
+    jobTitle: document.getElementById('appJobTitle').value.trim(),
+    resumeFileName: resumeFile ? resumeFile.name : '',
+    coverLetter: document.getElementById('appCoverLetter').value.trim(),
+    submittedAt: new Date().toISOString()
+  };
+
+  const applications = JSON.parse(
+    localStorage.getItem('sightxApplications') || '[]'
+  );
+
+  applications.unshift(application);
+
+  localStorage.setItem(
+    'sightxApplications',
+    JSON.stringify(applications)
+  );
+
+  document.getElementById('applicationMessage').textContent =
+    'Application saved successfully on this device!';
+
+  alert('Your application has been saved!');
+
+  this.reset();
+});
+</script>
   <p id="applicationMessage" role="status"></p>
     </div>
 <section class="composer" id="composer">
