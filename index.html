@@ -799,11 +799,18 @@ function createPost() {
 async function showJobListings() {
   const jobsContent = document.getElementById('jobsContent');
 
-  const { data: rows, error } = await window. lxSupabase
+const client = window.lxSupabase || await new Promise(resolve => {
+  window.addEventListener(
+    'lx-supabase-ready',
+    () => resolve(window.lxSupabase),
+    { once: true }
+  );
+});
+
+const { data: rows, error } = await client
   .from('jobs')
   .select('*')
   .order('created_at', { ascending: false });
-
 if (error) {
   jobsContent.innerHTML =
     '<p>Could not load jobs: ' + error.message + '</p>';
@@ -1303,7 +1310,7 @@ if (userError || !user) {
   return;
 }
 
-const { error: saveError } = await lxSupabase
+const { error: saveError } = await window.lxSupabase
   .from('jobs')
   .insert({
     title: newJob.title,
