@@ -1188,6 +1188,10 @@ document.querySelectorAll('.navitem').forEach(button => {
     currentView = button.dataset.view;
     document.querySelectorAll('.navitem').forEach(item => item.classList.remove('active'));
     button.classList.add('active');
+
+    document.getElementById('applyJobPage').style.display = 'none';
+    document.getElementById('postJobPage').style.display = 'none';
+
     applyFilters();
   });
 });
