@@ -1264,7 +1264,7 @@ applyFilters();
 if (currentView === 'Jobs') {
   showJobListings();
 }
-document.getElementById('newJobForm').addEventListener('submit', function(event) {
+document.getElementById('newJobForm').addEventListener('submit',async function(event) {
   event.preventDefault();
   
   // New-job form handler
@@ -1279,11 +1279,32 @@ document.getElementById('newJobForm').addEventListener('submit', function(event)
     description: document.getElementById('newJobDescription').value.trim()
   };
 
-  const savedJobs = JSON.parse(localStorage.getItem('sightxJobs') || '[]');
+  const { data: userData, error: userError } =
+  await lxSupabase.auth.getUser();
 
-  savedJobs.unshift(newJob);
+const user = userData?.user;
 
-  localStorage.setItem('sightxJobs', JSON.stringify(savedJobs));
+if (userError || !user) {
+  alert('Please log in before posting a job.');
+  return;
+}
+
+const { error: saveError } = await lxSupabase
+  .from('jobs')
+  .insert({
+    title: newJob.title,
+    company: newJob.company,
+    location: newJob.location,
+    job_type: newJob.type,
+    salary: newJob.salary,
+    description: newJob.description,
+    posted_by: user.id
+  });
+
+if (saveError) {
+  alert('Could not save job: ' + saveError.message);
+  return;
+}
 
   this.reset();
 
