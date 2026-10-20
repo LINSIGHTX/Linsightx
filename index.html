@@ -1401,6 +1401,7 @@ const lxSupabase = createClient(
   SUPABASE_URL,
   SUPABASE_PUBLISHABLE_KEY
 );
+  window.lxSupabase = lxSupabase;
 
 const lxButton = document.getElementById('lx-account-button');
 const lxPanel = document.getElementById('lx-auth-panel');
