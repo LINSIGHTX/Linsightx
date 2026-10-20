@@ -1365,6 +1365,7 @@ if (saveError) {
     width:280px;
     max-width:85vw;
     padding:8px;
+    padding-top:32px;
     background:white;
     color:#222;
     border:1px solid #ddd;
@@ -1413,9 +1414,12 @@ if (saveError) {
     </button>
 
     <button id="lx-close-button" type="button"
-      style="display:block;margin-top:10px;padding:8px;cursor:pointer;">
-      Close
-    </button>
+  aria-label="Close login window"
+  style="position:absolute;top:6px;right:8px;
+  border:0;background:transparent;font-size:22px;
+  line-height:1;cursor:pointer;padding:2px 6px;">
+  &times;
+</button>
   </div>
 </div>
 
