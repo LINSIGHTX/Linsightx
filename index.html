@@ -1261,5 +1261,221 @@ document.getElementById('newJobForm').addEventListener('submit', function(event)
 
   alert('Job posted successfully!');
 });
-</script></body>
+</script> <!-- LinsightX Login and Signup -->
+<div id="lx-auth-area" style="
+  position:fixed;
+  top:12px;
+  right:12px;
+  z-index:9999;
+  font-family:Arial,sans-serif;
+">
+  <button id="lx-account-button" type="button"
+    style="padding:10px 14px;cursor:pointer;">
+    Login / Sign Up
+  </button>
+
+  <div id="lx-auth-panel" style="
+    display:none;
+    position:absolute;
+    right:0;
+    top:48px;
+    width:280px;
+    max-width:85vw;
+    padding:18px;
+    background:white;
+    color:#222;
+    border:1px solid #ddd;
+    border-radius:10px;
+    box-shadow:0 4px 16px #0002;
+    box-sizing:border-box;
+  ">
+    <h3 id="lx-auth-heading">Welcome to LinsightX</h3>
+
+    <form id="lx-auth-form">
+      <label for="lx-full-name">Full name (for signup)</label>
+      <input id="lx-full-name" type="text"
+        autocomplete="name"
+        placeholder="Your full name"
+        style="display:block;width:100%;padding:10px;margin:6px 0 12px;box-sizing:border-box;">
+
+      <label for="lx-email">Email</label>
+      <input id="lx-email" type="email" required
+        autocomplete="email"
+        placeholder="you@example.com"
+        style="display:block;width:100%;padding:10px;margin:6px 0 12px;box-sizing:border-box;">
+
+      <label for="lx-password">Password</label>
+      <input id="lx-password" type="password" required
+        minlength="8"
+        autocomplete="current-password"
+        placeholder="At least 8 characters"
+        style="display:block;width:100%;padding:10px;margin:6px 0 12px;box-sizing:border-box;">
+
+      <button type="submit" id="lx-submit-button"
+        style="padding:10px;width:100%;cursor:pointer;">
+        Log In
+      </button>
+    </form>
+
+    <p id="lx-auth-message" role="status" aria-live="polite"></p>
+
+    <button id="lx-toggle-mode" type="button"
+      style="padding:8px;cursor:pointer;">
+      Need an account? Sign Up
+    </button>
+
+    <button id="lx-logout-button" type="button"
+      style="display:none;padding:8px;cursor:pointer;">
+      Log Out
+    </button>
+
+    <button id="lx-close-button" type="button"
+      style="display:block;margin-top:10px;padding:8px;cursor:pointer;">
+      Close
+    </button>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from
+  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL =
+  'https://ycfnsufdxztkmtyuceqy.supabase.co';
+
+const SUPABASE_PUBLISHABLE_KEY =
+  'sb_publishable_EbJZKeEdRR6l_UsRucmpnA_yzWHmVXJ';
+
+const lxSupabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+const lxButton = document.getElementById('lx-account-button');
+const lxPanel = document.getElementById('lx-auth-panel');
+const lxForm = document.getElementById('lx-auth-form');
+const lxHeading = document.getElementById('lx-auth-heading');
+const lxName = document.getElementById('lx-full-name');
+const lxEmail = document.getElementById('lx-email');
+const lxPassword = document.getElementById('lx-password');
+const lxSubmit = document.getElementById('lx-submit-button');
+const lxMessage = document.getElementById('lx-auth-message');
+const lxToggle = document.getElementById('lx-toggle-mode');
+const lxLogout = document.getElementById('lx-logout-button');
+
+let lxSignupMode = false;
+
+lxButton.addEventListener('click', async () => {
+  lxPanel.style.display =
+    lxPanel.style.display === 'none' ? 'block' : 'none';
+
+  const { data: { session } } =
+    await lxSupabase.auth.getSession();
+
+  if (session) {
+    lxMessage.textContent =
+      'Signed in as ' + session.user.email;
+  }
+});
+
+document.getElementById('lx-close-button')
+  .addEventListener('click', () => {
+    lxPanel.style.display = 'none';
+  });
+
+lxToggle.addEventListener('click', () => {
+  lxSignupMode = !lxSignupMode;
+
+  lxHeading.textContent = lxSignupMode
+    ? 'Create your LinsightX account'
+    : 'Welcome to LinsightX';
+
+  lxSubmit.textContent = lxSignupMode
+    ? 'Sign Up'
+    : 'Log In';
+
+  lxToggle.textContent = lxSignupMode
+    ? 'Already registered? Log In'
+    : 'Need an account? Sign Up';
+
+  lxName.style.display = lxSignupMode ? 'block' : 'none';
+  lxName.required = lxSignupMode;
+  lxPassword.autocomplete = lxSignupMode
+    ? 'new-password'
+    : 'current-password';
+
+  lxMessage.textContent = '';
+});
+
+lxName.style.display = 'none';
+
+lxForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  lxSubmit.disabled = true;
+  lxMessage.textContent = 'Please wait...';
+
+  try {
+    const email = lxEmail.value.trim();
+    const password = lxPassword.value;
+
+    if (lxSignupMode) {
+      const { data, error } = await lxSupabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: lxName.value.trim()
+          },
+          emailRedirectTo:
+            'https://linsightx.github.io/Linsightx/'
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.session) {
+        lxMessage.textContent =
+          'Account created and signed in successfully.';
+      } else {
+        lxMessage.textContent =
+          'Account created. Check your email to confirm your account before logging in.';
+      }
+    } else {
+      const { error } =
+        await lxSupabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+      if (error) throw error;
+
+      lxMessage.textContent = 'Login successful!';
+    }
+  } catch (error) {
+    lxMessage.textContent = error.message ||
+      'Something went wrong. Please try again.';
+  } finally {
+    lxSubmit.disabled = false;
+  }
+});
+
+lxLogout.addEventListener('click', async () => {
+  const { error } = await lxSupabase.auth.signOut();
+
+  lxMessage.textContent = error
+    ? error.message
+    : 'You have logged out.';
+});
+
+lxSupabase.auth.onAuthStateChange((event, session) => {
+  if (session) {
+    lxButton.textContent = 'My Account';
+    lxLogout.style.display = 'block';
+  } else {
+    lxButton.textContent = 'Login / Sign Up';
+    lxLogout.style.display = 'none';
+  }
+});
+</script> </body>
 </html>
