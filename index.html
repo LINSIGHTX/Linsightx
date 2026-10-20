@@ -799,7 +799,7 @@ function createPost() {
 async function showJobListings() {
   const jobsContent = document.getElementById('jobsContent');
 
-  const { data: rows, error } = await lxSupabase
+  const { data: rows, error } = await window. lxSupabase
   .from('jobs')
   .select('*')
   .order('created_at', { ascending: false });
