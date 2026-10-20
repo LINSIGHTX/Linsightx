@@ -250,16 +250,19 @@ button { cursor: pointer; }
   }
 }
 .topbar {
-  height: 65px;
-  background: white;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 5%;
-  position: sticky;
-  top: 0;
-  z-index: 5;
+min-height: 72px;
+background: #ffffff;
+border-bottom: 1px solid #e2e8f0;
+box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 20px;
+padding: 0 5%;
+position: sticky;
+top: 0;
+z-index: 100;
+box-sizing: border-box;
 }
 .logo { font-size: 22px; font-weight: 800; color: var(--blue); }
 .logo span { color: var(--dark); }
