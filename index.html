@@ -1210,28 +1210,30 @@ function applyFilters() {
 }
 
 document.querySelectorAll('.navitem').forEach(button => {
-  button.addEventListener('click', () => {
-    currentView = button.dataset.view;
+button.addEventListener('click', () => {
+currentView = button.dataset.view;
 
-    document.querySelectorAll('.navitem').forEach(item =>
-      item.classList.remove('active')
-    );
-    button.classList.add('active');
+sessionStorage.setItem('sightxCurrentView', currentView);
 
-    document.getElementById('applyJobPage').style.display = 'none';
-    document.getElementById('postJobPage').style.display = 'none';
+document.querySelectorAll('.navitem').forEach(item =>
+  item.classList.remove('active')
+);
+button.classList.add('active');
 
-    if (currentView === 'Jobs') {
-      document.getElementById('jobsPage').style.display = 'block';
-      showJobListings();
-    } else {
-      document.getElementById('jobsPage').style.display = 'none';
-    }
+document.getElementById('applyJobPage').style.display = 'none';
+document.getElementById('postJobPage').style.display = 'none';
 
-    applyFilters();
-  });
+if (currentView === 'Jobs') {
+  document.getElementById('jobsPage').style.display = 'block';
+  showJobListings();
+} else {
+  document.getElementById('jobsPage').style.display = 'none';
+}
+
+applyFilters();
+
 });
-
+});
 document.querySelectorAll('[data-feed]').forEach(button => {
   button.addEventListener('click', () => {
     currentFeed = button.dataset.feed;
