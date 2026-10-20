@@ -468,7 +468,9 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px
 <header class="topbar">
   <div class="logo">SIGHT<span>X</span></div>
   <input class="search" id="search" placeholder="Search..." aria-label="Search posts">
-  <div class="avatar">B</div>
+  <button id="lx-account-button" class="primary" type="button">
+  Login / Sign Up
+</button>
 </header><div class="layout">
   <aside class="leftcol">
     <nav class="sidebar">
@@ -1269,10 +1271,7 @@ document.getElementById('newJobForm').addEventListener('submit', function(event)
   z-index:9999;
   font-family:Arial,sans-serif;
 ">
-  <button id="lx-account-button" type="button"
-style="padding:6px 9px;font-size:12px;cursor:pointer;border-radius:6px;">
-Login / Sign Up
-</button>
+  
 
   <div id="lx-auth-panel" style="
     display:none;
