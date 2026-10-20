@@ -796,12 +796,24 @@ function createPost() {
   notice.textContent = 'Post added to this page. This prototype does not publish posts to other users.';
   applyFilters();
 }
-function showJobListings() {
+async function showJobListings() {
   const jobsContent = document.getElementById('jobsContent');
 
-  const savedJobs = JSON.parse(
-    localStorage.getItem('sightxJobs') || '[]'
-  );
+  const { data: rows, error } = await lxSupabase
+  .from('jobs')
+  .select('*')
+  .order('created_at', { ascending: false });
+
+if (error) {
+  jobsContent.innerHTML =
+    '<p>Could not load jobs: ' + error.message + '</p>';
+  return;
+}
+
+const savedJobs = (rows || []).map(job => ({
+  ...job,
+  type: job.job_type
+}));
 
   jobsContent.innerHTML = '';
 
@@ -1029,7 +1041,7 @@ function showApplicationForm(job) {
   formArea.style.display = 'block';
   formArea.scrollIntoView({ behavior: 'smooth' });
 
-  document.getElementById('jobForm').onsubmit = function(event) {
+  document.getElementById('jobForm').onsubmit = async function(event) {
     event.preventDefault();
 
     const title = document.getElementById('jobTitle').value.trim();
@@ -1060,19 +1072,33 @@ function showApplicationForm(job) {
     applyInfo.textContent = 'How to apply: ' + apply;
 
     article.append(heading, companyInfo, jobInfo, details, applyInfo);
-    const savedJobs = JSON.parse(localStorage.getItem('sightxJobs') || '[]');
+    const { data: userData, error: userError } =
+  await lxSupabase.auth.getUser();
 
-savedJobs.unshift({
-  title: title,
-  company: company,
-  location: location,
-  salary: salary,
-  type: type,
-  description: description,
-  apply: apply
-});
+const user = userData?.user;
 
-localStorage.setItem('sightxJobs', JSON.stringify(savedJobs));
+if (userError || !user) {
+  alert('Please log in before posting a job.');
+  return;
+}
+
+const { error: saveError } = await lxSupabase
+  .from('jobs')
+  .insert({
+    title: title,
+    company: company,
+    location: location,
+    salary: salary,
+    job_type: type,
+    description: description,
+    apply: apply,
+    posted_by: user.id
+  });
+
+if (saveError) {
+  alert('Could not save job: ' + saveError.message);
+  return;
+}
     feed.prepend(article);
 
     formArea.style.display = 'none';
