@@ -837,8 +837,9 @@ const savedJobs = (rows || []).map(job => ({
   savedJobs.forEach(job => {
     const card = document.createElement('article');
     card.className = 'post';
-    card.style.display = 'block';
-    card.style.marginBottom = '16px';
+card.style.display = 'block';
+card.style.marginBottom = '8px';
+card.style.padding = '10px';
 
     const title = document.createElement('h3');
     title.textContent = job.title;
