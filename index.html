@@ -866,6 +866,10 @@ card.style.padding = '6px 10px';
     const description = document.createElement('p');
     description.className = 'job-description';
     description.textContent = job.description;
+description.style.display = '-webkit-box';
+description.style.webkitBoxOrient = 'vertical';
+description.style.webkitLineClamp = '3';
+description.style.overflow = 'hidden';
 
     const apply = document.createElement('button');
     apply.textContent = 'Apply Now';
