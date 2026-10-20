@@ -1269,7 +1269,9 @@ function mobileview(view) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-applyFilters();
+const savedViewOnLoad = sessionStorage.getItem('sightxCurrentView');
+if (savedViewOnLoad) mobileview(savedViewOnLoad);
+  applyFilters();
 
 if (currentView === 'Jobs') {
   showJobListings();
