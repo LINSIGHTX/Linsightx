@@ -1423,6 +1423,7 @@ const lxSupabase = createClient(
   SUPABASE_PUBLISHABLE_KEY
 );
   window.lxSupabase = lxSupabase;
+  window.dispatchEvent(new Event('lx-supabase-ready'));
 
 const lxButton = document.getElementById('lx-account-button');
 const lxPanel = document.getElementById('lx-auth-panel');
