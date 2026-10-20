@@ -845,6 +845,7 @@ const savedJobs = (rows || []).map(job => ({
 card.style.display = 'block';
 card.style.marginBottom = '8px';
 card.style.padding = '6px 10px';
+    card.style.minHeight = '0';
 
     const title = document.createElement('h3');
     title.textContent = job.title;
