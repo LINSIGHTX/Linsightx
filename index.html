@@ -264,14 +264,37 @@ top: 0;
 z-index: 100;
 box-sizing: border-box;
 }
-.logo { font-size: 22px; font-weight: 800; color: var(--blue); }
-.logo span { color: var(--dark); }
+.logo {
+font-size: 25px;
+font-weight: 800;
+letter-spacing: -0.8px;
+color: #123b6d;
+white-space: nowrap;
+}
+
+.logo span {
+color: #2878e5;
+}
+
 .search {
-  width: 36%;
-  padding: 11px 15px;
-  border: 1px solid var(--border);
-  border-radius: 22px;
-  background: var(--bg);
+flex: 1;
+width: 100%;
+max-width: 520px;
+min-width: 0;
+padding: 12px 18px;
+border: 1px solid #d7e0ea;
+border-radius: 24px;
+background: #f5f8fc;
+color: #1e293b;
+font-size: 14px;
+outline: none;
+box-sizing: border-box;
+}
+
+.search:focus {
+border-color: #2878e5;
+background: #ffffff;
+box-shadow: 0 0 0 3px rgba(40, 120, 229, 0.12);
 }
 .avatar {
   width: 40px;
