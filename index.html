@@ -402,16 +402,49 @@ outline-offset: 3px;
   color: var(--blue);
   border-bottom: 3px solid var(--blue);
 }
-.composer { padding: 17px; margin-bottom: 14px; }
-.compose-row { display: flex; gap: 12px; }
-textarea {
+.composer {
+  padding: 20px;
+  margin-bottom: 20px;
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(15, 35, 70, 0.06);
+  box-sizing: border-box;
+}
+
+.compose-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.composer textarea {
+  flex: 1;
+  min-width: 0;
   width: 100%;
-  border: 0;
+  box-sizing: border-box;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   outline: none;
   resize: vertical;
-  min-height: 72px;
+  min-height: 100px;
+  font-family: inherit;
   font-size: 15px;
-  padding: 8px 0;
+  line-height: 1.6;
+  padding: 12px;
+  color: #102a56;
+  background: #f8fafc;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.composer textarea:focus {
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.composer textarea::placeholder {
+  color: #94a3b8;
 }
 .compose-bottom {
   display: flex;
