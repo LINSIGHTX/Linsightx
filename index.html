@@ -1200,12 +1200,20 @@ if (job.salary) {
 }
 
     const description = document.createElement('p');
-    description.className = 'job-description';
-    description.textContent = job.description;
+description.className = 'job-description';
+description.textContent =
+  job.description || 'No description provided.';
+
+description.style.fontSize = '14px';
+description.style.lineHeight = '1.7';
+description.style.fontWeight = '400';
+description.style.color = '#475569';
+description.style.margin = '0';
 description.style.display = '-webkit-box';
 description.style.webkitBoxOrient = 'vertical';
 description.style.webkitLineClamp = '3';
 description.style.overflow = 'hidden';
+description.style.overflowWrap = 'anywhere';
 
     const apply = document.createElement('button');
 apply.textContent = 'Apply Now';
