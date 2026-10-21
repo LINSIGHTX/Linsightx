@@ -1608,6 +1608,9 @@ if (
 
   document.getElementById('postJobPage').style.display =
     sightxOpenPage === 'postJobPage' ? 'block' : 'none';
+
+} else {
+  sessionStorage.removeItem('sightxOpenPage');
 }
 document.getElementById('newJobForm').addEventListener('submit',async function(event) {
   event.preventDefault();
