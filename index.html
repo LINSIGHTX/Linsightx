@@ -1121,35 +1121,49 @@ const savedJobs = (rows || []).map(job => ({
     const card = document.createElement('article');
 card.className = 'post';
 card.style.display = 'block';
-card.style.marginBottom = '18px';
-card.style.padding = '22px';
+card.style.margin = '0';
+card.style.padding = '24px';
 card.style.minHeight = '0';
+card.style.boxSizing = 'border-box';
 card.style.borderRadius = '16px';
-card.style.border = '1px solid #dce5f0';
-card.style.boxShadow = '0 5px 18px rgba(16, 45, 82, 0.07)';
+card.style.border = '1px solid #dbe4f0';
+card.style.boxShadow = '0 4px 18px rgba(15, 35, 70, 0.06)';
 card.style.background = '#ffffff';
 card.style.transition = 'box-shadow 0.2s ease, border-color 0.2s ease';
+card.style.overflow = 'hidden';
 
 card.onmouseenter = function() {
-card.style.boxShadow = '0 9px 26px rgba(16, 45, 82, 0.12)';
-card.style.borderColor = '#b8cdf0';
+  card.style.boxShadow = '0 8px 26px rgba(15, 35, 70, 0.12)';
+  card.style.borderColor = '#2563eb';
 };
 
 card.onmouseleave = function() {
-card.style.boxShadow = '0 5px 18px rgba(16, 45, 82, 0.07)';
-card.style.borderColor = '#dce5f0';
+  card.style.boxShadow = '0 4px 18px rgba(15, 35, 70, 0.06)';
+  card.style.borderColor = '#dbe4f0';
 };
 
     const title = document.createElement('h3');
-    title.textContent = job.title;
+title.textContent = job.title;
+title.style.fontSize = '19px';
+title.style.fontWeight = '750';
+title.style.lineHeight = '1.4';
+title.style.color = '#102a56';
+title.style.margin = '0 0 12px';
 
-    const company = document.createElement('p');
-    company.className = 'job-company';
-    company.textContent = '🏢 ' + job.company;
+const company = document.createElement('p');
+company.className = 'job-company';
+company.textContent = job.company || 'Company not specified';
+company.style.fontSize = '14px';
+company.style.fontWeight = '600';
+company.style.color = '#334155';
+company.style.margin = '0 0 8px';
 
-    const location = document.createElement('p');
-    location.className = 'job-location';
-    location.textContent = '📍 ' + job.location;
+const location = document.createElement('p');
+location.className = 'job-location';
+location.textContent = '📍 ' + (job.location || 'Location not specified');
+location.style.fontSize = '13px';
+location.style.color = '#64748b';
+location.style.margin = '0 0 12px';
 
     const details = document.createElement('p');
     details.className = 'job-details';
