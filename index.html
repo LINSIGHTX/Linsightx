@@ -1590,16 +1590,13 @@ if (savedViewOnLoad) mobileview(savedViewOnLoad);
 if (currentView === 'Jobs') {
   showJobListings();
 }
-  const sightxOpenPage = sessionStorage.getItem('sightxOpenPage');
+const sightxOpenPage = sessionStorage.getItem('sightxOpenPage');
 
-if (sightxOpenPage === 'applyJobPage' || sightxOpenPage === 'postJobPage') {
-  currentView = 'Jobs';
-  sessionStorage.setItem('sightxCurrentView', 'Jobs');
-
-  document.querySelectorAll('.navitem').forEach(item => {
-    item.classList.toggle('active', item.dataset.view === 'Jobs');
-  });
-
+if (
+  (sightxOpenPage === 'applyJobPage' ||
+   sightxOpenPage === 'postJobPage') &&
+  currentView === 'Jobs'
+) {
   document.getElementById('jobsPage').style.display = 'none';
 
   document.getElementById('applyJobPage').style.display =
