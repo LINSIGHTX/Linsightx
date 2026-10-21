@@ -212,22 +212,27 @@ button { cursor: pointer; }
   color: #475467;
   }
   #jobsContent .apply-job-btn {
-  display: block;
-  margin-top: 14px;
-  margin-left: auto;
-  width: fit-content;
-  padding: 10px 20px;
-  background: #10b981;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
+display: block;
+margin-top: 14px;
+margin-left: auto;
+width: fit-content;
+padding: 10px 20px;
+background: #2563eb;
+color: #ffffff;
+border: none;
+border-radius: 8px;
+font-size: 15px;
+font-weight: 600;
+cursor: pointer;
+transition: background 0.2s ease, transform 0.2s ease;
 }
 
 #jobsContent .apply-job-btn:hover {
-  background: #059669;
+background: #1d4ed8;
+}
+
+#jobsContent .apply-job-btn:active {
+transform: translateY(1px);
 }
 
 /* Job details */
