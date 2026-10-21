@@ -1026,24 +1026,7 @@ const feed = document.getElementById('feed');
 const notice = document.getElementById('notice');
 let currentView = sessionStorage.getItem('sightxCurrentView') || 'Home';
 let currentFeed = 'For you';
-  const sightxOpenPage = sessionStorage.getItem('sightxOpenPage');
-
-if (sightxOpenPage === 'applyJobPage' || sightxOpenPage === 'postJobPage') {
-currentView = 'Jobs';
-sessionStorage.setItem('sightxCurrentView', 'Jobs');
-
-document.querySelectorAll('.navitem').forEach(item => {
-item.classList.toggle('active', item.dataset.view === 'Jobs');
-});
-
-document.getElementById('jobsPage').style.display = 'none';
-
-document.getElementById('applyJobPage').style.display =
-sightxOpenPage === 'applyJobPage' ? 'block' : 'none';
-
-document.getElementById('postJobPage').style.display =
-sightxOpenPage === 'postJobPage' ? 'block' : 'none';
-}
+  
 
 postText.addEventListener('input', () => {
   
