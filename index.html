@@ -804,7 +804,7 @@ Login / Sign Up
 
 <button type="submit" style="padding:12px 24px;background:#10b981;color:white;border:0;border-radius:8px;font-weight:bold;">Publish Job</button>
 
-<button type="button" onclick="document.getElementById('postJobPage').style.display='none';document.getElementById('jobsPage').style.display='block';" style="padding:12px 24px;margin-left:8px;">Back to Jobs</button>
+<button type="button" onclick="sessionStorage.removeItem('sightxOpenPage'); document.getElementById('postJobPage').style.display='none'; document.getElementById('applyJobPage').style.display='none'; document.getElementById('jobsPage').style.display='block';" style="padding:12px 24px;margin-left:8px;">Back to Jobs</button>
 
   </form>
     </div>
