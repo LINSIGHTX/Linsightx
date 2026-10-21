@@ -828,7 +828,7 @@ Login / Sign Up
 <textarea id="appCoverLetter" name="coverLetter" rows="5" placeholder="Tell us why you're suitable for this job" style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;"></textarea>
 
 <button type="submit" style="padding:12px 24px;background:#10b981;color:white;border:0;border-radius:8px;font-weight:bold;">Submit Application</button>
-<button type="button" onclick="document.getElementById('applyJobPage').style.display='none';document.getElementById('jobsPage').style.display='block';" style="padding:12px 24px;margin-left:8px;">Back to Jobs</button>
+<button type="button" onclick="sessionStorage.removeItem('sightxOpenPage'); document.getElementById('applyJobPage').style.display='none'; document.getElementById('postJobPage').style.display='none'; document.getElementById('jobsPage').style.display='block';" style="padding:12px 24px;margin-left:8px;">Back to Jobs</button>
 
   </form>
       <script>
