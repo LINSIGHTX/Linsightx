@@ -1214,6 +1214,32 @@ description.style.webkitBoxOrient = 'vertical';
 description.style.webkitLineClamp = '3';
 description.style.overflow = 'hidden';
 description.style.overflowWrap = 'anywhere';
+    const viewDetails = document.createElement('button');
+viewDetails.type = 'button';
+viewDetails.textContent = 'View Details';
+viewDetails.style.display = 'block';
+viewDetails.style.marginTop = '12px';
+viewDetails.style.padding = '8px 0';
+viewDetails.style.border = 'none';
+viewDetails.style.background = 'transparent';
+viewDetails.style.color = '#2563eb';
+viewDetails.style.fontSize = '13px';
+viewDetails.style.fontWeight = '700';
+viewDetails.style.cursor = 'pointer';
+
+viewDetails.onclick = function() {
+  const isExpanded = description.style.webkitLineClamp === 'unset';
+
+  if (isExpanded) {
+    description.style.webkitLineClamp = '3';
+    description.style.display = '-webkit-box';
+    viewDetails.textContent = 'View Details';
+  } else {
+    description.style.webkitLineClamp = 'unset';
+    description.style.display = 'block';
+    viewDetails.textContent = 'Show Less';
+  }
+};
 
     const apply = document.createElement('button');
 apply.textContent = 'Apply Now';
@@ -1246,7 +1272,7 @@ apply.onclick = function() {
   showApplicationForm(job);
 };
 
-    card.append(title, company, location, details, description, apply);
+    card.append(title, company, location, details, description, viewDetails apply);
     jobsContent.appendChild(card);
   });
 }
