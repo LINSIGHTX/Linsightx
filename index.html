@@ -1375,7 +1375,19 @@ typeBadge.style.fontSize = '12px';
 typeBadge.style.fontWeight = '700';
 
 details.appendChild(typeBadge);
+if (job.experience) {
+  const experienceBadge = document.createElement('span');
+  experienceBadge.textContent = 'Experience: ' + job.experience;
+  experienceBadge.style.display = 'inline-block';
+  experienceBadge.style.padding = '6px 10px';
+  experienceBadge.style.borderRadius = '20px';
+  experienceBadge.style.background = '#f3e8ff';
+  experienceBadge.style.color = '#7e22ce';
+  experienceBadge.style.fontSize = '12px';
+  experienceBadge.style.fontWeight = '700';
 
+  details.appendChild(experienceBadge);
+}
 if (job.salary) {
   const salaryBadge = document.createElement('span');
   salaryBadge.textContent = '₹ ' + job.salary;
