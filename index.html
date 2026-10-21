@@ -1118,11 +1118,26 @@ const savedJobs = (rows || []).map(job => ({
 
   savedJobs.forEach(job => {
     const card = document.createElement('article');
-    card.className = 'post';
+card.className = 'post';
 card.style.display = 'block';
-card.style.marginBottom = '8px';
-card.style.padding = '6px 10px';
-    card.style.minHeight = '0';
+card.style.marginBottom = '18px';
+card.style.padding = '22px';
+card.style.minHeight = '0';
+card.style.borderRadius = '16px';
+card.style.border = '1px solid #dce5f0';
+card.style.boxShadow = '0 5px 18px rgba(16, 45, 82, 0.07)';
+card.style.background = '#ffffff';
+card.style.transition = 'box-shadow 0.2s ease, border-color 0.2s ease';
+
+card.onmouseenter = function() {
+card.style.boxShadow = '0 9px 26px rgba(16, 45, 82, 0.12)';
+card.style.borderColor = '#b8cdf0';
+};
+
+card.onmouseleave = function() {
+card.style.boxShadow = '0 5px 18px rgba(16, 45, 82, 0.07)';
+card.style.borderColor = '#dce5f0';
+};
 
     const title = document.createElement('h3');
     title.textContent = job.title;
