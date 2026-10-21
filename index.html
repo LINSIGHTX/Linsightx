@@ -1535,12 +1535,16 @@ button.classList.add('active');
 document.getElementById('applyJobPage').style.display = 'none';
 document.getElementById('postJobPage').style.display = 'none';
 
-if (currentView === 'Jobs') {
+  if (currentView === 'Jobs') {
+  sessionStorage.removeItem('sightxOpenPage');
+  document.getElementById('applyJobPage').style.display = 'none';
+  document.getElementById('postJobPage').style.display = 'none';
   document.getElementById('jobsPage').style.display = 'block';
   showJobListings();
 } else {
   document.getElementById('jobsPage').style.display = 'none';
 }
+
 
 applyFilters();
 
