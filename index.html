@@ -345,14 +345,28 @@ box-shadow: 0 0 0 3px rgba(40, 120, 229, 0.12);
   font-weight: bold;
 }
 .primary {
-  width: 100%;
-  background: var(--blue);
-  color: white;
-  border: 0;
-  border-radius: 24px;
-  padding: 13px;
-  margin: 14px 0;
-  font-weight: bold;
+width: 100%;
+background: linear-gradient(135deg, #174a87, #2878e5);
+color: #ffffff;
+border: 0;
+border-radius: 24px;
+padding: 13px 20px;
+margin: 14px 0;
+font-weight: 700;
+font-size: 14px;
+cursor: pointer;
+transition: background 0.2s ease, box-shadow 0.2s ease;
+box-shadow: 0 3px 8px rgba(23, 74, 135, 0.16);
+}
+
+.primary:hover {
+background: linear-gradient(135deg, #123b6d, #1d65c1);
+box-shadow: 0 5px 12px rgba(23, 74, 135, 0.22);
+}
+
+.primary:focus-visible {
+outline: 3px solid rgba(40, 120, 229, 0.35);
+outline-offset: 3px;
 }
 .smallnote { color: var(--muted); font-size: 12px; line-height: 1.5; }
 .feedtabs {
