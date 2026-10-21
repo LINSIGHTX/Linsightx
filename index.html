@@ -517,6 +517,185 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px
     font-size: 11px;
   }
 }
+/* SIGHTX — unified premium visual design */
+body {
+background: #f3f6fb;
+color: #172b4d;
+font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+line-height: 1.5;
+}
+
+.topbar {
+min-height: 72px;
+background: rgba(255, 255, 255, 0.97);
+border-bottom: 1px solid #dce5f0;
+box-shadow: 0 4px 18px rgba(19, 43, 77, 0.06);
+}
+
+.logo {
+font-size: 28px;
+font-weight: 850;
+letter-spacing: -1.2px;
+color: #102d52;
+}
+
+.logo span {
+color: #3478f6;
+}
+
+.layout {
+max-width: 1440px;
+margin: 28px auto;
+padding: 0 24px;
+gap: 24px;
+}
+
+.sidebar,
+.panel,
+.post,
+.composer,
+.feedtabs {
+background: #ffffff;
+border: 1px solid #e1e8f2;
+border-radius: 16px;
+box-shadow: 0 5px 20px rgba(19, 43, 77, 0.045);
+}
+
+.sidebar {
+padding: 18px 14px;
+}
+
+.navitem {
+padding: 13px 14px;
+margin: 5px 0;
+border-radius: 10px;
+font-size: 14px;
+}
+
+.navitem:hover {
+background: #f0f5ff;
+color: #215fc5;
+}
+
+.navitem.active {
+background: #eaf1ff;
+color: #215fc5;
+box-shadow: inset 3px 0 0 #3478f6;
+}
+
+.panel {
+padding: 20px;
+margin-bottom: 18px;
+}
+
+.panel h3 {
+margin-top: 0;
+margin-bottom: 16px;
+color: #102d52;
+font-size: 16px;
+letter-spacing: -0.2px;
+}
+
+.feedtabs {
+overflow: hidden;
+margin-bottom: 18px;
+}
+
+.feedtabs button {
+padding: 16px 8px;
+cursor: pointer;
+transition: background 0.2s ease, color 0.2s ease;
+}
+
+.feedtabs button:hover {
+background: #f5f8ff;
+}
+
+.post,
+.composer {
+margin-bottom: 18px;
+}
+
+.jobsActionBar {
+display: flex;
+flex-wrap: wrap;
+gap: 12px;
+margin-bottom: 20px;
+}
+
+.jobsActionBar button {
+padding: 12px 20px;
+border: 1px solid #d7e3f5;
+border-radius: 10px;
+background: #ffffff;
+color: #174a87;
+font-weight: 700;
+cursor: pointer;
+}
+
+.jobsActionBar button:hover {
+background: #edf4ff;
+border-color: #8bb5ff;
+}
+
+input,
+select,
+textarea {
+border-radius: 9px;
+}
+
+button {
+transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+outline: 3px solid rgba(52, 120, 246, 0.25);
+outline-offset: 2px;
+}
+
+footer {
+color: #718096;
+border-top: 1px solid #e1e8f2;
+padding: 22px 12px;
+text-align: center;
+}
+
+@media (max-width: 600px) {
+.layout {
+margin: 14px auto;
+padding: 0 10px 80px;
+}
+
+.topbar {
+min-height: 58px;
+padding: 0 12px;
+gap: 10px;
+}
+
+.logo {
+font-size: 20px;
+}
+
+.search {
+flex: 1;
+width: auto;
+min-width: 0;
+padding: 9px 11px;
+font-size: 12px;
+}
+
+.panel {
+padding: 16px;
+}
+
+.jobsActionBar button {
+flex: 1;
+padding: 11px 8px;
+}
+}
 </style>
 </head>
 <body>
