@@ -1522,6 +1522,7 @@ function applyFilters() {
 
 document.querySelectorAll('.navitem').forEach(button => {
 button.addEventListener('click', () => {
+  sessionStorage.removeItem('sightxOpenPage');
 currentView = button.dataset.view;
 
 sessionStorage.setItem('sightxCurrentView', currentView);
