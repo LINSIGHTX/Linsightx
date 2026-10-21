@@ -388,22 +388,45 @@ outline-offset: 3px;
 }
 .smallnote { color: var(--muted); font-size: 12px; line-height: 1.5; }
 .feedtabs {
-  display: flex;
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 14px;
+display: flex;
+gap: 6px;
+border-radius: 12px;
+overflow: hidden;
+margin-bottom: 16px;
+padding: 5px;
+background: #f1f5f9;
+border: 1px solid #e2e8f0;
 }
+
 .feedtabs button {
-  flex: 1;
-  padding: 15px 5px;
-  border: 0;
-  background: white;
-  color: var(--muted);
-  font-weight: bold;
+flex: 1;
+min-width: 0;
+padding: 12px 5px;
+border: 0;
+border-radius: 8px;
+background: transparent;
+color: #64748b;
+font-family: inherit;
+font-size: 13px;
+font-weight: 650;
+cursor: pointer;
+transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
+
+.feedtabs button:hover {
+background: #ffffff;
+color: #2563eb;
+}
+
 .feedtabs button.active {
-  color: var(--blue);
-  border-bottom: 3px solid var(--blue);
+background: #ffffff;
+color: #1d4ed8;
+box-shadow: 0 1px 4px rgba(15, 35, 70, 0.1);
+}
+
+.feedtabs button:focus-visible {
+outline: 2px solid #2563eb;
+outline-offset: -2px;
 }
 .composer {
   padding: 20px;
