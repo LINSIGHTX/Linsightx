@@ -458,12 +458,32 @@ outline-offset: 3px;
 }
 .compose-bottom span { color: var(--muted); font-size: 12px; }
 .postbtn {
-  border: 0;
-  background: var(--blue);
-  color: white;
-  padding: 10px 20px;
-  border-radius: 22px;
-  font-weight: bold;
+border: 0;
+background: linear-gradient(135deg, #2563eb, #1d4ed8);
+color: #ffffff;
+padding: 11px 24px;
+border-radius: 10px;
+font-family: inherit;
+font-size: 14px;
+font-weight: 700;
+min-height: 42px;
+cursor: pointer;
+box-shadow: 0 3px 8px rgba(37, 99, 235, 0.18);
+transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.postbtn:hover {
+transform: translateY(-1px);
+box-shadow: 0 5px 12px rgba(37, 99, 235, 0.25);
+}
+
+.postbtn:active {
+transform: translateY(0);
+}
+
+.postbtn:focus-visible {
+outline: 2px solid #2563eb;
+outline-offset: 3px;
 }
 .post {
 padding: 20px;
