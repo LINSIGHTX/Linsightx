@@ -1864,6 +1864,24 @@ function applyFilters() {
   const notice = document.getElementById('notice');
   const jobFormArea = document.getElementById('jobFormArea');
   const jobSearch = document.getElementById('search').value.toLowerCase();
+const jobTitleSearch = document.getElementById('jobTitleFilter').value.trim().toLowerCase();
+const jobTypeFilter = document.getElementById('jobTypeFilter').value.trim().toLowerCase();
+const jobLocationFilter = document.getElementById('jobLocationFilter').value.trim().toLowerCase();
+
+document.querySelectorAll('#jobsContent .post').forEach(jobCard => {
+const matchesSearch = jobCard.innerText.toLowerCase().includes(jobSearch);
+const matchesTitle = !jobTitleSearch ||
+(jobCard.dataset.jobTitle || '').includes(jobTitleSearch);
+const matchesJobType = !jobTypeFilter ||
+(jobCard.dataset.jobType || '') === jobTypeFilter;
+const matchesLocation = !jobLocationFilter ||
+(jobCard.dataset.jobLocation || '').includes(jobLocationFilter);
+
+jobCard.style.display =
+matchesSearch && matchesTitle && matchesJobType && matchesLocation
+? ''
+: 'none';
+});
 const jobTypeFilter = document.getElementById('jobTypeFilter').value;
 document.querySelectorAll('#jobsContent .post').forEach(jobCard => {
   const matchesJobSearch = jobCard.innerText.toLowerCase().includes(jobSearch);
