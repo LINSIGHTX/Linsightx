@@ -963,26 +963,33 @@ Login / Sign Up
   <button type="button" onclick="sessionStorage.setItem('sightxOpenPage','applyJobPage'); document.getElementById('jobsPage').style.display='none'; document.getElementById('postJobPage').style.display='none'; document.getElementById('applyJobPage').style.display='block';">Apply for Job</button><button type="button" onclick="sessionStorage.setItem('sightxOpenPage','postJobPage'); document.getElementById('jobsPage').style.display='none'; document.getElementById('applyJobPage').style.display='none'; document.getElementById('postJobPage').style.display='block';">Post a Job</button>
 
 </div>
-  <div style="margin:0 0 16px;">
-  <label for="jobTypeFilter" style="display:block;margin-bottom:7px;font-size:14px;font-weight:700;color:#334155;">Filter by job type</label>
-  <select id="jobTypeFilter" style="width:100%;max-width:320px;padding:12px 14px;border:1px solid #CBD5E1;border-radius:10px;background:#FFFFFF;color:#0F172A;font-size:14px;box-sizing:border-box;">
-    <option value="">All job types</option>
-    <option value="Full-time">Full-time</option>
-    <option value="Part-time">Part-time</option>
-    <option value="Internship">Internship</option>
-    <option value="Contract">Contract</option>
-    <option value="Remote">Remote</option>
-  </select>
-</div>
+  <details id="jobsFilters" style="margin:0 0 16px;">
+  <summary style="cursor:pointer;display:inline-block;padding:12px 18px;background:#174a87;color:#ffffff;border-radius:10px;font-size:14px;font-weight:700;">
+    🔽 Filters
+  </summary>
 
-<div style="margin:0 0 16px;">
-  <label for="jobLocationFilter" style="display:block;margin-bottom:7px;font-size:14px;font-weight:700;color:#334155;">Filter by location</label>
-  <select id="jobLocationFilter" style="width:100%;max-width:320px;padding:12px 14px;border:1px solid #CBD5E1;border-radius:10px;background:#FFFFFF;color:#0F172A;font-size:14px;box-sizing:border-box;">
-    <option value="">All locations</option>
-    <option value="Remote">Remote</option>
-    <option value="Bengaluru">Bengaluru</option>
-  </select>
-</div>
+  <div style="margin-top:14px;padding:16px;border:1px solid #CBD5E1;border-radius:12px;background:#ffffff;">
+    <label for="jobTitleFilter" style="display:block;margin-bottom:7px;font-size:14px;font-weight:700;color:#334155;">Filter by job title</label>
+    <input id="jobTitleFilter" type="text" placeholder="Search job title..." style="display:block;width:100%;max-width:320px;padding:12px 14px;margin-bottom:16px;border:1px solid #CBD5E1;border-radius:10px;font-size:14px;box-sizing:border-box;">
+
+    <label for="jobTypeFilter" style="display:block;margin-bottom:7px;font-size:14px;font-weight:700;color:#334155;">Filter by job type</label>
+    <select id="jobTypeFilter" style="width:100%;max-width:320px;padding:12px 14px;margin-bottom:16px;border:1px solid #CBD5E1;border-radius:10px;background:#FFFFFF;color:#0F172A;font-size:14px;box-sizing:border-box;">
+      <option value="">All job types</option>
+      <option value="Full-time">Full-time</option>
+      <option value="Part-time">Part-time</option>
+      <option value="Internship">Internship</option>
+      <option value="Contract">Contract</option>
+      <option value="Remote">Remote</option>
+    </select>
+
+    <label for="jobLocationFilter" style="display:block;margin-bottom:7px;font-size:14px;font-weight:700;color:#334155;">Filter by location</label>
+    <select id="jobLocationFilter" style="width:100%;max-width:320px;padding:12px 14px;border:1px solid #CBD5E1;border-radius:10px;background:#FFFFFF;color:#0F172A;font-size:14px;box-sizing:border-box;">
+      <option value="">All locations</option>
+      <option value="Remote">Remote</option>
+      <option value="Bengaluru">Bengaluru</option>
+    </select>
+  </div>
+</details>
 
 <div id="jobsContent"></div>
     </div>
