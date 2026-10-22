@@ -2082,26 +2082,18 @@ function mobileview(view) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-const savedViewOnLoad = sessionStorage.getItem('sightxCurrentView');
+sessionStorage.removeItem('sightxOpenPage');
+sessionStorage.setItem('sightxCurrentView', 'Home');
 
-currentView = savedViewOnLoad || 'Home';
+currentView = 'Home';
 
 document.querySelectorAll('.navitem').forEach(item => {
-  item.classList.toggle('active', item.dataset.view === currentView);
+  item.classList.toggle('active', item.dataset.view === 'Home');
 });
 
-document.getElementById('applyJobPage').style.display = 'none';
+document.getElementById('jobsPage').style.display = 'none';
 document.getElementById('postJobPage').style.display = 'none';
-
-if (currentView === 'Jobs') {
-  document.getElementById('jobsPage').style.display = 'block';
-  showJobListings();
-} else {
-  currentView = 'Home';
-  sessionStorage.setItem('sightxCurrentView', 'Home');
-  sessionStorage.removeItem('sightxOpenPage');
-  document.getElementById('jobsPage').style.display = 'none';
-}
+document.getElementById('applyJobPage').style.display = 'none';
 
 applyFilters();
 document.getElementById('newJobForm').addEventListener('submit',async function(event) {
