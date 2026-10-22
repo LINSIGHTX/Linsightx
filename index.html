@@ -1281,7 +1281,7 @@ async function showJobListings() {
   jobsContent.style.display = 'grid';
 jobsContent.style.gridTemplateColumns =
   window.innerWidth >= 768 ? 'repeat(2, minmax(0, 1fr))' : '1fr';
-jobsContent.style.gap = '16px';
+jobsContent.style.gap = '20px';
 jobsContent.style.alignItems = 'start';
 
 const client = window.lxSupabase || await new Promise(resolve => {
