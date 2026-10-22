@@ -2002,7 +2002,7 @@ if (resultsCount) {
       (currentView === 'B2B Network' &&
         post.dataset.category === 'B2B Network');
 
-    post.style.display = (currentView === 'Jobs' && matchesSearch && matchesView) ? '' : 'none';
+    post.style.display = matchesSearch && matchesView ? '' : 'none';
   });
 
   
