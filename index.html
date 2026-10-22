@@ -1375,6 +1375,18 @@ hiringBadge.style.borderRadius = '6px';
 hiringBadge.style.fontSize = '11px';
 hiringBadge.style.fontWeight = '700';
 hiringBadge.style.letterSpacing = '0.5px';
+const titleRow = document.createElement('div');
+titleRow.style.display = 'flex';
+titleRow.style.justifyContent = 'space-between';
+titleRow.style.alignItems = 'flex-start';
+titleRow.style.gap = '10px';
+titleRow.style.width = '100%';
+
+title.style.flex = '1';
+title.style.minWidth = '0';
+hiringBadge.style.flexShrink = '0';
+
+titleRow.append(title, hiringBadge);
 
 const company = document.createElement('p');
 company.className = 'job-company';
