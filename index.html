@@ -1333,6 +1333,7 @@ const savedJobs = (rows || []).map(job => ({
   savedJobs.forEach(job => {
     const card = document.createElement('article');
 card.className = 'post';
+card.dataset.jobType = (job.job_type || job.type || '').trim().toLowerCase();
 card.style.display = 'block';
 card.style.margin = '0';
 card.style.padding = '20px';
