@@ -1333,6 +1333,17 @@ card.style.boxShadow = '0 6px 20px rgba(15, 35, 70, 0.10)';
 card.style.background = '#ffffff';
 card.style.transition = 'box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease';
 card.style.overflow = 'hidden';
+card.onmouseenter = function() {
+  card.style.transform = 'translateY(-3px)';
+  card.style.boxShadow = '0 10px 26px rgba(15, 35, 70, 0.16)';
+  card.style.borderColor = '#93b4e8';
+};
+
+card.onmouseleave = function() {
+  card.style.transform = 'translateY(0)';
+  card.style.boxShadow = '0 6px 20px rgba(15, 35, 70, 0.10)';
+  card.style.borderColor = '#cbdaf0';
+};
 
 card.onmouseenter = function() {
   card.style.boxShadow = '0 8px 26px rgba(15, 35, 70, 0.12)';
