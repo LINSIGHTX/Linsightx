@@ -2148,21 +2148,16 @@ if (saveError) {
   alert('Could not save job: ' + saveError.message);
   return;
 }
-
   this.reset();
 
-currentView = 'Jobs';
-sessionStorage.setItem('sightxCurrentView', 'Jobs');
+  document.getElementById('postJobPage').style.display = 'none';
+  document.getElementById('jobsPage').style.display = 'block';
 
-document.querySelectorAll('.navitem').forEach(item => {
-item.classList.toggle('active', item.dataset.view === 'Jobs');
+  showJobListings();
+
+  alert('Job posted successfully!');
 });
-
-document.getElementById('postJobPage').style.display = 'none';
-
-showJobListings();
-applyFilters();
-
+  
   alert('Job posted successfully!');
 });
 </script> <!-- LinsightX Login and Signup -->
