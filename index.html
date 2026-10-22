@@ -1446,11 +1446,13 @@ saveButton.style.cssText = 'flex-shrink:0;border:1px solid #E2E8F0;border-radius
 
 const savedJobKey = String(job.id || job.title || '');
 const getSavedJobs = () => JSON.parse(localStorage.getItem('sightxSavedJobs') || '[]');
-
 function updateSaveButton() {
-  saveButton.textContent = getSavedJobs().includes(savedJobKey) ? '♥ Saved' : '♥ Save';
+  const isSaved = getSavedJobs().includes(savedJobKey);
+  saveButton.textContent = isSaved ? '♥ Saved' : '♥ Save';
+  saveButton.style.background = isSaved ? '#BE123C' : '#FFFFFF';
+  saveButton.style.color = isSaved ? '#FFFFFF' : '#BE123C';
+  saveButton.style.borderColor = isSaved ? '#BE123C' : '#E2E8F0';
 }
-
 saveButton.onclick = function() {
   let savedJobKeys = getSavedJobs();
 
