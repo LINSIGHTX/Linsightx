@@ -1882,14 +1882,7 @@ matchesSearch && matchesTitle && matchesJobType && matchesLocation
 ? ''
 : 'none';
 });
-const jobTypeFilter = document.getElementById('jobTypeFilter').value;
-document.querySelectorAll('#jobsContent .post').forEach(jobCard => {
-  const matchesJobSearch = jobCard.innerText.toLowerCase().includes(jobSearch);
-  const matchesJobType = !jobTypeFilter ||
-    jobCard.dataset.jobType === jobTypeFilter.trim().toLowerCase();
 
-  jobCard.style.display = matchesJobSearch && matchesJobType ? '' : 'none';
-});
   const visibleJobCount = Array.from(
   document.querySelectorAll('#jobsContent .post')
 ).filter(jobCard => jobCard.style.display !== 'none').length;
