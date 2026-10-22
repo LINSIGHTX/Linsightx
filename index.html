@@ -1853,21 +1853,7 @@ document.querySelectorAll('#jobsContent .post').forEach(jobCard => {
 
   jobCard.style.display = matchesJobSearch && matchesJobType ? '' : 'none';
 });
-  const visibleJobCount = Array.from(
-document.querySelectorAll('#jobsContent .post')
-).filter(jobCard => jobCard.style.display !== 'none').length;
 
-const resultsCount = document.getElementById('jobResultsCount');
-
-if (resultsCount) {
-if (visibleJobCount === 0) {
-resultsCount.textContent = 'No jobs match your filters. Try another search or job type.';
-} else {
-resultsCount.textContent = visibleJobCount === 1
-? 'Showing 1 job'
-: 'Showing ' + visibleJobCount + ' jobs';
-}
-}
 
   if (currentView === 'Jobs') {
     jobsPage.style.display = 'block';
