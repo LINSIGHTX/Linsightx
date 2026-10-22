@@ -1321,16 +1321,19 @@ const savedJobs = (rows || []).map(job => ({
   jobsContent.innerHTML = '';
 
   if (savedJobs.length === 0) {
-    jobsContent.innerHTML = `
-      <div style="text-align:center; padding:40px 20px;">
-        <h2>No jobs available yet</h2>
-        <p>Be the first to post a job!</p>
-      </div>
-    `;
-    return;
-  }
+jobsContent.innerHTML = "<div style="text-align:center; padding:40px 20px;"> <h2>No jobs available yet</h2> <p>Be the first to post a job!</p> </div>";
+return;
+}
 
-  savedJobs.forEach(job => {
+const resultsCount = document.createElement('p');
+resultsCount.id = 'jobResultsCount';
+resultsCount.style.cssText = 'margin:0 0 14px;color:#475569;font-size:14px;font-weight:600;grid-column:1 / -1;';
+resultsCount.textContent = savedJobs.length === 1
+? 'Showing 1 job'
+: 'Showing ' + savedJobs.length + ' jobs';
+jobsContent.appendChild(resultsCount);
+
+savedJobs.forEach(job => {
     const card = document.createElement('article');
 card.className = 'post';
 card.dataset.jobType = (job.job_type || job.type || '').trim().toLowerCase();
