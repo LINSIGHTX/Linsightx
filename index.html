@@ -1829,7 +1829,12 @@ function applyFilters() {
   const feed = document.getElementById('feed');
   const notice = document.getElementById('notice');
   const jobFormArea = document.getElementById('jobFormArea');
+  const jobSearch = document.getElementById('search').value.toLowerCase();
 
+document.querySelectorAll('#jobsContent .post').forEach(jobCard => {
+  const matchesJobSearch = jobCard.innerText.toLowerCase().includes(jobSearch);
+  jobCard.style.display = matchesJobSearch ? '' : 'none';
+});
   if (currentView === 'Jobs') {
     jobsPage.style.display = 'block';
     feedTabs.style.display = 'none';
