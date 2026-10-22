@@ -1991,10 +1991,7 @@ if (resultsCount) {
     const matchesSearch = post.innerText.toLowerCase().includes(search);
 
     const matchesView =
-      (currentView === 'Home' &&
-  post.dataset.category !== 'Jobs' &&
-  !Array.from(post.querySelectorAll('button')).some(button =>
-    button.textContent.includes('Save'))) ||
+      (currentView === 'Home' && post.dataset.category !== 'Jobs') ||
       currentView === 'Profile' ||
       (currentView === 'Bookmarks' &&
         post.querySelector('[data-saved="true"]')) ||
