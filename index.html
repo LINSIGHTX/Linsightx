@@ -1868,6 +1868,10 @@ function applyFilters() {
     post.style.display = matchesSearch && matchesView ? '' : 'none';
   });
 
+  document.querySelectorAll('#jobsContent .post').forEach(jobCard => {
+  const matchesSearch = jobCard.innerText.toLowerCase().includes(search);
+  jobCard.style.display = matchesSearch ? '' : 'none';
+});
   const pageTitle = document.getElementById('pageTitle');
   if (pageTitle) {
     pageTitle.textContent = currentView === 'Home' ? '' : currentView;
