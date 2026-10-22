@@ -1841,10 +1841,14 @@ function applyFilters() {
   const notice = document.getElementById('notice');
   const jobFormArea = document.getElementById('jobFormArea');
   const jobSearch = document.getElementById('search').value.toLowerCase();
+const jobTypeFilter = document.getElementById('jobTypeFilter').value;
 
 document.querySelectorAll('#jobsContent .post').forEach(jobCard => {
-  const matchesJobSearch = jobCard.innerText.toLowerCase().includes(jobSearch);
-  jobCard.style.display = matchesJobSearch ? '' : 'none';
+const matchesJobSearch = jobCard.innerText.toLowerCase().includes(jobSearch);
+const matchesJobType = !jobTypeFilter ||
+(jobCard.innerText.toLowerCase().includes(jobTypeFilter.toLowerCase()));
+
+jobCard.style.display = matchesJobSearch && matchesJobType ? '' : 'none';
 });
   if (currentView === 'Jobs') {
     jobsPage.style.display = 'block';
