@@ -1989,6 +1989,8 @@ document.querySelectorAll('[data-feed]').forEach(button => {
 
 document.getElementById('search').addEventListener('input', applyFilters);
 document.getElementById('jobTypeFilter').addEventListener('change', applyFilters);
+  document.getElementById('jobTitleFilter').addEventListener('input', applyFilters);
+document.getElementById('jobLocationFilter').addEventListener('change', applyFilters);
 
 function mobileview(view) {
   currentView = view;
