@@ -1321,7 +1321,7 @@ const savedJobs = (rows || []).map(job => ({
   jobsContent.innerHTML = '';
 
   if (savedJobs.length === 0) {
-jobsContent.innerHTML = "<div style="text-align:center; padding:40px 20px;"> <h2>No jobs available yet</h2> <p>Be the first to post a job!</p> </div>";
+jobsContent.innerHTML = `<div style="text-align:center; padding:40px 20px;"><h2>No jobs available yet</h2><p>Be the first to post a job!</p></div>`;
 return;
 }
 
