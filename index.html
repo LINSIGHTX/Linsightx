@@ -1939,6 +1939,7 @@ document.querySelectorAll('[data-feed]').forEach(button => {
 });
 
 document.getElementById('search').addEventListener('input', applyFilters);
+document.getElementById('jobTypeFilter').addEventListener('change', applyFilters);
 
 function mobileview(view) {
   currentView = view;
