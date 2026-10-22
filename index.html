@@ -963,7 +963,18 @@ Login / Sign Up
   <button type="button" onclick="sessionStorage.setItem('sightxOpenPage','applyJobPage'); document.getElementById('jobsPage').style.display='none'; document.getElementById('postJobPage').style.display='none'; document.getElementById('applyJobPage').style.display='block';">Apply for Job</button><button type="button" onclick="sessionStorage.setItem('sightxOpenPage','postJobPage'); document.getElementById('jobsPage').style.display='none'; document.getElementById('applyJobPage').style.display='none'; document.getElementById('postJobPage').style.display='block';">Post a Job</button>
 
 </div>
-  <div id="jobsContent"></div>
+  <div style="margin:0 0 16px;">
+  <label for="jobTypeFilter" style="display:block;margin-bottom:7px;font-size:14px;font-weight:700;color:#334155;">Filter by job type</label>
+  <select id="jobTypeFilter" style="width:100%;max-width:320px;padding:12px 14px;border:1px solid #CBD5E1;border-radius:10px;background:#FFFFFF;color:#0F172A;font-size:14px;box-sizing:border-box;">
+    <option value="">All job types</option>
+    <option value="Full-time">Full-time</option>
+    <option value="Part-time">Part-time</option>
+    <option value="Internship">Internship</option>
+    <option value="Contract">Contract</option>
+    <option value="Remote">Remote</option>
+  </select>
+</div>
+<div id="jobsContent"></div>
     </div>
     <div class="feedtabs">
       <button class="active" data-feed="For you">For you</button>
