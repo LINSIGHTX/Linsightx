@@ -963,7 +963,10 @@ Login / Sign Up
   <button type="button" onclick="sessionStorage.setItem('sightxOpenPage','applyJobPage'); document.getElementById('jobsPage').style.display='none'; document.getElementById('postJobPage').style.display='none'; document.getElementById('applyJobPage').style.display='block';">Apply for Job</button><button type="button" onclick="sessionStorage.setItem('sightxOpenPage','postJobPage'); document.getElementById('jobsPage').style.display='none'; document.getElementById('applyJobPage').style.display='none'; document.getElementById('postJobPage').style.display='block';">Post a Job</button>
 
 </div>
- <details id="jobsFilters" style="margin:0 0 16px;">
+</div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+<details id="jobsFilters" style="margin:0 0 16px;">
+ 
   <summary style="cursor:pointer;display:inline-flex;align-items:center;gap:9px;padding:11px 17px;background:#ffffff;color:#17365D;border:1px solid #CBD5E1;border-radius:8px;font-size:14px;font-weight:600;">
     <span aria-hidden="true">☷</span> Filters
   </summary> 
@@ -991,7 +994,8 @@ Login / Sign Up
     </select>
   </div>
 </details>
-
+<button type="button" onclick="showSavedJobs()" style="padding:11px 12px;background:#ffffff;color:#17365D;border:1px solid #CBD5E1;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">♥ Saved Jobs</button>
+</div>
 <div id="jobsContent"></div>
     </div>
     <div class="feedtabs">
@@ -1354,6 +1358,7 @@ jobsContent.appendChild(resultsCount);
 savedJobs.forEach(job => {
     const card = document.createElement('article');
 card.className = 'post';
+card.dataset.savedJobKey = String(job.id || job.title || '');
 card.dataset.jobType = (job.job_type || job.type || '').trim().toLowerCase();
 card.dataset.jobTitle = (job.title || '').trim().toLowerCase();
 card.dataset.jobLocation = (job.location || '').trim().toLowerCase();
@@ -1596,6 +1601,43 @@ apply.onclick = function() {
     jobsContent.appendChild(card);
   });
 }
+  function showSavedJobs() {
+  const savedButton = document.querySelector('button[onclick="showSavedJobs()"]');
+  const showingSaved = savedButton.dataset.showingSaved === 'true';
+  const cards = document.querySelectorAll('#jobsContent .post');
+  const resultsCount = document.getElementById('jobResultsCount');
+
+  if (showingSaved) {
+    savedButton.dataset.showingSaved = 'false';
+    savedButton.textContent = '♥ Saved Jobs';
+    applyFilters();
+    return;
+  }
+
+  const savedKeys = JSON.parse(
+    localStorage.getItem('sightxSavedJobs') || '[]'
+  );
+
+  let visibleCount = 0;
+
+  cards.forEach(card => {
+    const isSaved = savedKeys.includes(card.dataset.savedJobKey);
+    card.style.display = isSaved ? '' : 'none';
+
+    if (isSaved) visibleCount++;
+  });
+
+  if (resultsCount) {
+    resultsCount.textContent = visibleCount === 0
+      ? 'No saved jobs yet'
+      : visibleCount === 1
+        ? 'Showing 1 saved job'
+        : 'Showing ' + visibleCount + ' saved jobs';
+  }
+
+  savedButton.dataset.showingSaved = 'true';
+  savedButton.textContent = '♥ All Jobs';
+  }
 
 function showApplicationForm(job) {
   const jobsContent = document.getElementById('jobsContent');
