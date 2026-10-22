@@ -1843,14 +1843,14 @@ function applyFilters() {
   const jobFormArea = document.getElementById('jobFormArea');
   const jobSearch = document.getElementById('search').value.toLowerCase();
 const jobTypeFilter = document.getElementById('jobTypeFilter').value;
-
 document.querySelectorAll('#jobsContent .post').forEach(jobCard => {
-const matchesJobSearch = jobCard.innerText.toLowerCase().includes(jobSearch);
-const matchesJobType = !jobTypeFilter ||
-(jobCard.innerText.toLowerCase().includes(jobTypeFilter.toLowerCase()));
+  const matchesJobSearch = jobCard.innerText.toLowerCase().includes(jobSearch);
+  const matchesJobType = !jobTypeFilter ||
+    jobCard.dataset.jobType === jobTypeFilter.trim().toLowerCase();
 
-jobCard.style.display = matchesJobSearch && matchesJobType ? '' : 'none';
+  jobCard.style.display = matchesJobSearch && matchesJobType ? '' : 'none';
 });
+
   if (currentView === 'Jobs') {
     jobsPage.style.display = 'block';
     feedTabs.style.display = 'none';
