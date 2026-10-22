@@ -1431,12 +1431,41 @@ company.style.fontWeight = '700';
 company.style.color = '#1E40AF';
 company.style.margin = '0 0 8px';
 
+const locationRow = document.createElement('div');
+locationRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin:0 0 10px;';
+
 const location = document.createElement('p');
 location.className = 'job-location';
 location.textContent = '📍 ' + (job.location || 'Location not specified');
-location.style.fontSize = '14px';
-location.style.color = '#475569';
-location.style.margin = '0 0 10px';
+location.style.cssText = 'font-size:14px;color:#475569;margin:0;overflow-wrap:anywhere;';
+
+const saveButton = document.createElement('button');
+saveButton.type = 'button';
+saveButton.textContent = '♥ Save';
+saveButton.style.cssText = 'flex-shrink:0;border:1px solid #E2E8F0;border-radius:8px;background:#FFFFFF;color:#BE123C;padding:7px 10px;font-size:13px;font-weight:600;cursor:pointer;';
+
+const savedJobKey = String(job.id || job.title || '');
+const getSavedJobs = () => JSON.parse(localStorage.getItem('sightxSavedJobs') || '[]');
+
+function updateSaveButton() {
+  saveButton.textContent = getSavedJobs().includes(savedJobKey) ? '♥ Saved' : '♥ Save';
+}
+
+saveButton.onclick = function() {
+  let savedJobKeys = getSavedJobs();
+
+  if (savedJobKeys.includes(savedJobKey)) {
+    savedJobKeys = savedJobKeys.filter(key => key !== savedJobKey);
+  } else {
+    savedJobKeys.push(savedJobKey);
+  }
+
+  localStorage.setItem('sightxSavedJobs', JSON.stringify(savedJobKeys));
+  updateSaveButton();
+};
+
+updateSaveButton();
+locationRow.append(location, saveButton);
 
     const details = document.createElement('div');
 details.style.cssText = 'display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; width:100%;';
@@ -1562,7 +1591,7 @@ apply.onclick = function() {
   showApplicationForm(job);
 };
 
-    card.append(titleRow, company, location, details, description, viewDetails, apply);
+    card.append(titleRow, company, locationRow, details, description, viewDetails, apply);
     jobsContent.appendChild(card);
   });
 }
