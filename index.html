@@ -2151,10 +2151,17 @@ if (saveError) {
 
   this.reset();
 
-  document.getElementById('postJobPage').style.display = 'none';
-  document.getElementById('jobsPage').style.display = 'block';
+currentView = 'Jobs';
+sessionStorage.setItem('sightxCurrentView', 'Jobs');
 
-  showJobListings();
+document.querySelectorAll('.navitem').forEach(item => {
+item.classList.toggle('active', item.dataset.view === 'Jobs');
+});
+
+document.getElementById('postJobPage').style.display = 'none';
+
+showJobListings();
+applyFilters();
 
   alert('Job posted successfully!');
 });
