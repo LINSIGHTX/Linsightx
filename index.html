@@ -1475,7 +1475,7 @@ function createPost() {
 }
 let sightxJobsLoadToken = 0;
 
-async function showJobListings() {
+async function showJobListings(skipCache = false) {
   const thisLoadToken = ++sightxJobsLoadToken;
   sessionStorage.setItem('sightxCurrentView', 'Jobs');
   sessionStorage.removeItem('sightxOpenPage');
@@ -1503,26 +1503,67 @@ jobsContent.style.gridTemplateColumns =
 jobsContent.style.gap = '20px';
 jobsContent.style.alignItems = 'start';
 
-const client = window.lxSupabase || await new Promise(resolve => {
-  window.addEventListener(
-    'lx-supabase-ready',
-    () => resolve(window.lxSupabase),
-    { once: true }
-  );
-});
+const jobsCacheKey = 'sightxJobsCacheV1';
+let cachedRows = null;
+try {
+  cachedRows = JSON.parse(localStorage.getItem(jobsCacheKey) || 'null');
+} catch (_) {
+  cachedRows = null;
+}
 
-const { data: rows, error } = await client
-  .from('jobs')
-  .select('*')
-  .order('created_at', { ascending: false });
+let rows;
+if (!skipCache && Array.isArray(cachedRows)) {
+  // Paint cached listings immediately, then refresh them in the background.
+  rows = cachedRows;
+  (async () => {
+    try {
+      const refreshClient = window.lxSupabase || await new Promise(resolve => {
+        window.addEventListener('lx-supabase-ready', () => resolve(window.lxSupabase), { once: true });
+      });
+      const { data: freshRows, error: refreshError } = await refreshClient
+        .from('jobs')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (refreshError || !Array.isArray(freshRows)) return;
+      localStorage.setItem(jobsCacheKey, JSON.stringify(freshRows));
+      if (thisLoadToken !== sightxJobsLoadToken || currentView !== 'Jobs' ||
+          sessionStorage.getItem('sightxCurrentView') !== 'Jobs' ||
+          sessionStorage.getItem('sightxOpenPage')) return;
+      if (JSON.stringify(freshRows) !== JSON.stringify(cachedRows)) {
+        showJobListings(true);
+      }
+    } catch (_) {
+      // Keep showing cached jobs if the network is temporarily unavailable.
+    }
+  })();
+} else {
+  const client = window.lxSupabase || await new Promise(resolve => {
+    window.addEventListener(
+      'lx-supabase-ready',
+      () => resolve(window.lxSupabase),
+      { once: true }
+    );
+  });
+  const { data: freshRows, error } = await client
+    .from('jobs')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (thisLoadToken !== sightxJobsLoadToken || currentView !== 'Jobs' ||
+      sessionStorage.getItem('sightxCurrentView') !== 'Jobs' ||
+      sessionStorage.getItem('sightxOpenPage')) {
+    return;
+  }
+  if (error) {
+    jobsContent.innerHTML = '<p>Could not load jobs: ' + error.message + '</p>';
+    return;
+  }
+  rows = freshRows || [];
+  try { localStorage.setItem(jobsCacheKey, JSON.stringify(rows)); } catch (_) {}
+}
+
 if (thisLoadToken !== sightxJobsLoadToken || currentView !== 'Jobs' ||
     sessionStorage.getItem('sightxCurrentView') !== 'Jobs' ||
     sessionStorage.getItem('sightxOpenPage')) {
-  return;
-}
-if (error) {
-  jobsContent.innerHTML =
-    '<p>Could not load jobs: ' + error.message + '</p>';
   return;
 }
 
