@@ -1494,6 +1494,38 @@ html body #rightSidebar .company .follow {
 
 /* End SIGHTX FINAL LAYOUT */
 
+/* Application pages keep the main left navigation visible after refresh. */
+@media screen and (min-width: 801px) {
+  html body .layout.application-mode {
+    display: grid !important;
+    grid-template-columns: 220px minmax(0, 1fr) !important;
+    gap: 20px !important;
+    width: calc(100% - 48px) !important;
+    max-width: 1440px !important;
+  }
+  html body .layout.application-mode > .leftcol {
+    display: block !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    width: auto !important;
+    min-width: 0 !important;
+  }
+  html body .layout.application-mode > main {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  html body .layout.application-mode > #rightSidebar {
+    display: none !important;
+  }
+}
+@media screen and (max-width: 800px) {
+  html body .layout.application-mode > .leftcol {
+    display: block !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -2815,12 +2847,14 @@ function mobileview(view) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-const savedViewOnLoad = sessionStorage.getItem('sightxCurrentView') || 'Home';
-// Only restore a sub-page when the saved main view is Jobs.
-// Prevent stale application state from hiding the Home navigation after refresh.
-const savedOpenPage = savedViewOnLoad === 'Jobs'
-  ? sessionStorage.getItem('sightxOpenPage')
-  : null;
+const storedOpenPageOnLoad = sessionStorage.getItem('sightxOpenPage');
+// An application sub-page belongs to Jobs, even if an older/stale saved view says Home.
+const isSavedJobSubPage = ['jobApplicationPage', 'applyJobPage', 'postJobPage'].includes(storedOpenPageOnLoad);
+const savedViewOnLoad = isSavedJobSubPage
+  ? 'Jobs'
+  : (sessionStorage.getItem('sightxCurrentView') || 'Home');
+const savedOpenPage = savedViewOnLoad === 'Jobs' ? storedOpenPageOnLoad : null;
+if (isSavedJobSubPage) sessionStorage.setItem('sightxCurrentView', 'Jobs');
 
 currentView = savedViewOnLoad;
 document.querySelector('.layout')?.classList.remove('application-mode');
