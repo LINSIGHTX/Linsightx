@@ -1812,8 +1812,15 @@ jobsContent.style.display = 'block';
   </form>
 `;
 
-  formArea.style.display = 'block';
-  formArea.scrollIntoView({ behavior: 'smooth' });
+  sessionStorage.setItem('sightxOpenPage', 'postJobPage');
+sessionStorage.setItem('sightxCurrentView', currentView);
+
+document.getElementById('jobsPage').style.display = 'none';
+document.getElementById('jobsContent').style.display = 'none';
+document.getElementById('applyJobPage').style.display = 'none';
+
+formArea.style.display = 'block';
+formArea.scrollIntoView({ behavior: 'smooth' });
 
   document.getElementById('jobForm').onsubmit = async function(event) {
     event.preventDefault();
