@@ -931,11 +931,11 @@ font-size: 13px;
 }
 
 
-/* HOME DESKTOP LAYOUT FIX: laptop columns override older responsive rules. */
-@media screen and (min-width: 768px) {
+/* SIGHTX FINAL LAYOUT: three columns on laptop/desktop, stacked only on phones. */
+@media screen and (min-width: 601px) {
   html body .layout {
     display: grid !important;
-    grid-template-columns: 190px minmax(420px, 1fr) 245px !important;
+    grid-template-columns: 190px minmax(0, 1fr) 245px !important;
     grid-template-rows: auto !important;
     align-items: start !important;
     gap: 20px !important;
@@ -945,13 +945,13 @@ font-size: 13px;
     padding: 0 !important;
     box-sizing: border-box !important;
   }
-  html body .layout > aside.leftcol {
+  html body .layout > .leftcol {
     display: block !important;
     grid-column: 1 !important;
     grid-row: 1 !important;
     width: auto !important;
     min-width: 0 !important;
-    float: none !important;
+    max-width: none !important;
   }
   html body .layout > main {
     display: block !important;
@@ -960,96 +960,44 @@ font-size: 13px;
     width: auto !important;
     min-width: 0 !important;
     max-width: none !important;
-    float: none !important;
   }
-  html body .layout > aside#rightSidebar {
+  html body .layout > #rightSidebar {
     display: block !important;
     grid-column: 3 !important;
     grid-row: 1 !important;
     width: auto !important;
     min-width: 0 !important;
-    float: none !important;
-  }
-}
-@media screen and (min-width: 768px) and (max-width: 1100px) {
-  html body .layout {
-    grid-template-columns: 160px minmax(300px, 1fr) 200px !important;
-    gap: 12px !important;
-    width: calc(100% - 24px) !important;
-  }
-}
-/* End HOME DESKTOP LAYOUT FIX */
-
-
-/* FINAL RESPONSIVE LAYOUT OVERRIDE: desktop/tablet columns on Home and Jobs. */
-@media screen and (min-width: 601px) {
-  html body .layout {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: flex-start !important;
-    justify-content: stretch !important;
-    gap: 18px !important;
-    width: calc(100% - 32px) !important;
-    max-width: 1440px !important;
-    margin: 24px auto !important;
-    padding: 0 !important;
-  }
-  html body .layout > .leftcol {
-    display: block !important;
-    flex: 0 0 190px !important;
-    width: 190px !important;
-    min-width: 190px !important;
-    max-width: 190px !important;
-  }
-  html body .layout > main {
-    display: block !important;
-    flex: 1 1 0% !important;
-    width: auto !important;
-    min-width: 0 !important;
     max-width: none !important;
-  }
-  html body .layout > #rightSidebar {
-    display: block !important;
-    flex: 0 0 245px !important;
-    width: 245px !important;
-    min-width: 245px !important;
-    max-width: 245px !important;
   }
   html body #jobsContent {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    align-items: start !important;
     gap: 16px !important;
-    width: 100% !important;
+    align-items: start !important;
   }
-  html body #jobsContent > * {
-    min-width: 0 !important;
-    width: 100% !important;
+  html body #jobsContent > #jobResultsCount {
+    grid-column: 1 / -1 !important;
   }
 }
-@media screen and (min-width: 601px) and (max-width: 1050px) {
+@media screen and (min-width: 601px) and (max-width: 1100px) {
   html body .layout {
+    grid-template-columns: 150px minmax(0, 1fr) 190px !important;
     gap: 12px !important;
     width: calc(100% - 24px) !important;
   }
-  html body .layout > .leftcol {
-    flex-basis: 150px !important;
-    width: 150px !important;
-    min-width: 150px !important;
-    max-width: 150px !important;
+}
+@media screen and (min-width: 601px) and (max-width: 800px) {
+  html body .layout {
+    grid-template-columns: 110px minmax(0, 1fr) 145px !important;
+    gap: 8px !important;
+    width: calc(100% - 16px) !important;
   }
+  html body .layout > .leftcol,
   html body .layout > #rightSidebar {
-    flex-basis: 190px !important;
-    width: 190px !important;
-    min-width: 190px !important;
-    max-width: 190px !important;
-  }
-  html body #jobsContent {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    font-size: 12px !important;
   }
 }
-/* End FINAL RESPONSIVE LAYOUT OVERRIDE */
+/* End SIGHTX FINAL LAYOUT */
 
 </style>
 </head>
@@ -2161,7 +2109,8 @@ return;
 }
 
 if (currentView === 'Jobs') {
-jobsPage.style.display = 'block';
+jobsPage.style.setProperty('display', 'block', 'important');
+document.getElementById('jobsContent').style.setProperty('display', 'grid', 'important');
 const openPage = sessionStorage.getItem('sightxOpenPage');
 document.getElementById('rightSidebar').style.display =
   (openPage === 'applyJobPage' || openPage === 'jobApplicationPage') ? 'none' : '';
@@ -2173,8 +2122,8 @@ jobFormArea.style.display = 'none';
 return;
 }
 
-    jobsPage.style.display = 'none';
-  document.getElementById('jobsContent').style.display = 'none';
+    jobsPage.style.setProperty('display', 'none', 'important');
+  document.getElementById('jobsContent').style.setProperty('display', 'none', 'important');
   document.getElementById('applyJobPage').style.display = 'none';
   document.getElementById('postJobPage').style.display = 'none';
   feedTabs.style.display = '';
@@ -2226,12 +2175,14 @@ document.querySelectorAll('.navitem').forEach(button => {
     const jobsPageEl = document.getElementById('jobsPage');
     const jobsContentEl = document.getElementById('jobsContent');
     if (currentView === 'Jobs') {
-      jobsPageEl.style.display = 'block';
+      jobsPageEl.style.setProperty('display', 'block', 'important');
+      jobsContentEl.style.setProperty('display', 'grid', 'important');
       document.getElementById('rightSidebar').style.display = '';
       showJobListings();
     } else {
-      jobsPageEl.style.display = 'none';
-      jobsContentEl.style.display = 'none';
+      if (typeof sightxJobsLoadToken !== 'undefined') sightxJobsLoadToken++;
+      jobsPageEl.style.setProperty('display', 'none', 'important');
+      jobsContentEl.style.setProperty('display', 'none', 'important');
       document.getElementById('rightSidebar').style.display = '';
     }
     applyFilters();
@@ -2615,42 +2566,37 @@ lxSupabase.auth.onAuthStateChange((event, session) => {
 });
 </script> 
 <script>
-/* Reinforce the desktop layout after page scripts toggle Home/Jobs views. */
+/* Keep Home and Jobs layout in a stable desktop grid after navigation and resize. */
 (function () {
-  window.sightxApplyWideLayout = function sightxApplyWideLayout() {
-    var wide = window.innerWidth > 600;
-    var layout = document.querySelector('body > .layout');
+  window.sightxApplyWideLayout = function () {
+    var layout = document.querySelector('.layout');
     if (!layout) return;
-    if (wide) {
-      layout.style.setProperty('display', 'flex', 'important');
-      layout.style.setProperty('flex-direction', 'row', 'important');
-      layout.style.setProperty('flex-wrap', 'nowrap', 'important');
-      layout.style.setProperty('align-items', 'flex-start', 'important');
-      layout.style.setProperty('width', 'calc(100% - 32px)', 'important');
+    var width = window.innerWidth;
+    if (width > 600) {
+      var columns = width <= 800 ? '110px minmax(0, 1fr) 145px'
+        : width <= 1100 ? '150px minmax(0, 1fr) 190px'
+        : '190px minmax(0, 1fr) 245px';
+      layout.style.setProperty('display', 'grid', 'important');
+      layout.style.setProperty('grid-template-columns', columns, 'important');
+      layout.style.setProperty('grid-template-rows', 'auto', 'important');
+      layout.style.setProperty('align-items', 'start', 'important');
+      layout.style.setProperty('gap', width <= 800 ? '8px' : width <= 1100 ? '12px' : '20px', 'important');
+      layout.style.setProperty('width', width <= 800 ? 'calc(100% - 16px)' : width <= 1100 ? 'calc(100% - 24px)' : 'calc(100% - 40px)', 'important');
       layout.style.setProperty('max-width', '1440px', 'important');
       layout.style.setProperty('margin', '24px auto', 'important');
+      layout.style.setProperty('padding', '0', 'important');
       var left = layout.querySelector(':scope > .leftcol');
       var main = layout.querySelector(':scope > main');
       var right = layout.querySelector(':scope > #rightSidebar');
-      if (left) {
-        left.style.setProperty('display', 'block', 'important');
-        left.style.setProperty('flex', window.innerWidth <= 1050 ? '0 0 150px' : '0 0 190px', 'important');
-        left.style.setProperty('width', window.innerWidth <= 1050 ? '150px' : '190px', 'important');
-        left.style.setProperty('min-width', window.innerWidth <= 1050 ? '150px' : '190px', 'important');
-      }
-      if (main) {
-        main.style.setProperty('display', 'block', 'important');
-        main.style.setProperty('flex', '1 1 0%', 'important');
-        main.style.setProperty('width', 'auto', 'important');
-        main.style.setProperty('min-width', '0', 'important');
-        main.style.setProperty('max-width', 'none', 'important');
-      }
-      if (right) {
-        right.style.setProperty('display', 'block', 'important');
-        right.style.setProperty('flex', window.innerWidth <= 1050 ? '0 0 190px' : '0 0 245px', 'important');
-        right.style.setProperty('width', window.innerWidth <= 1050 ? '190px' : '245px', 'important');
-        right.style.setProperty('min-width', window.innerWidth <= 1050 ? '190px' : '245px', 'important');
-      }
+      [[left, '1'], [main, '2'], [right, '3']].forEach(function (entry) {
+        if (!entry[0]) return;
+        entry[0].style.setProperty('display', 'block', 'important');
+        entry[0].style.setProperty('grid-column', entry[1], 'important');
+        entry[0].style.setProperty('grid-row', '1', 'important');
+        entry[0].style.setProperty('min-width', '0', 'important');
+        entry[0].style.setProperty('width', 'auto', 'important');
+        entry[0].style.setProperty('max-width', 'none', 'important');
+      });
       var jobs = document.getElementById('jobsContent');
       if (jobs) {
         jobs.style.setProperty('display', 'grid', 'important');
@@ -2659,17 +2605,18 @@ lxSupabase.auth.onAuthStateChange((event, session) => {
       }
     } else {
       layout.style.removeProperty('display');
-      layout.style.removeProperty('flex-direction');
-      layout.style.removeProperty('flex-wrap');
+      layout.style.removeProperty('grid-template-columns');
+      layout.style.removeProperty('grid-template-rows');
+      layout.style.removeProperty('align-items');
+      layout.style.removeProperty('gap');
       layout.style.removeProperty('width');
       layout.style.removeProperty('max-width');
       layout.style.removeProperty('margin');
-      var leftSmall = layout.querySelector(':scope > .leftcol');
-      var mainSmall = layout.querySelector(':scope > main');
-      var rightSmall = layout.querySelector(':scope > #rightSidebar');
-      [leftSmall, mainSmall, rightSmall].forEach(function (el) {
+      layout.style.removeProperty('padding');
+      var children = [layout.querySelector(':scope > .leftcol'), layout.querySelector(':scope > main'), layout.querySelector(':scope > #rightSidebar')];
+      children.forEach(function (el) {
         if (!el) return;
-        ['display','flex','width','min-width','max-width'].forEach(function (p) { el.style.removeProperty(p); });
+        ['display','grid-column','grid-row','min-width','width','max-width'].forEach(function (prop) { el.style.removeProperty(prop); });
       });
     }
   };
