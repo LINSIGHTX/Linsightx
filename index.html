@@ -1430,7 +1430,10 @@ function createPost() {
   notice.textContent = 'Post added to this page. This prototype does not publish posts to other users.';
   applyFilters();
 }
+let sightxJobsLoadToken = 0;
+
 async function showJobListings() {
+  const thisLoadToken = ++sightxJobsLoadToken;
   sessionStorage.setItem('sightxCurrentView', 'Jobs');
   sessionStorage.removeItem('sightxOpenPage');
   sessionStorage.removeItem('sightxSelectedJob');
@@ -1469,6 +1472,11 @@ const { data: rows, error } = await client
   .from('jobs')
   .select('*')
   .order('created_at', { ascending: false });
+if (thisLoadToken !== sightxJobsLoadToken || currentView !== 'Jobs' ||
+    sessionStorage.getItem('sightxCurrentView') !== 'Jobs' ||
+    sessionStorage.getItem('sightxOpenPage')) {
+  return;
+}
 if (error) {
   jobsContent.innerHTML =
     '<p>Could not load jobs: ' + error.message + '</p>';
@@ -2167,6 +2175,8 @@ return;
 
     jobsPage.style.display = 'none';
   document.getElementById('jobsContent').style.display = 'none';
+  document.getElementById('applyJobPage').style.display = 'none';
+  document.getElementById('postJobPage').style.display = 'none';
   feedTabs.style.display = '';
   composer.style.display = '';
   feed.style.display = '';
@@ -2202,34 +2212,31 @@ return;
 }
 
 document.querySelectorAll('.navitem').forEach(button => {
-button.addEventListener('click', () => {
-  sessionStorage.removeItem('sightxOpenPage');
-currentView = button.dataset.view;
+  button.addEventListener('click', () => {
+    sessionStorage.removeItem('sightxOpenPage');
+    currentView = button.dataset.view;
+    sessionStorage.setItem('sightxCurrentView', currentView);
 
-sessionStorage.setItem('sightxCurrentView', currentView);
+    document.querySelectorAll('.navitem').forEach(item => item.classList.toggle('active', item === button));
 
-document.querySelectorAll('.navitem').forEach(item =>
-  item.classList.remove('active')
-);
-button.classList.add('active');
+    document.getElementById('applyJobPage').style.display = 'none';
+    document.getElementById('postJobPage').style.display = 'none';
 
-document.getElementById('applyJobPage').style.display = 'none';
-document.getElementById('postJobPage').style.display = 'none';
-document.getElementById('rightSidebar').style.display = '';
-  if (currentView === 'Jobs') {
-  sessionStorage.removeItem('sightxOpenPage');
-  document.getElementById('applyJobPage').style.display = 'none';
-  document.getElementById('postJobPage').style.display = 'none';
-  document.getElementById('jobsPage').style.display = 'block';
-  showJobListings();
-} else {
-  document.getElementById('jobsPage').style.display = 'none';
-}
-
-
-applyFilters();
-
-});
+    // Immediately hide the Jobs container before any async loading can finish.
+    const jobsPageEl = document.getElementById('jobsPage');
+    const jobsContentEl = document.getElementById('jobsContent');
+    if (currentView === 'Jobs') {
+      jobsPageEl.style.display = 'block';
+      document.getElementById('rightSidebar').style.display = '';
+      showJobListings();
+    } else {
+      jobsPageEl.style.display = 'none';
+      jobsContentEl.style.display = 'none';
+      document.getElementById('rightSidebar').style.display = '';
+    }
+    applyFilters();
+    if (typeof sightxApplyWideLayout === 'function') sightxApplyWideLayout();
+  });
 });
 document.querySelectorAll('[data-feed]').forEach(button => {
   button.addEventListener('click', () => {
@@ -2610,7 +2617,7 @@ lxSupabase.auth.onAuthStateChange((event, session) => {
 <script>
 /* Reinforce the desktop layout after page scripts toggle Home/Jobs views. */
 (function () {
-  function sightxApplyWideLayout() {
+  window.sightxApplyWideLayout = function sightxApplyWideLayout() {
     var wide = window.innerWidth > 600;
     var layout = document.querySelector('body > .layout');
     if (!layout) return;
@@ -2665,12 +2672,12 @@ lxSupabase.auth.onAuthStateChange((event, session) => {
         ['display','flex','width','min-width','max-width'].forEach(function (p) { el.style.removeProperty(p); });
       });
     }
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sightxApplyWideLayout);
-  else sightxApplyWideLayout();
-  window.addEventListener('resize', sightxApplyWideLayout);
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.sightxApplyWideLayout);
+  else window.sightxApplyWideLayout();
+  window.addEventListener('resize', window.sightxApplyWideLayout);
   document.addEventListener('click', function (event) {
-    if (event.target.closest('[data-view]')) setTimeout(sightxApplyWideLayout, 0);
+    if (event.target.closest('[data-view]')) setTimeout(window.sightxApplyWideLayout, 0);
   });
 })();
 </script>
