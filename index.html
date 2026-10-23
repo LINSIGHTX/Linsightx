@@ -1064,6 +1064,13 @@ font-size: 13px;
   }
 }
 
+/* Keep the right sidebar hidden while the dynamic Apply Now form is open. */
+@media screen and (min-width: 801px) {
+  html body .layout.application-mode > #rightSidebar {
+    display: none !important;
+  }
+}
+
 /* Make the dynamic Apply Now form visually match the polished Apply for a Job card. */
 @media screen and (min-width: 801px) {
   html body .layout.application-mode {
@@ -2223,6 +2230,7 @@ const jobsContent = document.getElementById('jobsContent');
 jobsContent.innerHTML = '';
 jobsContent.classList.add('application-form-view');
 document.querySelector('.layout')?.classList.add('application-mode');
+document.getElementById('rightSidebar').style.display = 'none';
 document.getElementById('jobsPage').style.display = 'block';
 jobsContent.style.display = 'block';
 document.getElementById('rightSidebar').style.display = 'none';
