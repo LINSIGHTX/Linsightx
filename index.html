@@ -1064,6 +1064,18 @@ font-size: 13px;
   }
 }
 
+/* Hard-hide the right sidebar for the dynamically generated Apply Now page on every screen size. */
+html body .layout.application-mode #rightSidebar,
+html body .layout.application-mode > #rightSidebar {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  min-width: 0 !important;
+}
+html body .layout.application-mode {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
 /* Keep the right sidebar hidden while the dynamic Apply Now form is open. */
 @media screen and (min-width: 801px) {
   html body .layout.application-mode > #rightSidebar {
@@ -2614,6 +2626,12 @@ document.getElementById('jobsContent').style.setProperty('display', 'grid', 'imp
 const openPage = sessionStorage.getItem('sightxOpenPage');
 document.getElementById('rightSidebar').style.display =
   (openPage === 'applyJobPage' || openPage === 'jobApplicationPage') ? 'none' : '';
+if (openPage === 'jobApplicationPage') {
+  document.querySelector('.layout')?.classList.add('application-mode');
+  document.getElementById('jobsContent').classList.add('application-form-view');
+  document.getElementById('jobsContent').style.setProperty('display', 'block', 'important');
+  document.getElementById('rightSidebar').style.setProperty('display', 'none', 'important');
+}
 feedTabs.style.display = 'none';
 composer.style.display = 'none';
 feed.style.display = 'none';
