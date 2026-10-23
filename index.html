@@ -1083,6 +1083,46 @@ html body .layout.application-mode {
   }
 }
 
+/* Reapply the wide application layout after refreshing a selected job's form. */
+@media screen and (min-width: 801px) {
+  html body .layout.application-mode > main {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+  html body #jobsContent.application-form-view {
+    display: block !important;
+    width: 100% !important;
+    max-width: 1200px !important;
+    margin: 24px auto !important;
+  }
+  html body #jobsContent.application-form-view #applicationForm {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    width: 100% !important;
+    max-width: none !important;
+    gap: 22px 24px !important;
+    padding: 28px 32px 32px !important;
+    box-sizing: border-box !important;
+  }
+  html body #jobsContent.application-form-view #applicationForm .form-row {
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  html body #jobsContent.application-form-view #applicationForm .form-row input,
+  html body #jobsContent.application-form-view #applicationForm .form-row textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 52px !important;
+    padding: 14px 16px !important;
+    box-sizing: border-box !important;
+  }
+  html body #jobsContent.application-form-view #applicationForm .form-row:has(#applicantCover) {
+    grid-column: 1 / -1 !important;
+  }
+}
+
 /* Make the dynamic Apply Now form visually match the polished Apply for a Job card. */
 @media screen and (min-width: 801px) {
   html body .layout.application-mode {
@@ -2631,6 +2671,29 @@ if (openPage === 'jobApplicationPage') {
   document.getElementById('jobsContent').classList.add('application-form-view');
   document.getElementById('jobsContent').style.setProperty('display', 'block', 'important');
   document.getElementById('rightSidebar').style.setProperty('display', 'none', 'important');
+  document.getElementById('jobsWelcomeBanner').style.display = 'none';
+  document.getElementById('jobsActionBar').style.display = 'none';
+  document.getElementById('jobsFilters').style.display = 'none';
+  const savedButton = document.querySelector('button[onclick="showSavedJobs()"]');
+  if (savedButton) savedButton.style.display = 'none';
+  const selectedJobId = sessionStorage.getItem('sightxSelectedJob');
+  const cachedJobs = JSON.parse(localStorage.getItem('sightxJobsCache') || '[]');
+  const selectedJob = cachedJobs.find(job => String(job.id) === String(selectedJobId));
+  if (selectedJob) {
+    showApplicationForm(selectedJob);
+  } else {
+    document.getElementById('jobsContent').innerHTML =
+      '<div class="application-form-loading">Reloading application form…</div>';
+    fetchJobs(true).then(jobs => {
+      const job = jobs.find(item => String(item.id) === String(selectedJobId));
+      if (job) showApplicationForm(job);
+      else document.getElementById('jobsContent').innerHTML =
+        '<p>This job is no longer available. Please return to Jobs and select another listing.</p>';
+    }).catch(() => {
+      document.getElementById('jobsContent').innerHTML =
+        '<p>Could not reload this application. Please return to Jobs and select the job again.</p>';
+    });
+  }
 }
 feedTabs.style.display = 'none';
 composer.style.display = 'none';
