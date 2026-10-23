@@ -1967,16 +1967,16 @@ if (resultsCount) {
     : 'Showing ' + visibleJobCount + ' jobs';
 }
 
-
-  if (currentView === 'Jobs') {
-    jobsPage.style.display = 'block';
-    feedTabs.style.display = 'none';
-    composer.style.display = 'none';
-    feed.style.display = 'none';
-    notice.style.display = 'none';
-    jobFormArea.style.display = 'none';
-    return;
-  }
+if (currentView === 'Jobs') {
+jobsPage.style.display = 'block';
+feedTabs.style.display = 'none';
+composer.style.display = 'none';
+feed.style.display = 'none';
+notice.style.display = 'none';
+jobFormArea.style.display = 'none';
+showJobListings();
+return;
+}
 
     jobsPage.style.display = 'none';
   feedTabs.style.display = '';
