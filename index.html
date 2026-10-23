@@ -129,9 +129,16 @@ box-sizing: border-box;
   border-radius: 12px;
 }
 
-/* Keep Apply for Job on its own top row; place the other job controls below. */
-.jobsActionBar > button:first-child {
-  flex: 0 0 100%;
+/* Keep the two job actions together on the first row. */
+.jobsActionBar > button:nth-of-type(1),
+.jobsActionBar > button:nth-of-type(2) {
+  flex: 1 1 calc(50% - 6px);
+}
+
+/* Filters and Saved Jobs sit on the row below the job actions. */
+.jobsActionBar > #jobsFilters,
+.jobsActionBar > button:last-child {
+  flex: 0 1 auto;
 }
 
 .jobsActionBar button {
