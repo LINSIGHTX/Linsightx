@@ -1988,11 +1988,13 @@ composer.style.display = 'none';
 feed.style.display = 'none';
 notice.style.display = 'none';
 jobFormArea.style.display = 'none';
+document.getElementById('rightSidebar').style.display = 'none';
 return;
 }
 
 if (currentView === 'Jobs') {
 jobsPage.style.display = 'block';
+document.getElementById('rightSidebar').style.display = '';
 feedTabs.style.display = 'none';
 composer.style.display = 'none';
 feed.style.display = 'none';
