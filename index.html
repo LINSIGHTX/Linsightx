@@ -22,6 +22,29 @@
 @media(max-width:1100px){.layout{grid-template-columns:210px minmax(0,1fr);gap:18px}.rightcol{display:none}.topbar{padding:0 18px}.toplinks .toplink span:not(.ico){display:none}}@media(max-width:720px){.topbar{height:62px;padding:0 12px;gap:9px}.brand{font-size:21px;gap:7px}.brandmark{width:30px;height:30px}.searchbox{padding:9px 10px}.toplinks{display:none}.mobile-menu{display:block}.layout{display:block;margin-top:16px;padding:0 12px 30px}.leftcol{display:none;position:fixed;top:62px;left:0;bottom:0;width:260px;z-index:30;padding:14px;background:var(--bg);overflow:auto;box-shadow:10px 0 30px #163a631c}.leftcol.mobile-open{display:block}.page-heading{align-items:flex-start}.page-heading h1{font-size:24px}.date-chip{display:none}.composer,.post,.right-panel,.job-card{padding:14px}.post-art{min-height:160px}.post-art h2{font-size:21px}.network-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.jobs-intro{padding:18px}.jobs-intro h2{font-size:21px}.job-tools{flex-wrap:wrap}.job-search{flex-basis:100%}.filter-btn,.sort-select{flex:1}.job-card h3{font-size:16px}.job-title-row{gap:7px}.hiring{padding:5px 7px;font-size:8px}.job-details{gap:5px}.job-details span{font-size:9px}.job-bottom{align-items:flex-start}.job-buttons{flex-shrink:0}footer{padding:0 14px 20px;flex-direction:column}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 .workflow-form{padding:18px;margin:0 0 14px;border:1px solid #cbdcff;background:#fff;border-radius:15px;box-shadow:var(--shadow)}.workflow-form h3{font-size:16px;margin:0 0 5px}.workflow-form .form-help{font-size:11px;color:var(--muted);margin:0 0 14px}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.form-field{display:flex;flex-direction:column;gap:5px;min-width:0}.form-field.full{grid-column:1/-1}.form-field label{font-size:10px;font-weight:800;color:#4d607c}.form-field input,.form-field textarea,.form-field select{width:100%;border:1px solid #dce6f3;border-radius:9px;padding:10px 11px;background:#f9fbff;color:var(--ink);font-size:12px}.form-field textarea{min-height:85px;resize:vertical}.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}.secondary-btn{border:1px solid var(--line);background:#fff;color:var(--muted);padding:9px 13px;border-radius:9px;font-size:11px;font-weight:800}.form-notice{font-size:11px;color:#147553;margin-top:10px}@media(max-width:520px){.form-grid{grid-template-columns:1fr}.form-field.full{grid-column:auto}}</style>
+<style>
+/* Mobile bottom navigation preview: desktop layout stays unchanged. */
+.mobile-bottom-nav{display:none}
+@media(max-width:720px){
+  body{padding-bottom:calc(68px + env(safe-area-inset-bottom))}
+  .mobile-bottom-nav{
+    position:fixed;left:0;right:0;bottom:0;z-index:40;
+    display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;
+    padding:7px 6px calc(7px + env(safe-area-inset-bottom));
+    background:rgba(255,255,255,.97);border-top:1px solid #dfe9f6;
+    box-shadow:0 -5px 20px rgba(21,53,92,.08);
+    backdrop-filter:blur(12px)
+  }
+  .mobile-bottom-nav button{
+    min-width:0;min-height:48px;border:0;border-radius:10px;
+    background:transparent;color:#697992;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:2px;font-size:10px;font-weight:750;
+    padding:4px 1px
+  }
+  .mobile-bottom-nav button .bottom-ico{font-size:19px;line-height:1.15}
+  .mobile-bottom-nav button.active{background:#edf3ff;color:#2259c8}
+}
+</style>
 </head>
 <body>
 <header class="topbar"><button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button><a href="#home" class="brand" aria-label="SIGHTX home"><span class="brandmark">S</span><span>SIGHT<span>X</span></span></a><label class="searchbox"><span>⌕</span><input id="globalSearch" type="search" placeholder="Search people, jobs, companies…" aria-label="Search SIGHTX"></label><nav class="toplinks" aria-label="Main navigation"><button class="toplink active" data-page="home"><span class="ico">⌂</span><span>Home</span></button><button class="toplink" data-page="network"><span class="ico">♧</span><span>Network</span></button><button class="toplink" data-page="jobs"><span class="ico">▣</span><span>Jobs</span></button><button class="toplink" data-page="intel"><span class="ico">◈</span><span>Insights</span></button></nav><button class="userdot" id="profileBtn" aria-label="Profile">LX</button></header>
@@ -76,4 +99,13 @@ document.addEventListener('submit',e=>{
 
 function updateSaved(){const saved=[...document.querySelectorAll('.job-card .save-btn.saved')].map(b=>b.closest('.job-card').querySelector('h3').textContent+' — '+b.closest('.job-card').querySelector('.job-company').textContent);const box=document.getElementById('savedList');box.className='card '+(saved.length?'':'empty-state');box.innerHTML=saved.length?saved.map(s=>'<div style="padding:15px;border-bottom:1px solid var(--line);font-size:12px">'+s+'</div>').join(''):'Save a job or post to find it here.'}
 </script>
+
+<nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+  <button type="button" data-page="home" class="active"><span class="bottom-ico" aria-hidden="true">⌂</span><span>Home</span></button>
+  <button type="button" data-page="network"><span class="bottom-ico" aria-hidden="true">♧</span><span>Network</span></button>
+  <button type="button" data-page="jobs"><span class="bottom-ico" aria-hidden="true">▣</span><span>Jobs</span></button>
+  <button type="button" data-page="intel"><span class="bottom-ico" aria-hidden="true">◈</span><span>Insights</span></button>
+  <button type="button" data-page="saved"><span class="bottom-ico" aria-hidden="true">♡</span><span>Saved</span></button>
+</nav>
+
 </body></html>
