@@ -1,3419 +1,943 @@
-<!DOCTYPE html><html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIGHTX | Business Network</title>
-<style>
-:root {
-  --blue: #10b981;
-  --dark: #172b4d;
-  --muted: #667085;
-  --border: #e4e7ec;
-  --bg: #f7f9fc;
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  color: var(--dark);
-  background: #F1F5F9;
-}
-button, textarea { font: inherit; }
-button { cursor: pointer; }
-  #jobForm {
-display: flex;
-flex-direction: column;
-gap: 18px;
-max-width: 700px;
-margin: 24px auto;
-padding: 28px;
-background: #ffffff;
-border: 1px solid #dbe4f0;
-border-radius: 16px;
-box-shadow: 0 8px 24px rgba(15, 35, 70, 0.06);
-box-sizing: border-box;
-}
-  #applicationForm {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  max-width: 700px;
-  margin-top: 20px;
-  padding: 24px;
-  background: #ffffff;
-  border: 1px solid #e4e7ec;
-  border-radius: 12px;
-}
-
-#applicationForm .form-row {
-  display: grid;
-  grid-template-columns: 160px minmax(0, 1fr);
-  align-items: center;
-  gap: 14px;
-}
-
-#applicationForm label {
-  font-weight: 600;
-}
-
-#applicationForm input,
-#applicationForm textarea {
-  width: 100%;
-  min-width: 0;
-  padding: 11px;
-  border: 1px solid #d0d5dd;
-  border-radius: 7px;
-  font: inherit;
-}
-
-#applicationForm textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-@media (max-width: 520px) {
-  #applicationForm {
-    padding: 16px;
-  }
-
-  #applicationForm .form-row {
-    grid-template-columns: 110px minmax(0, 1fr);
-    gap: 8px;
-  }
-}
-
-#jobForm .form-row {
-  display: grid;
-  grid-template-columns: 160px minmax(0, 1fr);
-  align-items: center;
-  gap: 14px;
-}
-
-#jobForm label {
-  font-weight: bold;
-}
-
-#jobForm input,
-#jobForm select,
-#jobForm textarea {
-  width: 100%;
-  min-width: 0;
-  padding: 11px;
-  border: 1px solid #d0d5dd;
-  border-radius: 7px;
-  font: inherit;
-}
-
-#jobForm textarea {
-  height: 130px;
-  resize: vertical;
-}
-
-@media (max-width: 520px) {
-  #jobForm .form-row {
-    grid-template-columns: 110px minmax(0, 1fr);
-    gap: 8px;
-  }
-}
-  .jobsActionBar {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 16px;
-  margin: 16px 0;
-  background: white;
-  border: 1px solid #e4e7ec;
-  border-radius: 12px;
-}
-
-/* Keep only the two primary job actions inside the bordered box. */
-.jobsActionBar > button:nth-of-type(1),
-.jobsActionBar > button:nth-of-type(2) {
-  flex: 1 1 0;
-  width: 50%;
-  min-width: 0;
-}
-
-.jobsUtilityBar {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 12px;
-  width: 100%;
-  margin: -4px 0 16px;
-  position: relative;
-  min-height: 42px;
-}
-
-.jobsUtilityBar #jobsFilters {
-  flex: 0 0 auto;
-  position: relative;
-}
-
-/* Open the filter panel as an overlay so it never pushes Saved Jobs
-   or changes the utility buttons' positions when toggled. */
-.jobsUtilityBar #jobsFilters > div {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  z-index: 1000;
-  width: min(320px, calc(100vw - 48px));
-  margin-top: 0 !important;
-  background: #ffffff;
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16);
-}
-
-.jobsUtilityBar > button {
-  flex: 0 0 auto;
-  position: relative;
-}
-
-.jobsActionBar button {
-flex: 1;
-min-width: 0;
-padding: 14px 18px;
-border: none;
-border-radius: 8px;
-background: #2563eb;
-color: #ffffff;
-font-family: inherit;
-font-weight: 700;
-font-size: 16px;
-cursor: pointer;
-transition: background 0.2s ease;
-}
-
-.jobsActionBar button:hover {
-background: #1d4ed8;
-}
-
-.jobsActionBar button:hover {
-  background: #1d4ed8;
-}
-  /* Jobs page layout */
-#jobsContent {
-  width: 100%;
-  margin-top: 20px;
-}
-
-/* Two medium job cards per row */
-#jobsContent {
-  display: grid;
- grid-template-columns: 1fr;
-  gap: 14px;
-  align-items: start;
-}
-
-#jobsContent .post {
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  padding: 14px;
-  margin-bottom: 0;
-  background: #ffffff;
-  border: 1px solid #e4e7ec;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.05);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-  @media (max-width: 420px) {
-  #jobsContent {
-    gap: 8px;
-  }
-
-  #jobsContent .post {
-    padding: 10px;
-  }
-}
-
-/* Hover effect */
-#jobsContent .post:hover {
-  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.10);
-  transform: translateY(-2px);
-}
-
-/* Job title */
-#jobsContent .post h3 {
-  margin: 0 0 14px;
-  font-size: 21px;
-  font-weight: 700;
-  line-height: 1.4;
-}
-  #jobsContent .job-company {
-  font-size: 16px;
-  font-weight: 700;
-  color: #344054;
-  margin: 8px 0 2px;
-}
-
-#jobsContent .job-location {
-  font-size: 14px;
-  color: #667085;
-  margin: 2px 0 12px;
-}
-  #jobsContent .job-details {
-display: flex;
-align-items: center;
-flex-wrap: wrap;
-gap: 8px;
-padding: 10px 12px;
-margin: 10px 0 14px;
-background: #F8FAFC;
-border: 1px solid #E2E8F0;
-border-radius: 10px;
-font-weight: 600;
-color: #344054;
-}
-  #jobsContent .job-description {
-  margin-top: 16px;
-  line-height: 1.8;
-  color: #475467;
-  }
-  #jobsContent .apply-job-btn {
-display: block;
-margin-top: 14px;
-margin-left: auto;
-width: fit-content;
-padding: 10px 20px;
-background: #2563eb;
-color: #ffffff;
-border: none;
-border-radius: 8px;
-font-size: 15px;
-font-weight: 600;
-cursor: pointer;
-transition: background 0.2s ease, transform 0.2s ease;
-}
-
-#jobsContent .apply-job-btn:hover {
-background: #1d4ed8;
-}
-
-#jobsContent .apply-job-btn:active {
-transform: translateY(1px);
-}
-
-/* Job details */
-#jobsContent .post p {
-  margin: 10px 0;
-  font-size: 16px;
-  line-height: 1.7;
-  overflow-wrap: anywhere;
-}
-
-/* Mobile spacing */
-@media (max-width: 520px) {
-  #jobsContent .post {
-    padding: 16px;
-    border-radius: 10px;
-  }
-
-  #jobsContent .post h3 {
-    font-size: 19px;
-  }
-}
-.topbar {
-min-height: 72px;
-background: #F0F7FF;
-border-bottom: 1px solid #e2e8f0;
-border-bottom: 1px solid #e2e8f0;
-box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-display: flex;
-align-items: center;
-justify-content: space-between;
-gap: 20px;
-padding: 0 5%;
-position: sticky;
-top: 0;
-z-index: 100;
-box-sizing: border-box;
-}
-.logo {
-font-size: 28px;
-font-weight: 800;
-letter-spacing: -0.5px;
-color: #123b6d;
-white-space: nowrap;
-}
-
-.logo span {
-color: #2878e5;
-}
-
-.search {
-flex: 1;
-width: 100%;
-max-width: 520px;
-min-width: 0;
-padding: 12px 18px;
-border: 1px solid #bfcee3;
-border-radius: 24px;
-background: #ffffff;
-color: #1e293b;
-font-size: 14px;
-outline: none;
-box-sizing: border-box;
-}
-
-.search:focus {
-border-color: #2878e5;
-background: #ffffff;
-box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.20);
-}
-.avatar {
-width: 40px;
-height: 40px;
-border-radius: 50%;
-background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-display: inline-flex;
-align-items: center;
-justify-content: center;
-font-family: inherit;
-font-size: 15px;
-font-weight: 750;
-color: #1d4ed8;
-border: 1px solid #bfdbfe;
-flex-shrink: 0;
-}
-.layout {
-  max-width: 1250px;
-  margin: 22px auto;
-  padding: 0 16px;
-  display: grid;
-  grid-template-columns: 205px minmax(0, 1fr) 265px;
-  gap: 22px;
-}
-.sidebar, .panel, .post, .composer, .feedtabs {
-background: #ffffff;
-border: 1px solid #e2e8f0;
-border-radius: 14px;
-box-shadow: 0 3px 12px rgba(15, 23, 42, 0.035);
-}
-.sidebar {
-padding: 16px;
-height: fit-content;
-position: sticky;
-top: 85px;
-background: #ffffff;
-border: 1px solid #e2e8f0;
-border-radius: 14px;
-box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
-}
-
-.navitem {
-display: block;
-width: 100%;
-padding: 13px 12px;
-margin: 4px 0;
-border: 0;
-background: transparent;
-border-radius: 9px;
-text-align: left;
-color: #475569;
-font-size: 14px;
-font-weight: 500;
-transition: background 0.2s ease, color 0.2s ease;
-}
-
-.navitem:hover {
-background: #f1f5f9;
-color: #174a87;
-}
-
-.navitem.active {
-background: #eaf2ff;
-color: #174a87;
-font-weight: 700;
-box-shadow: inset 3px 0 0 #2878e5;
-}
-.primary {
-width: 100%;
-background: linear-gradient(135deg, #2563EB, #3B82F6);
-color: #ffffff;
-border: 0;
-border-radius: 24px;
-padding: 13px 20px;
-margin: 14px 0;
-font-weight: 700;
-font-size: 14px;
-cursor: pointer;
-transition: background 0.2s ease, box-shadow 0.2s ease;
-box-shadow: 0 4px 12px rgba(37, 99, 235, 0.24);
-}
-
-.primary:hover {
-background: linear-gradient(135deg, #1D4ED8, #2563EB);
-box-shadow: 0 6px 16px rgba(37, 99, 235, 0.30);
-transform: translateY(-1px);
-}
-
-.primary:focus-visible {
-outline: 3px solid rgba(40, 120, 229, 0.35);
-outline-offset: 3px;
-}
-.smallnote { color: var(--muted); font-size: 12px; line-height: 1.5; }
-.feedtabs {
-display: flex;
-gap: 6px;
-border-radius: 12px;
-overflow: hidden;
-margin-bottom: 16px;
-padding: 5px;
-background: #f1f5f9;
-border: 1px solid #e2e8f0;
-}
-
-.feedtabs button {
-flex: 1;
-min-width: 0;
-padding: 12px 5px;
-border: 0;
-border-radius: 8px;
-background: transparent;
-color: #64748b;
-font-family: inherit;
-font-size: 13px;
-font-weight: 650;
-cursor: pointer;
-transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.feedtabs button:hover {
-background: #ffffff;
-color: #2563eb;
-}
-
-.feedtabs button.active {
-background: #ffffff;
-color: #1d4ed8;
-box-shadow: 0 1px 4px rgba(15, 35, 70, 0.1);
-}
-
-.feedtabs button:focus-visible {
-outline: 2px solid #2563eb;
-outline-offset: -2px;
-}
-.composer {
-  padding: 20px;
-  margin-bottom: 20px;
-  background: #ffffff;
-  border: 1px solid #dbe4f0;
-  border-radius: 16px;
-  box-shadow: 0 4px 18px rgba(15, 35, 70, 0.06);
-  box-sizing: border-box;
-}
-
-.compose-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-}
-
-.composer textarea {
-  flex: 1;
-  min-width: 0;
-  width: 100%;
-  box-sizing: border-box;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  outline: none;
-  resize: vertical;
-  min-height: 100px;
-  font-family: inherit;
-  font-size: 15px;
-  line-height: 1.6;
-  padding: 12px;
-  color: #102a56;
-  background: #f8fafc;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.composer textarea:focus {
-  border-color: #2563eb;
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-.composer textarea::placeholder {
-  color: #94a3b8;
-}
-.compose-bottom {
-display: flex;
-justify-content: flex-end;
-align-items: center;
-border-top: 1px solid #e2e8f0;
-padding-top: 14px;
-margin-top: 14px;
-gap: 12px;
-}
-.compose-bottom span { color: var(--muted); font-size: 12px; }
-.postbtn {
-border: 0;
-background: linear-gradient(135deg, #2563eb, #1d4ed8);
-color: #ffffff;
-padding: 11px 24px;
-border-radius: 10px;
-font-family: inherit;
-font-size: 14px;
-font-weight: 700;
-min-height: 42px;
-cursor: pointer;
-box-shadow: 0 3px 8px rgba(37, 99, 235, 0.18);
-transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-  #jobForm .postbtn {
-  background: #2563eb !important;
-  color: #ffffff !important;
-}
-
-.postbtn:hover {
-transform: translateY(-1px);
-box-shadow: 0 5px 12px rgba(37, 99, 235, 0.25);
-}
-
-.postbtn:active {
-transform: translateY(0);
-}
-
-#postJobPage .postbtn {
-background: #2563eb !important;
-color: #ffffff !important;
-}
-
-#postJobPage .postbtn:hover {
-background: #1d4ed8 !important;
-}
-.post {
-padding: 20px;
-margin-bottom: 18px;
-background: #ffffff;
-border: 1px solid #dbe4f0;
-border-radius: 16px;
-box-shadow: 0 4px 18px rgba(15, 35, 70, 0.05);
-box-sizing: border-box;
-overflow-wrap: anywhere;
-}
-  #feed {
-min-width: 0;
-}
-
-.posthead {
-display: flex;
-gap: 12px;
-align-items: center;
-padding-bottom: 14px;
-border-bottom: 1px solid #f1f5f9;
-}
-.person {
-font-weight: 750;
-font-size: 15px;
-color: #102a56;
-}
-
-.handle {
-color: var(--muted);
-font-size: 12px;
-margin-top: 4px;
-}
-
-.postbody {
-line-height: 1.8;
-font-size: 14px;
-color: #334155;
-margin: 18px 0;
-overflow-wrap: anywhere;
-word-break: normal;
-letter-spacing: 0.1px;
-}
-
-.tag {
-color: #2563eb;
-font-weight: 650;
-background: #eff6ff;
-padding: 2px 5px;
-border-radius: 5px;
-box-decoration-break: clone;
--webkit-box-decoration-break: clone;
-}
-
-.postlabel {
-display: inline-block;
-padding: 6px 10px;
-border-radius: 6px;
-background: #eff6ff;
-color: #1d4ed8;
-border: 1px solid #dbeafe;
-font-size: 10px;
-font-weight: 750;
-margin-bottom: 10px;
-letter-spacing: 0.7px;
-line-height: 1.4;
-}
-.actions {
-display: flex;
-justify-content: space-between;
-align-items: center;
-flex-wrap: wrap;
-gap: 8px;
-border-top: 1px solid #e2e8f0;
-padding-top: 14px;
-margin-top: 14px;
-}
-
-.actions button {
-display: inline-flex;
-align-items: center;
-justify-content: center;
-gap: 5px;
-background: transparent;
-border: 1px solid transparent;
-border-radius: 8px;
-color: #64748b;
-font-family: inherit;
-font-size: 13px;
-font-weight: 600;
-padding: 9px 10px;
-min-height: 38px;
-cursor: pointer;
-transition: background 0.2s ease, color 0.2s ease;
-}
-
-.actions button:hover {
-color: #2563eb;
-background: #eff6ff;
-}
-
-.actions button:focus-visible {
-outline: 2px solid #2563eb;
-outline-offset: 2px;
-}
-.panel { padding: 17px; margin-bottom: 15px; }
-.panel h3 { margin: 0 0 15px; font-size: 16px; }
-.trend { padding: 11px 0; border-bottom: 1px solid var(--border); }
-.trend:last-child { border-bottom: 0; }
-.trend small { color: var(--muted); }
-.trend strong { display: block; margin: 5px 0; font-size: 13px; }
-.company {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 15px 0;
-}
-.follow {
-  margin-left: auto;
-  border: 1px solid var(--blue);
-  color: var(--blue);
-  background: white;
-  border-radius: 18px;
-  padding: 7px 10px;
-  font-size: 12px;
-}
-footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px; }
-.mobile-nav { display: none; }
-.section-title { font-size: 21px; margin: 4px 0 15px; }
-.empty { text-align: center; color: var(--muted); padding: 30px 12px; }
-@media(max-width: 950px) {
-  .layout { grid-template-columns: 175px minmax(0,1fr); }
-  .rightcol { display: none; }
-}
-@media(max-width: 600px) {
-  .topbar { padding: 0 13px; height: 58px; }
-  .logo { font-size: 19px; }
-  .search { width: 39%; padding: 9px; font-size: 12px; }
-  .topbar .avatar { width: 34px; height: 34px; }
-  .layout { display: block; margin: 12px auto; padding: 0 13px 75px; }
-  .leftcol { display: none; }
-  .feedtabs button { font-size: 13px; }
-  .post, .composer {
-padding: 16px;
-margin-bottom: 14px;
-border-radius: 14px;
-}
-  .mobile-nav {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    border-top: 1px solid var(--border);
-    justify-content: space-around;
-    padding: 10px 2px;
-    z-index: 10;
-  }
-  .mobile-nav button {
-    border: 0;
-    background: white;
-    color: var(--muted);
-    font-size: 11px;
-  }
-}
-/* SIGHTX — unified premium visual design */
-body {
-background: #f3f6fb;
-color: #172b4d;
-font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-line-height: 1.5;
-}
-
-.topbar {
-min-height: 72px;
-background: rgba(255, 255, 255, 0.97);
-border-bottom: 1px solid #dce5f0;
-box-shadow: 0 4px 18px rgba(19, 43, 77, 0.06);
-}
-
-.logo {
-font-size: 28px;
-font-weight: 850;
-letter-spacing: -1.2px;
-color: #102d52;
-}
-
-.logo span {
-color: #3478f6;
-}
-
-.layout {
-max-width: 1440px;
-margin: 28px auto;
-padding: 0 24px;
-gap: 24px;
-}
-
-.sidebar,
-.panel,
-.post,
-.composer,
-.feedtabs {
-background: #ffffff;
-border: 1px solid #e1e8f2;
-border-radius: 16px;
-box-shadow: 0 5px 20px rgba(19, 43, 77, 0.045);
-}
-
-.sidebar {
-padding: 18px 14px;
-}
-
-.navitem {
-padding: 13px 14px;
-margin: 5px 0;
-border-radius: 10px;
-font-size: 14px;
-}
-
-.navitem:hover {
-background: #f0f5ff;
-color: #215fc5;
-}
-
-.navitem.active {
-background: #eaf1ff;
-color: #215fc5;
-box-shadow: inset 3px 0 0 #3478f6;
-}
-
-.panel {
-padding: 20px;
-margin-bottom: 18px;
-}
-
-.panel h3 {
-margin-top: 0;
-margin-bottom: 16px;
-color: #102d52;
-font-size: 16px;
-letter-spacing: -0.2px;
-}
-
-.feedtabs {
-overflow: hidden;
-margin-bottom: 18px;
-}
-
-.feedtabs button {
-padding: 16px 8px;
-cursor: pointer;
-transition: background 0.2s ease, color 0.2s ease;
-}
-
-.feedtabs button:hover {
-background: #f5f8ff;
-}
-
-.post,
-.composer {
-margin-bottom: 18px;
-}
-
-.jobsActionBar {
-display: flex;
-flex-wrap: wrap;
-gap: 12px;
-margin-bottom: 20px;
-}
-
-.jobsActionBar button {
-padding: 12px 20px;
-border: 1px solid #d7e3f5;
-border-radius: 10px;
-background: #ffffff;
-color: #174a87;
-font-weight: 700;
-cursor: pointer;
-}
-
-.jobsActionBar button:hover {
-background: #edf4ff;
-border-color: #8bb5ff;
-}
-
-input,
-select,
-textarea {
-border-radius: 9px;
-}
-
-button {
-transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-outline: 3px solid rgba(52, 120, 246, 0.25);
-outline-offset: 2px;
-}
-
-footer {
-color: #718096;
-border-top: 1px solid #e1e8f2;
-padding: 22px 12px;
-text-align: center;
-}
-
-@media (max-width: 600px) {
-.layout {
-margin: 14px auto;
-padding: 0 10px 80px;
-}
-
-.topbar {
-min-height: 58px;
-padding: 0 12px;
-gap: 10px;
-}
-
-.logo {
-font-size: 20px;
-}
-
-.search {
-flex: 1;
-width: auto;
-min-width: 0;
-padding: 9px 11px;
-font-size: 12px;
-}
-
-.panel {
-padding: 16px;
-}
-
-.jobsActionBar button {
-flex: 1;
-padding: 11px 8px;
-}
-}
-  /* SIGHTX — polished job action buttons */
-.jobsActionBar {
-display: flex;
-gap: 14px;
-margin: 0 0 24px;
-padding: 18px;
-background: linear-gradient(135deg, #102d52, #174a87);
-border: 1px solid #174a87;
-border-radius: 16px;
-box-shadow: 0 8px 24px rgba(16, 45, 82, 0.14);
-}
-
-.jobsActionBar button {
-flex: 1;
-min-height: 46px;
-padding: 12px 18px;
-background: #ffffff;
-color: #174a87;
-border: 1px solid rgba(255, 255, 255, 0.8);
-border-radius: 10px;
-font-size: 14px;
-font-weight: 700;
-cursor: pointer;
-}
-
-.jobsActionBar button:hover {
-background: #eaf1ff;
-border-color: #eaf1ff;
-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
-
-@media (max-width: 600px) {
-.jobsActionBar {
-gap: 10px;
-padding: 12px;
-}
-
-.jobsActionBar button {
-padding: 11px 8px;
-font-size: 13px;
-}
-}
-
-
-/* SIGHTX FINAL LAYOUT: three columns on laptop/desktop, stacked only on phones. */
-@media screen and (min-width: 601px) {
-  html body .layout {
-    display: grid !important;
-    grid-template-columns: 190px minmax(0, 1fr) 245px !important;
-    grid-template-rows: auto !important;
-    align-items: start !important;
-    gap: 20px !important;
-    width: calc(100% - 40px) !important;
-    max-width: 1440px !important;
-    margin: 24px auto !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
-  }
-  html body .layout > .leftcol {
-    display: block !important;
-    grid-column: 1 !important;
-    grid-row: 1 !important;
-    width: auto !important;
-    min-width: 0 !important;
-    max-width: none !important;
-  }
-  html body .layout > main {
-    display: block !important;
-    grid-column: 2 !important;
-    grid-row: 1 !important;
-    width: auto !important;
-    min-width: 0 !important;
-    max-width: none !important;
-  }
-  html body .layout > #rightSidebar {
-    display: block !important;
-    grid-column: 3 !important;
-    grid-row: 1 !important;
-    width: auto !important;
-    min-width: 0 !important;
-    max-width: none !important;
-  }
-  html body #jobsContent {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 16px !important;
-    align-items: start !important;
-  }
-  html body #jobsContent > #jobResultsCount {
-    grid-column: 1 / -1 !important;
-  }
-}
-@media screen and (min-width: 601px) and (max-width: 1100px) {
-  html body .layout {
-    grid-template-columns: 150px minmax(0, 1fr) 190px !important;
-    gap: 12px !important;
-    width: calc(100% - 24px) !important;
-  }
-}
-@media screen and (min-width: 601px) and (max-width: 800px) {
-  html body .layout {
-    grid-template-columns: 110px minmax(0, 1fr) 145px !important;
-    gap: 8px !important;
-    width: calc(100% - 16px) !important;
-  }
-  html body .layout > .leftcol,
-  html body .layout > #rightSidebar {
-    font-size: 12px !important;
-  }
-}
-
-/* Let the application view escape the normal narrow three-column feed grid on laptops. */
-@media screen and (min-width: 801px) {
-  html body .layout:has(#applyJobPage[style*="display: block"]),
-  html body .layout:has(#applyJobPage[style*="display:block"]) {
-    grid-template-columns: minmax(0, 1fr) !important;
-    max-width: 1440px !important;
-    width: calc(100% - 48px) !important;
-    gap: 0 !important;
-  }
-  html body .layout:has(#applyJobPage[style*="display: block"]) > .sidebar,
-  html body .layout:has(#applyJobPage[style*="display:block"]) > .sidebar,
-  html body .layout:has(#applyJobPage[style*="display: block"]) > #rightSidebar,
-  html body .layout:has(#applyJobPage[style*="display:block"]) > #rightSidebar {
-    display: none !important;
-  }
-  html body #applyJobPage {
-    width: 100% !important;
-    max-width: 1200px !important;
-    margin: 24px auto !important;
-  }
-}
-
-/* Hard-hide the right sidebar for the dynamically generated Apply Now page on every screen size. */
-html body .layout.application-mode #rightSidebar,
-html body .layout.application-mode > #rightSidebar {
-  display: none !important;
-  visibility: hidden !important;
-  width: 0 !important;
-  min-width: 0 !important;
-}
-html body .layout.application-mode {
-  grid-template-columns: minmax(0, 1fr) !important;
-}
-
-/* Keep the right sidebar hidden while the dynamic Apply Now form is open. */
-@media screen and (min-width: 801px) {
-  html body .layout.application-mode > #rightSidebar {
-    display: none !important;
-  }
-}
-
-/* Reapply the wide application layout after refreshing a selected job's form. */
-@media screen and (min-width: 801px) {
-  html body .layout.application-mode > main {
-    min-width: 0 !important;
-    width: 100% !important;
-  }
-  html body #jobsContent.application-form-view {
-    display: block !important;
-    width: 100% !important;
-    max-width: 1200px !important;
-    margin: 24px auto !important;
-  }
-  html body #jobsContent.application-form-view #applicationForm {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    width: 100% !important;
-    max-width: none !important;
-    gap: 22px 24px !important;
-    padding: 28px 32px 32px !important;
-    box-sizing: border-box !important;
-  }
-  html body #jobsContent.application-form-view #applicationForm .form-row {
-    min-width: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-  }
-  html body #jobsContent.application-form-view #applicationForm .form-row input,
-  html body #jobsContent.application-form-view #applicationForm .form-row textarea {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-height: 52px !important;
-    padding: 14px 16px !important;
-    box-sizing: border-box !important;
-  }
-  html body #jobsContent.application-form-view #applicationForm .form-row:has(#applicantCover) {
-    grid-column: 1 / -1 !important;
-  }
-}
-
-/* Make the dynamic Apply Now form visually match the polished Apply for a Job card. */
-@media screen and (min-width: 801px) {
-  html body .layout.application-mode {
-    grid-template-columns: minmax(0, 1fr) !important;
-    width: calc(100% - 64px) !important;
-    max-width: 1440px !important;
-    gap: 0 !important;
-  }
-  html body .layout.application-mode > .leftcol,
-  html body .layout.application-mode > #rightSidebar {
-    display: none !important;
-  }
-  html body .layout.application-mode > main {
-    width: 100% !important;
-    min-width: 0 !important;
-  }
-  html body #jobsContent.application-form-view {
-    display: block !important;
-    width: 100% !important;
-    max-width: 1200px !important;
-    margin: 24px auto !important;
-  }
-  html body #jobsContent.application-form-view > h2 {
-    margin: 0 !important;
-    padding: 26px 32px 22px !important;
-    color: #102a56 !important;
-    background: #fff !important;
-    border: 1px solid #dbe4f0 !important;
-    border-bottom: 0 !important;
-    border-radius: 18px 18px 0 0 !important;
-    font-size: 28px !important;
-    font-weight: 800 !important;
-    line-height: 1.25 !important;
-  }
-  html body #jobsContent.application-form-view #applicationForm {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 22px 24px !important;
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding: 28px 32px 32px !important;
-    background: #fff !important;
-    border: 1px solid #dbe4f0 !important;
-    border-radius: 0 0 18px 18px !important;
-    box-shadow: 0 12px 32px rgba(15,35,70,.09) !important;
-    box-sizing: border-box !important;
-  }
-  html body #jobsContent.application-form-view #applicationForm .form-row {
-    min-width: 0 !important;
-    margin: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-  }
-  html body #jobsContent.application-form-view #applicationForm .form-row label {
-    color: #334155 !important;
-    font-size: 14px !important;
-    font-weight: 700 !important;
-    margin: 0 !important;
-  }
-  html body #jobsContent.application-form-view #applicationForm .form-row input,
-  html body #jobsContent.application-form-view #applicationForm .form-row textarea {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    min-height: 52px !important;
-    padding: 14px 16px !important;
-    margin: 0 !important;
-    border: 1px solid #cbd5e1 !important;
-    border-radius: 10px !important;
-    background: #f8fafc !important;
-    color: #0f172a !important;
-    font: inherit !important;
-    font-size: 15px !important;
-    box-sizing: border-box !important;
-  }
-  html body #jobsContent.application-form-view #applicationForm .form-row input:focus,
-  html body #jobsContent.application-form-view #applicationForm .form-row textarea:focus {
-    outline: none !important;
-    border-color: #3b82f6 !important;
-    background: #fff !important;
-    box-shadow: 0 0 0 3px rgba(59,130,246,.13) !important;
-  }
-  html body #jobsContent.application-form-view #applicationForm .form-row:has(#applicantCover) {
-    grid-column: 1 / -1 !important;
-  }
-  html body #jobsContent.application-form-view #applicationForm #applicantCover {
-    min-height: 150px !important;
-    resize: vertical !important;
-  }
-  html body #jobsContent.application-form-view #applicationForm > button {
-    min-height: 48px !important;
-    padding: 12px 24px !important;
-    margin: 0 8px 0 0 !important;
-    border: 0 !important;
-    border-radius: 10px !important;
-    font-size: 15px !important;
-    font-weight: 700 !important;
-    cursor: pointer !important;
-  }
-  html body #jobsContent.application-form-view #applicationForm > button[type="submit"] {
-    background: #2563eb !important;
-    color: #fff !important;
-  }
-  html body #jobsContent.application-form-view #applicationForm > button[type="button"] {
-    background: #eff6ff !important;
-    color: #1d4ed8 !important;
-    border: 1px solid #bfdbfe !important;
-  }
-}
-@media screen and (max-width: 800px) {
-  html body .layout.application-mode {
-    display: block !important;
-    width: auto !important;
-  }
-  html body #jobsContent.application-form-view {
-    display: block !important;
-    width: 100% !important;
-    margin: 16px auto !important;
-  }
-  html body #jobsContent.application-form-view #applicationForm {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) !important;
-    gap: 16px !important;
-    width: 100% !important;
-    padding: 20px !important;
-    box-sizing: border-box !important;
-  }
-  html body #jobsContent.application-form-view #applicationForm .form-row input,
-  html body #jobsContent.application-form-view #applicationForm #applicantCover {
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-}
-
-/* Keep Apply for a Job and Post a Job consistent, spacious, and stable after refresh. */
-@media screen and (min-width: 801px) {
-  html body .layout.application-mode {
-    grid-template-columns: minmax(0, 1fr) !important;
-    width: calc(100% - 64px) !important;
-    max-width: 1440px !important;
-    gap: 0 !important;
-  }
-  html body .layout.application-mode > .leftcol,
-  html body .layout.application-mode > #rightSidebar {
-    display: none !important;
-  }
-  html body .layout.application-mode > main {
-    width: 100% !important;
-    min-width: 0 !important;
-  }
-  html body #applyJobPage.active-job-form,
-  html body #postJobPage.active-job-form {
-    width: 100% !important;
-    max-width: 1000px !important;
-    margin: 24px auto !important;
-    padding: 32px !important;
-    background: #fff !important;
-    border: 1px solid #dbe4f0 !important;
-    border-radius: 18px !important;
-    box-shadow: 0 10px 30px rgba(15,35,70,.08) !important;
-    box-sizing: border-box !important;
-  }
-  html body #applyJobPage.active-job-form form,
-  html body #postJobPage.active-job-form form {
-    width: 100% !important;
-    max-width: none !important;
-  }
-  html body #applyJobPage.active-job-form input:not([type="submit"]),
-  html body #applyJobPage.active-job-form textarea,
-  html body #applyJobPage.active-job-form select,
-  html body #postJobPage.active-job-form input:not([type="submit"]),
-  html body #postJobPage.active-job-form textarea,
-  html body #postJobPage.active-job-form select {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-height: 50px !important;
-    padding: 13px 15px !important;
-    border: 1px solid #cbd5e1 !important;
-    border-radius: 10px !important;
-    background: #f8fafc !important;
-    box-sizing: border-box !important;
-  }
-  html body #applyJobPage.active-job-form h2,
-  html body #postJobPage.active-job-form h2 {
-    color: #102a56 !important;
-    font-size: 28px !important;
-    font-weight: 800 !important;
-  }
-}
-@media screen and (max-width: 800px) {
-  html body #applyJobPage.active-job-form,
-  html body #postJobPage.active-job-form {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 16px auto !important;
-    padding: 20px !important;
-    box-sizing: border-box !important;
-  }
-}
-
-/* Professional, spacious application form layout. */
-html body #applyJobPage {
-  display: none;
-  width: 100% !important;
-  max-width: none !important;
-  margin: 18px 0 28px !important;
-  padding: 0 !important;
-  background: #ffffff !important;
-  border: 1px solid #dbe4f0 !important;
-  border-radius: 18px !important;
-  box-shadow: 0 12px 32px rgba(15, 35, 70, 0.09) !important;
-  overflow: hidden;
-  box-sizing: border-box !important;
-}
-html body #applyJobPage h2 {
-  margin: 0 !important;
-  padding: 26px 32px 10px !important;
-  color: #102a56 !important;
-  font-size: 28px !important;
-  font-weight: 800 !important;
-  line-height: 1.25 !important;
-}
-html body #applyJobPage > p {
-  margin: 0 !important;
-  padding: 0 32px 24px !important;
-  color: #64748b !important;
-  font-size: 15px !important;
-  border-bottom: 1px solid #e8eef6;
-}
-html body #applyJobPage #jobApplicationForm {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 8px 24px !important;
-  width: 100% !important;
-  padding: 26px 32px 32px !important;
-  box-sizing: border-box !important;
-}
-html body #applyJobPage #jobApplicationForm label {
-  display: block !important;
-  align-self: end !important;
-  margin: 0 0 2px !important;
-  color: #334155 !important;
-  font-size: 14px !important;
-  font-weight: 700 !important;
-}
-html body #applyJobPage #jobApplicationForm input:not([type="submit"]),
-html body #applyJobPage #jobApplicationForm textarea,
-html body #applyJobPage #jobApplicationForm select {
-  display: block !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  min-height: 52px !important;
-  margin: 0 0 12px !important;
-  padding: 14px 16px !important;
-  border: 1px solid #cbd5e1 !important;
-  border-radius: 10px !important;
-  background: #f8fafc !important;
-  color: #0f172a !important;
-  font: inherit !important;
-  font-size: 15px !important;
-  box-sizing: border-box !important;
-  outline: none;
-}
-html body #applyJobPage #jobApplicationForm input:focus,
-html body #applyJobPage #jobApplicationForm textarea:focus {
-  border-color: #3b82f6 !important;
-  background: #ffffff !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.13) !important;
-}
-html body #applyJobPage #jobApplicationForm label[for="appResume"],
-html body #applyJobPage #jobApplicationForm #appResume,
-html body #applyJobPage #jobApplicationForm label[for="appCoverLetter"],
-html body #applyJobPage #jobApplicationForm #appCoverLetter {
-  grid-column: 1 / -1 !important;
-}
-html body #applyJobPage #jobApplicationForm #appCoverLetter {
-  min-height: 150px !important;
-  resize: vertical;
-}
-html body #applyJobPage #jobApplicationForm button {
-  min-height: 48px !important;
-  padding: 12px 24px !important;
-  border: 0 !important;
-  border-radius: 10px !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  cursor: pointer;
-  margin: 8px 8px 0 0 !important;
-}
-html body #applyJobPage #jobApplicationForm button[type="submit"] {
-  background: #2563eb !important;
-  color: #ffffff !important;
-}
-html body #applyJobPage #jobApplicationForm button[type="button"] {
-  background: #eff6ff !important;
-  color: #1d4ed8 !important;
-  border: 1px solid #bfdbfe !important;
-}
-@media screen and (max-width: 800px) {
-  html body #applyJobPage h2 { padding: 22px 20px 8px !important; font-size: 24px !important; }
-  html body #applyJobPage > p { padding: 0 20px 18px !important; }
-  html body #applyJobPage #jobApplicationForm {
-    grid-template-columns: minmax(0, 1fr) !important;
-    gap: 4px !important;
-    padding: 20px !important;
-  }
-  html body #applyJobPage #jobApplicationForm label[for="appResume"],
-  html body #applyJobPage #jobApplicationForm #appResume,
-  html body #applyJobPage #jobApplicationForm label[for="appCoverLetter"],
-  html body #applyJobPage #jobApplicationForm #appCoverLetter {
-    grid-column: 1 !important;
-  }
-}
-
-/* Right sidebar: use its space efficiently and keep Follow buttons inside cards. */
-@media screen and (min-width: 1101px) {
-  html body .layout {
-    grid-template-columns: 190px minmax(0, 1fr) 280px !important;
-    gap: 16px !important;
-    max-width: 1440px !important;
-  }
-}
-html body #rightSidebar {
-  min-width: 0 !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-html body #rightSidebar .panel {
-  width: 100% !important;
-  min-width: 0 !important;
-  padding: 14px !important;
-  margin: 0 0 14px !important;
-  box-sizing: border-box !important;
-  overflow: hidden !important;
-}
-html body #rightSidebar .panel h3 {
-  margin-top: 0;
-  overflow-wrap: anywhere;
-}
-html body #rightSidebar .company {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  width: 100% !important;
-  min-width: 0 !important;
-  margin: 12px 0 !important;
-  box-sizing: border-box !important;
-}
-html body #rightSidebar .company .avatar {
-  flex: 0 0 34px !important;
-}
-html body #rightSidebar .company > div:not(.avatar) {
-  flex: 1 1 auto !important;
-  min-width: 0 !important;
-  overflow-wrap: anywhere;
-}
-html body #rightSidebar .company .follow {
-  flex: 0 0 auto !important;
-  margin: 0 !important;
-  padding: 6px 9px !important;
-  white-space: nowrap !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-/* End SIGHTX FINAL LAYOUT */
-
-/* Application pages keep the main left navigation visible after refresh. */
-@media screen and (min-width: 801px) {
-  html body .layout.application-mode {
-    display: grid !important;
-    grid-template-columns: 220px minmax(0, 1fr) !important;
-    gap: 20px !important;
-    width: calc(100% - 48px) !important;
-    max-width: 1440px !important;
-  }
-  html body .layout.application-mode > .leftcol {
-    display: block !important;
-    grid-column: 1 !important;
-    grid-row: 1 !important;
-    width: auto !important;
-    min-width: 0 !important;
-  }
-  html body .layout.application-mode > main {
-    grid-column: 2 !important;
-    grid-row: 1 !important;
-    width: 100% !important;
-    min-width: 0 !important;
-  }
-  html body .layout.application-mode > #rightSidebar {
-    display: none !important;
-  }
-}
-@media screen and (max-width: 800px) {
-  html body .layout.application-mode > .leftcol {
-    display: block !important;
-  }
-}
-
-</style>
-</head>
-<body>
-<header class="topbar">
-  <div class="logo">SIGHT<span>X</span></div>
-  <input class="search" id="search" placeholder="Search..." aria-label="Search posts">
-  <button id="lx-account-button" class="primary" type="button"
-style="display:inline-block;width:auto;padding:8px 8px;margin:0;font-size:12px;line-height:normal;white-space:nowrap;box-sizing:border-box;">
-Login / Sign Up
-</button>
-</header><div class="layout">
-  <aside class="leftcol">
-    <nav class="sidebar">
-      <button class="navitem active" data-view="Home">🏠 Home Feed</button>
-      <button class="navitem" data-view="Jobs">💼 Jobs</button>
-      <button class="navitem" data-view="Market Intelligence">📊 Market Intelligence</button>
-      <button class="navitem" data-view="B2B Network">🤝 B2B Network</button>
-      <button class="navitem" data-view="Bookmarks">🔖 Bookmarks</button>
-      <button class="navitem" data-view="Profile">👤 My Profile</button>
-      <button class="primary" onclick="focusComposer()">＋ Create a post</button>
-      <p class="smallnote">One place for business conversations, opportunities and insights.</p>
-    </nav>
-  </aside>  <main>
-    <div id="jobsPage" style="display:none;">
-   <div id="jobsWelcomeBanner" style="margin:0 0 22px;padding:8px 14px;background:linear-gradient(120deg,#123b6d,#2563eb);border-radius:18px;color:#ffffff;box-shadow:0 8px 22px rgba(18,59,109,0.18);box-sizing:border-box;">
-  <div style="font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#bfdbfe;margin-bottom:10px;">WELCOME TO SIGHTX</div>
-<h2 style="margin:0 0 4px;font-size:18px;line-height:1.25;font-weight:800;color:#ffffff;">Your next opportunity starts here.</h2>
-  <p style="margin:0;font-size:14px;line-height:1.7;color:#eff6ff;">Discover jobs, connect with professionals, and find new opportunities to grow.</p>
-</div>
-<div id="jobsActionBar" class="jobsActionBar">
-  <button type="button" onclick="sessionStorage.setItem('sightxOpenPage','applyJobPage'); sessionStorage.removeItem('sightxSelectedJob'); sessionStorage.setItem('sightxCurrentView',currentView); document.getElementById('jobsPage').style.display='none'; document.getElementById('jobsContent').style.display='none'; document.getElementById('jobFormArea').style.display='none'; document.getElementById('postJobPage').style.display='none'; document.getElementById('applyJobPage').style.display='block';document.getElementById('rightSidebar').style.display='none';document.querySelector('.layout')?.classList.add('application-mode');document.getElementById('applyJobPage').classList.add('active-job-form');document.getElementById('postJobPage').classList.remove('active-job-form');">Apply for Job</button>
-
-<button type="button" onclick="sessionStorage.setItem('sightxOpenPage','postJobPage'); sessionStorage.setItem('sightxCurrentView',currentView); document.getElementById('jobsPage').style.display='none'; document.getElementById('jobsContent').style.display='none'; document.getElementById('jobFormArea').style.display='none'; document.getElementById('applyJobPage').style.display='none'; document.getElementById('postJobPage').style.display='block';document.getElementById('rightSidebar').style.display='none';document.querySelector('.layout')?.classList.add('application-mode');document.getElementById('postJobPage').classList.add('active-job-form');document.getElementById('applyJobPage').classList.remove('active-job-form');">Post a Job</button>
-
-</div>
-<div class="jobsUtilityBar">
-<details id="jobsFilters" style="margin:0;flex:0 0 auto;">
- 
-  <summary style="cursor:pointer;display:inline-flex;align-items:center;gap:9px;padding:11px 17px;background:#ffffff;color:#17365D;border:1px solid #CBD5E1;border-radius:8px;font-size:14px;font-weight:600;">
-    <span aria-hidden="true">☷</span> Filters
-  </summary> 
-  
-
-  <div style="margin-top:14px;padding:16px;border:1px solid #CBD5E1;border-radius:12px;background:#ffffff;">
-    <label for="jobTitleFilter" style="display:block;margin-bottom:7px;font-size:14px;font-weight:700;color:#334155;">Filter by job title</label>
-    <input id="jobTitleFilter" type="text" placeholder="Search job title..." style="display:block;width:100%;max-width:320px;padding:12px 14px;margin-bottom:16px;border:1px solid #CBD5E1;border-radius:10px;font-size:14px;box-sizing:border-box;">
-
-    <label for="jobTypeFilter" style="display:block;margin-bottom:7px;font-size:14px;font-weight:700;color:#334155;">Filter by job type</label>
-    <select id="jobTypeFilter" style="width:100%;max-width:320px;padding:12px 14px;margin-bottom:16px;border:1px solid #CBD5E1;border-radius:10px;background:#FFFFFF;color:#0F172A;font-size:14px;box-sizing:border-box;">
-      <option value="">All job types</option>
-      <option value="Full-time">Full-time</option>
-      <option value="Part-time">Part-time</option>
-      <option value="Internship">Internship</option>
-      <option value="Contract">Contract</option>
-      <option value="Remote">Remote</option>
-    </select>
-
-    <label for="jobLocationFilter" style="display:block;margin-bottom:7px;font-size:14px;font-weight:700;color:#334155;">Filter by location</label>
-    <select id="jobLocationFilter" style="width:100%;max-width:320px;padding:12px 14px;border:1px solid #CBD5E1;border-radius:10px;background:#FFFFFF;color:#0F172A;font-size:14px;box-sizing:border-box;">
-      <option value="">All locations</option>
-      <option value="Remote">Remote</option>
-      <option value="Bengaluru">Bengaluru</option>
-    </select>
-  </div>
-</details>
-<button type="button" onclick="showSavedJobs()" style="padding:11px 17px;background:#ffffff;color:#17365D;border:1px solid #CBD5E1;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;">♥ Saved Jobs</button>
-</div>
-<div id="jobsContent"></div>
-    </div>
-    <div class="feedtabs">
-      <button class="active" data-feed="For you">For you</button>
-      <button data-feed="Following">Following</button>
-      <button data-feed="Latest">Latest</button>
-    </div>
-<div id="notice"></div>
-<div id="jobFormArea" style="display:none;"></div>
-    <div id="postJobPage" style="display:none; width:calc(100% - 32px); max-width:680px; margin:30px auto; padding:32px; background:#ffffff; border:1px solid #dbe4f0; border-radius:18px; box-shadow:0 8px 28px rgba(15,35,70,0.08); box-sizing:border-box;">
-  <h2 style="margin:0 0 12px;color:#0f172a;font-size:28px;font-weight:800;letter-spacing:-0.6px;border-bottom:3px solid #2563eb;padding-bottom:14px;">Post a Job</h2>
-   <p style="margin:0 0 28px;color:#64748b;font-size:14px;line-height:1.6;">Complete the details below to publish your job opportunity. Fields marked with <span style="color:#dc2626;font-weight:700;">*</span> are required.</p> <form id="newJobForm">
-    <label for="newJobTitle" style="display:block;margin-bottom:6px;color:#334155;font-size:14px;font-weight:700;">Job Title <span style="color:#dc2626;">*</span></label>
-   <input id="newJobTitle" name="title" type="text" placeholder="e.g. Marketing Manager" required style="display:block;width:100%;padding:14px 16px;margin:0 0 22px;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:10px;background:#f8fafc;color:#0f172a;font-size:15px;outline:none;"><label for="newJobCompany" style="display:block;margin-bottom:6px;color:#334155;font-size:14px;font-weight:700;">Company Name <span style="color:#dc2626;">*</span></label>
-<input id="newJobCompany" name="company" type="text" placeholder="Enter company name" required style="display:block;width:100%;padding:14px 16px;margin:0 0 22px;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:10px;background:#f8fafc;color:#0f172a;font-size:15px;outline:none;">
-
-<label for="newJobLocation" style="display:block;margin-bottom:6px;color:#334155;font-size:14px;font-weight:700;">Location <span style="color:#dc2626;">*</span></label>
-<input id="newJobLocation" name="location" type="text" placeholder="e.g. Bengaluru or Remote" required style="display:block;width:100%;padding:14px 16px;margin:0 0 22px;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:10px;background:#f8fafc;color:#0f172a;font-size:15px;outline:none;">
-
-<label for="newJobType" style="display:block;margin-bottom:6px;color:#334155;font-size:14px;font-weight:700;">Job Type <span style="color:#dc2626;">*</span></label>
-<select id="newJobType" name="type" required style="display:block;width:100%;padding:14px 16px;margin:0 0 22px;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:10px;background:#f8fafc;color:#0f172a;font-size:15px;outline:none;">
-  <option value="">Choose job type</option>
-  <option>Full-time</option>
-  <option>Part-time</option>
-  <option>Contract</option>
-  <option>Internship</option>
-  <option>Remote</option>
-</select>
-<label for="newJobExperience" style="display:block;margin-bottom:6px;color:#334155;font-size:14px;font-weight:700;">Experience Required <span style="color:#dc2626;">*</span></label>
-<select id="newJobExperience" name="experience" required style="display:block;width:100%;padding:14px 16px;margin:0 0 22px;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:10px;background:#f8fafc;color:#0f172a;font-size:15px;outline:none;">
-  <option value="">Choose experience level</option>
-  <option value="Fresher">Fresher</option>
-  <option value="0-1 years">0–1 years</option>
-  <option value="1-3 years">1–3 years</option>
-  <option value="3-5 years">3–5 years</option>
-  <option value="5-8 years">5–8 years</option>
-  <option value="8+ years">8+ years</option>
-</select>
-<label for="newJobSalary" style="display:block;margin-bottom:6px;color:#334155;font-size:14px;font-weight:700;">Salary (Optional)</label>
-<input id="newJobSalary" name="salary" type="text" placeholder="e.g. ₹5–8 LPA" style="display:block;width:100%;padding:14px 16px;margin:0 0 22px;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:10px;background:#f8fafc;color:#0f172a;font-size:15px;outline:none;">
-
-<label for="newJobDescription" style="display:block;margin-bottom:6px;color:#334155;font-size:14px;font-weight:700;">Job Description <span style="color:#dc2626;">*</span></label>
-<textarea id="newJobDescription" name="description" rows="5" placeholder="Describe the role and responsibilities" required style="display:block;width:100%;padding:14px 16px;margin:0 0 24px;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:10px;background:#f8fafc;color:#0f172a;font-size:15px;line-height:1.6;resize:vertical;outline:none;"></textarea>
-
-<button type="submit" style="padding:14px 28px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#ffffff;border:0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(37,99,235,0.22);">Publish Job</button>
-<button type="button" onclick="showJobListings()" style="padding:14px 24px;margin-left:10px;background:#ffffff;color:#2563eb;border:1px solid #bfdbfe;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">Back to Jobs</button>
-  </form>
-    </div>
-    <div id="applyJobPage" style="display:none; width:100%; max-width:900px; margin:24px auto; padding:32px; background:white; border:1px solid #dbe4f0; border-radius:16px; box-shadow:0 8px 28px rgba(15,35,70,0.08); box-sizing:border-box;">
-  <h2>Apply for a Job</h2>
-  <p>Fill in all required fields marked with <span style="color:red;">*</span>.</p>  <form id="jobApplicationForm">
-    <label for="appFullName">Full Name <span style="color:red;">*</span></label>
-    <input id="appFullName" name="fullName" type="text" placeholder="Enter your full name" required style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;"><label for="appEmail">Email Address <span style="color:red;">*</span></label>
-<input id="appEmail" name="email" type="email" placeholder="Enter your email address" required style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;">
-
-<label for="appPhone">Phone Number <span style="color:red;">*</span></label>
-<input id="appPhone" name="phone" type="tel" placeholder="Enter your phone number" required style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;">
-
-<label for="appJobTitle">Job Title <span style="color:red;">*</span></label>
-<input id="appJobTitle" name="jobTitle" type="text" placeholder="Enter the job title" required style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;">
-
-<label for="appResume">Upload Resume <span style="color:red;">*</span></label>
-<input id="appResume" name="resume" type="file" accept=".pdf,.doc,.docx" required style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;">
-
-<label for="appCoverLetter">Cover Letter (Optional)</label>
-<textarea id="appCoverLetter" name="coverLetter" rows="5" placeholder="Tell us why you're suitable for this job" style="display:block;width:100%;padding:12px;margin:8px 0 18px;box-sizing:border-box;"></textarea>
-
-<button type="submit" style="padding:12px 24px;background:#2563eb;color:white;border:0;border-radius:8px;font-weight:bold;cursor:pointer;">Submit Application</button>
-<button type="button" onclick="showJobListings()" style="padding:12px 24px;margin-left:8px;background:#2563eb;color:white;border:0;border-radius:8px;font-weight:bold;cursor:pointer;">Back to Jobs</button>
-  </form>
-      <script>
-document.getElementById('jobApplicationForm').addEventListener('submit', async function(event) {
-  event.preventDefault();
-
-  const resumeFile = document.getElementById('appResume').files[0];
-
-  const application = {
-    id: Date.now(),
-    name: document.getElementById('appFullName').value.trim(),
-    email: document.getElementById('appEmail').value.trim(),
-    phone: document.getElementById('appPhone').value.trim(),
-    jobTitle: document.getElementById('appJobTitle').value.trim(),
-    resumeFileName: resumeFile ? resumeFile.name : '',
-    coverLetter: document.getElementById('appCoverLetter').value.trim(),
-    submittedAt: new Date().toISOString()
-  };
-
-  const applications = JSON.parse(
-    localStorage.getItem('sightxApplications') || '[]'
-  );
-
-  applications.unshift(application);
-
-  localStorage.setItem(
-    'sightxApplications',
-    JSON.stringify(applications)
-  );
-    try {
-    const { createClient } = await import(
-      'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
-    );
-
-    const supabaseClient = createClient(
-      'https://ycfnsufdxztkmtyuceqy.supabase.co',
-      'sb_publishable_EbJZKeEdRR6l_UsRucmpnA_yzWHmVXJ'
-    );
-
-    // Upload the actual resume file
-if (!resumeFile) {
-  throw new Error('Please select a resume file.');
-}
-
-const safeFileName = resumeFile.name.replace(
-  /[^a-zA-Z0-9._-]/g,
-  '_'
-);
-
-const resumePath = `${Date.now()}-${safeFileName}`;
-
-const { error: uploadError } = await supabaseClient
-  .storage
-  .from('resumes')
-  .upload(resumePath, resumeFile, {
-    contentType: resumeFile.type,
-    upsert: false
-  });
-
-if (uploadError) {
-  throw uploadError;
-}
-
-// Save the application and resume path in the database
-const { error: insertError } = await supabaseClient
-  .from('applications')
-  .insert([{
-    applicant_name: application.name,
-    applicant_email: application.email,
-    applicant_phone: application.phone,
-    job_title: application.jobTitle,
-    resume_file_name: resumeFile.name,
-    resume_file_path: resumePath,
-    cover_letter: application.coverLetter
-  }]);
-
-if (insertError) {
-  throw insertError;
-}
-
-    alert('Application submitted online successfully!');
-
-  } catch (error) {
-    console.error('Supabase submission failed:', error);
-    alert('Online submission failed. Please try again.');
-  }
-
-  document.getElementById('applicationMessage').textContent =
-    'Application saved successfully on this device!';
-
-  alert('Your application has been saved!');
-
-  this.reset();
-});
-</script>
-  <p id="applicationMessage" role="status"></p>
-    </div>
-<section class="composer" id="composer">
-  <div class="compose-row">
-    <div class="avatar" aria-label="Your profile"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"></path></svg></div>
-    <textarea id="postText" maxlength="500" placeholder="What's happening in your business world? Share an insight, opportunity or update..."></textarea>
-  </div>
-  <div class="compose-bottom">
-  <button class="postbtn" onclick="createPost()">Post</button>
-</div>
-</section>
-
-<div id="feed">
-  <article class="post" data-category="Market Intelligence">
-    <div class="posthead">
-      <div class="avatar">M</div>
-      <div><div class="person">Market Insights Daily</div><div class="handle">@marketinsights · Sample post</div></div>
-    </div>
-    <div class="postbody">
-      <span class="postlabel">MARKET INTELLIGENCE</span><br>
-      Understanding your customers is the foundation of sustainable business growth. What market trends are shaping your industry this year?<br><br>
-      <span class="tag">#MarketResearch #BusinessGrowth</span>
-    </div>
-    <div class="actions">
-      <button onclick="replyPost(this)">💬 Reply</button>
-      <button onclick="repost(this)">🔁 Repost</button>
-      <button onclick="likePost(this)">♡ Like <span>0</span></button>
-      <button onclick="bookmarkPost(this)">🔖 Save</button>
-    </div>
-  </article>
-
-  <article class="post" data-category="Jobs">
-    <div class="posthead">
-      <div class="avatar">T</div>
-      <div><div class="person">Talent Connect</div><div class="handle">@talentconnect · Sample post</div></div>
-    </div>
-    <div class="postbody">
-      <span class="postlabel">HIRING & CAREERS</span><br>
-      Hiring is about finding the right people and helping them grow. Employers: what skills are you looking for in your next great hire?<br><br>
-      <span class="tag">#Recruitment #Careers #Hiring</span>
-    </div>
-    <div class="actions">
-      <button onclick="replyPost(this)">💬 Reply</button>
-      <button onclick="repost(this)">🔁 Repost</button>
-      <button onclick="likePost(this)">♡ Like <span>0</span></button>
-      <button onclick="bookmarkPost(this)">🔖 Save</button>
-    </div>
-  </article>
-
-  <article class="post" data-category="B2B Network">
-    <div class="posthead">
-      <div class="avatar">N</div>
-      <div><div class="person">Business Network</div><div class="handle">@businessnetwork · Sample post</div></div>
-    </div>
-    <div class="postbody">
-      <span class="postlabel">B2B OPPORTUNITIES</span><br>
-      Great partnerships begin with a conversation. Introduce your business, explain what you do, and tell the community what kind of partners you hope to meet.<br><br>
-      <span class="tag">#B2B #Partnerships #Networking</span>
-    </div>
-    <div class="actions">
-      <button onclick="replyPost(this)">💬 Reply</button>
-      <button onclick="repost(this)">🔁 Repost</button>
-      <button onclick="likePost(this)">♡ Like <span>0</span></button>
-      <button onclick="bookmarkPost(this)">🔖 Save</button>
-    </div>
-  </article>
-</div>
-<div id="notice" class="smallnote" role="status"></div>
-
-  </main>  <aside id="rightSidebar" class="rightcol">
-    <section class="panel">
-      <h3>🔥 Trending in Business</h3>
-      <div class="trend"><small>Industry · Trending</small><strong>#BusinessGrowth</strong><small>Strategy and expansion</small></div>
-      <div class="trend"><small>Careers · Trending</small><strong>#FutureOfWork</strong><small>Skills and recruitment</small></div>
-      <div class="trend"><small>Markets · Trending</small><strong>#MarketInsights</strong><small>Industry analysis</small></div>
-      <div class="trend"><small>Networking · Trending</small><strong>#B2BPartnerships</strong><small>Building connections</small></div>
-    </section><section class="panel">
-  <h3>🏢 Discover Businesses</h3>
-  <div class="company"><div class="avatar">S</div><div><strong style="font-size:13px">Startup Circle</strong><div class="handle">Entrepreneurship</div></div><button class="follow" onclick="followCompany(this)">Follow</button></div>
-  <div class="company"><div class="avatar">I</div><div><strong style="font-size:13px">Industry Connect</strong><div class="handle">B2B Network</div></div><button class="follow" onclick="followCompany(this)">Follow</button></div>
-  <p class="smallnote">Sample suggestions. Real company discovery will be added later.</p>
-</section>
-<section class="panel">
-  <h3>About SIGHTX</h3>
-  <p class="smallnote">A unified place to explore jobs, share market insights, discover businesses and connect with professionals.</p>
-  <p class="smallnote">© 2026 SIGHTX</p>
-</section>
-
-  </aside>
-</div><nav class="mobile-nav">
-  <button onclick="mobileview('Home')">🏠<br>Home</button>
-  <button onclick="mobileview('Jobs')">💼<br>Jobs</button>
-  <button onclick="focusComposer()">✚<br>Post</button>
-  <button onclick="mobileview('Market Intelligence')">📊<br>Markets</button>
-  <button onclick="mobileview('B2B Network')">🤝<br>Network</button>
-</nav><footer>SIGHTX · A connected business world</footer><script>
-const postText = document.getElementById('postText');
-
-const feed = document.getElementById('feed');
-const notice = document.getElementById('notice');
-let currentView = sessionStorage.getItem('sightxCurrentView') || 'Home';
-let currentFeed = 'For you';
-  
-
-postText.addEventListener('input', () => {
-  
-});
-
-function focusComposer() {
-  document.getElementById('composer').scrollIntoView({behavior:'smooth'});
-  postText.focus();
-}
-
-function createPost() {
-  const text = postText.value.trim();
-  if (!text) {
-    notice.textContent = 'Please write something before posting.';
-    postText.focus();
-    return;
-  }
-  const article = document.createElement('article');
-  article.className = 'post';
-  article.dataset.category = 'Home';
-  const head = document.createElement('div');
-  head.className = 'posthead';
-  const avatar = document.createElement('div');
-  avatar.className = 'avatar';
-  avatar.textContent = 'B';
-  const identity = document.createElement('div');
-  const name = document.createElement('div');
-  name.className = 'person';
-  name.textContent = 'SIGHTX';
-  const handle = document.createElement('div');
-  handle.className = 'handle';
-  handle.textContent = '@you · Just now';
-  identity.append(name, handle);
-  head.append(avatar, identity);
-  const body = document.createElement('div');
-  body.className = 'postbody';
-  body.textContent = text;
-  const actions = document.createElement('div');
-  actions.className = 'actions';
-  actions.innerHTML = '<button onclick="replyPost(this)">💬 Reply</button><button onclick="repost(this)">🔁 Repost</button><button onclick="likePost(this)">♡ Like <span>0</span></button><button onclick="bookmarkPost(this)">🔖 Save</button>';
-  article.append(head, body, actions);
-  feed.prepend(article);
-  postText.value = '';
-  
-  notice.textContent = 'Post added to this page. This prototype does not publish posts to other users.';
-  applyFilters();
-}
-let sightxJobsLoadToken = 0;
-
-async function showJobListings(skipCache = false) {
-  document.querySelector('.layout')?.classList.remove('application-mode');
-  document.getElementById('jobsContent')?.classList.remove('application-form-view');
-  const thisLoadToken = ++sightxJobsLoadToken;
-  sessionStorage.setItem('sightxCurrentView', 'Jobs');
-  sessionStorage.removeItem('sightxOpenPage');
-  sessionStorage.removeItem('sightxSelectedJob');
-  currentView = 'Jobs';
-
-  document.getElementById('jobsPage').style.display = 'block';
-  document.getElementById('jobsWelcomeBanner').style.display = '';
-  document.getElementById('jobsActionBar').style.display = 'flex';
-  document.getElementById('jobsFilters').style.display = '';
-  document.getElementById('rightSidebar').style.display = '';
-  document.getElementById('applyJobPage').style.display = 'none';
-  document.getElementById('postJobPage').style.display = 'none';
-  document.getElementById('applyJobPage').classList.remove('active-job-form');
-  document.getElementById('postJobPage').classList.remove('active-job-form');
-  document.getElementById('jobFormArea').style.display = 'none';
-  const savedJobsButton = document.querySelector('button[onclick="showSavedJobs()"]');
-  if (savedJobsButton) {
-    savedJobsButton.style.display = '';
-    savedJobsButton.dataset.showingSaved = 'false';
-    savedJobsButton.textContent = '♥ Saved Jobs';
-  }
-
-  const jobsContent = document.getElementById('jobsContent');
-  jobsContent.style.display = 'grid';
-jobsContent.style.gridTemplateColumns =
-  window.innerWidth >= 768 ? 'repeat(2, minmax(0, 1fr))' : '1fr';
-jobsContent.style.gap = '20px';
-jobsContent.style.alignItems = 'start';
-
-const jobsCacheKey = 'sightxJobsCacheV1';
-let cachedRows = null;
-try {
-  cachedRows = JSON.parse(localStorage.getItem(jobsCacheKey) || 'null');
-} catch (_) {
-  cachedRows = null;
-}
-
-let rows;
-if (!skipCache && Array.isArray(cachedRows)) {
-  // Paint cached listings immediately, then refresh them in the background.
-  rows = cachedRows;
-  (async () => {
-    try {
-      const refreshClient = window.lxSupabase || await new Promise(resolve => {
-        window.addEventListener('lx-supabase-ready', () => resolve(window.lxSupabase), { once: true });
-      });
-      const { data: freshRows, error: refreshError } = await refreshClient
-        .from('jobs')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (refreshError || !Array.isArray(freshRows)) return;
-      localStorage.setItem(jobsCacheKey, JSON.stringify(freshRows));
-      if (thisLoadToken !== sightxJobsLoadToken || currentView !== 'Jobs' ||
-          sessionStorage.getItem('sightxCurrentView') !== 'Jobs' ||
-          sessionStorage.getItem('sightxOpenPage')) return;
-      if (JSON.stringify(freshRows) !== JSON.stringify(cachedRows)) {
-        showJobListings(true);
-      }
-    } catch (_) {
-      // Keep showing cached jobs if the network is temporarily unavailable.
-    }
-  })();
-} else {
-  const client = window.lxSupabase || await new Promise(resolve => {
-    window.addEventListener(
-      'lx-supabase-ready',
-      () => resolve(window.lxSupabase),
-      { once: true }
-    );
-  });
-  const { data: freshRows, error } = await client
-    .from('jobs')
-    .select('*')
-    .order('created_at', { ascending: false });
-  if (thisLoadToken !== sightxJobsLoadToken || currentView !== 'Jobs' ||
-      sessionStorage.getItem('sightxCurrentView') !== 'Jobs' ||
-      sessionStorage.getItem('sightxOpenPage')) {
-    return;
-  }
-  if (error) {
-    jobsContent.innerHTML = '<p>Could not load jobs: ' + error.message + '</p>';
-    return;
-  }
-  rows = freshRows || [];
-  try { localStorage.setItem(jobsCacheKey, JSON.stringify(rows)); } catch (_) {}
-}
-
-if (thisLoadToken !== sightxJobsLoadToken || currentView !== 'Jobs' ||
-    sessionStorage.getItem('sightxCurrentView') !== 'Jobs' ||
-    sessionStorage.getItem('sightxOpenPage')) {
-  return;
-}
-
-const savedJobs = (rows || []).map(job => ({
-  ...job,
-  type: job.job_type
-}));
-
-  jobsContent.innerHTML = '';
-
-  if (savedJobs.length === 0) {
-jobsContent.innerHTML = `<div style="text-align:center; padding:40px 20px;"><h2>No jobs available yet</h2><p>Be the first to post a job!</p></div>`;
-return;
-}
-
-const resultsCount = document.createElement('p');
-resultsCount.id = 'jobResultsCount';
-resultsCount.style.cssText = 'margin:0 0 14px;color:#475569;font-size:14px;font-weight:600;grid-column:1 / -1;';
-resultsCount.textContent = savedJobs.length === 1
-? 'Showing 1 job'
-: 'Showing ' + savedJobs.length + ' jobs';
-jobsContent.appendChild(resultsCount);
-
-savedJobs.forEach(job => {
-    const card = document.createElement('article');
-card.className = 'post';
-card.dataset.savedJobKey = String(job.id || job.title || '');
-card.dataset.jobType = (job.job_type || job.type || '').trim().toLowerCase();
-card.dataset.jobTitle = (job.title || '').trim().toLowerCase();
-card.dataset.jobLocation = (job.location || '').trim().toLowerCase();
-card.style.display = 'block';
-card.style.margin = '0';
-card.style.padding = '20px';
-card.style.minHeight = '0';
-card.style.boxSizing = 'border-box';
-card.style.borderRadius = '16px';
-card.style.border = '1px solid #E2E8F0';
-card.style.boxShadow = '0 4px 16px rgba(15, 35, 70, 0.07)';
-card.style.background = '#ffffff';
-card.style.transition = 'box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease';
-card.style.overflow = 'hidden';
-card.onmouseenter = function() {
-  card.style.transform = 'translateY(-3px)';
-  card.style.boxShadow = '0 10px 26px rgba(15, 35, 70, 0.16)';
-  card.style.borderColor = '#93b4e8';
-};
-
-card.onmouseleave = function() {
-  card.style.transform = 'translateY(0)';
-  card.style.boxShadow = '0 6px 20px rgba(15, 35, 70, 0.10)';
-  card.style.borderColor = '#cbdaf0';
-};
-
-card.onmouseenter = function() {
-  card.style.boxShadow = '0 8px 26px rgba(15, 35, 70, 0.12)';
-  card.style.borderColor = '#2563eb';
-};
-
-card.onmouseleave = function() {
-  card.style.boxShadow = '0 4px 18px rgba(15, 35, 70, 0.06)';
-  card.style.borderColor = '#dbe4f0';
-};
-
-    const title = document.createElement('h3');
-title.textContent = job.title;
-title.style.fontSize = '21px';
-title.style.fontWeight = '750';
-title.style.lineHeight = '1.4';
-title.style.color = '#102a56';
-title.style.margin = '0';
-title.style.display = 'inline-block';
-title.style.verticalAlign = 'middle';
-const hiringBadge = document.createElement('span');
-hiringBadge.textContent = 'HIRING';
-hiringBadge.style.display = 'inline-block';
-hiringBadge.style.padding = '4px 9px';
-hiringBadge.style.margin = '0 0 12px';
-hiringBadge.style.background = '#DCFCE7';
-hiringBadge.style.color = '#166534';
-hiringBadge.style.borderRadius = '6px';
-hiringBadge.style.fontSize = '11px';
-hiringBadge.style.fontWeight = '700';
-hiringBadge.style.letterSpacing = '0.5px';
-const titleRow = document.createElement('div');
-titleRow.style.display = 'flex';
-titleRow.style.justifyContent = 'space-between';
-titleRow.style.alignItems = 'flex-start';
-titleRow.style.gap = '10px';
-titleRow.style.width = '100%';
-
-title.style.flex = '1';
-title.style.minWidth = '0';
-hiringBadge.style.flexShrink = '0';
-
-titleRow.append(title, hiringBadge);
-
-const company = document.createElement('p');
-company.className = 'job-company';
-company.textContent = job.company || 'Company not specified';
-company.style.fontSize = '15px';
-company.style.fontWeight = '700';
-company.style.color = '#1E40AF';
-company.style.margin = '0 0 8px';
-
-const locationRow = document.createElement('div');
-locationRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin:0 0 10px;';
-
-const location = document.createElement('p');
-location.className = 'job-location';
-location.textContent = '📍 ' + (job.location || 'Location not specified');
-location.style.cssText = 'font-size:14px;color:#475569;margin:0;overflow-wrap:anywhere;';
-
-const saveButton = document.createElement('button');
-saveButton.type = 'button';
-saveButton.textContent = '♥ Save';
-saveButton.style.cssText = 'flex-shrink:0;border:1px solid #E2E8F0;border-radius:6px;background:#FFFFFF;color:#BE123C;padding:4px 7px;font-size:11px;font-weight:600;cursor:pointer;';
-const savedJobKey = String(job.id || job.title || '');
-const getSavedJobs = () => JSON.parse(localStorage.getItem('sightxSavedJobs') || '[]');
-function updateSaveButton() {
-  const isSaved = getSavedJobs().includes(savedJobKey);
-  saveButton.textContent = isSaved ? '♥ Saved' : '♥ Save';
-  saveButton.style.background = isSaved ? '#BE123C' : '#FFFFFF';
-  saveButton.style.color = isSaved ? '#FFFFFF' : '#BE123C';
-  saveButton.style.borderColor = isSaved ? '#BE123C' : '#E2E8F0';
-}
-saveButton.onclick = function() {
-  let savedJobKeys = getSavedJobs();
-
-  if (savedJobKeys.includes(savedJobKey)) {
-    savedJobKeys = savedJobKeys.filter(key => key !== savedJobKey);
-  } else {
-    savedJobKeys.push(savedJobKey);
-  }
-
-  localStorage.setItem('sightxSavedJobs', JSON.stringify(savedJobKeys));
-  updateSaveButton();
-};
-
-updateSaveButton();
-locationRow.append(location, saveButton);
-
-    const details = document.createElement('div');
-details.style.cssText = 'display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; width:100%;';
-details.className = 'job-details';
-details.style.display = 'flex';
-details.style.flexWrap = 'wrap';
-details.style.alignItems = 'center';
-details.style.gap = '8px';
-details.style.margin = '0 0 14px';
-
-const typeBadge = document.createElement('span');
-typeBadge.textContent = job.type || 'Job';
-typeBadge.style.display = 'inline-block';
-typeBadge.style.padding = '6px 10px';
-typeBadge.style.borderRadius = '20px';
-typeBadge.style.background = '#eaf2ff';
-typeBadge.style.color = '#1d4ed8';
-typeBadge.style.fontSize = '12px';
-typeBadge.style.fontWeight = '700';
-
-details.appendChild(typeBadge);
-if (job.experience) {
-  const experienceBadge = document.createElement('span');
-  experienceBadge.textContent = 'Experience: ' + job.experience;
-  experienceBadge.style.display = 'inline-block';
-  experienceBadge.style.padding = '6px 10px';
-  experienceBadge.style.borderRadius = '20px';
-  experienceBadge.style.background = '#f3e8ff';
-  experienceBadge.style.color = '#7e22ce';
-  experienceBadge.style.fontSize = '12px';
-  experienceBadge.style.fontWeight = '700';
-
-  details.appendChild(experienceBadge);
-}
-if (job.salary) {
-  const salaryBadge = document.createElement('span');
-  salaryBadge.textContent = '₹ ' + job.salary;
-  salaryBadge.style.display = 'inline-block';
-  salaryBadge.style.padding = '6px 10px';
-  salaryBadge.style.borderRadius = '20px';
-  salaryBadge.style.background = '#ecfdf5';
-  salaryBadge.style.color = '#047857';
-  salaryBadge.style.fontSize = '12px';
-  salaryBadge.style.fontWeight = '700';
-
-  details.appendChild(salaryBadge);
-}
-
-    const description = document.createElement('p');
-description.className = 'job-description';
-description.textContent =
-  job.description || 'No description provided.';
-
-description.style.fontSize = '14px';
-description.style.lineHeight = '1.6';
-description.style.fontWeight = '400';
-description.style.color = '#475569';
-description.style.margin = '0 0 14px';
-description.style.display = '-webkit-box';
-description.style.webkitBoxOrient = 'vertical';
-description.style.webkitLineClamp = '3';
-description.style.overflow = 'hidden';
-description.style.overflowWrap = 'anywhere';
-    const viewDetails = document.createElement('button');
-viewDetails.type = 'button';
-viewDetails.textContent = 'View Details';
-viewDetails.style.display = 'block';
-viewDetails.style.marginTop = '12px';
-viewDetails.style.padding = '9px 0';
-viewDetails.style.border = '1px solid #bfdbfe';
-viewDetails.style.background = '#eff6ff';
-viewDetails.style.borderRadius = '10px';
-viewDetails.style.width = '100%';
-viewDetails.style.boxSizing = 'border-box';
-viewDetails.style.color = '#2563eb';
-viewDetails.style.fontSize = '13px';
-viewDetails.style.fontWeight = '700';
-viewDetails.style.cursor = 'pointer';
-
-viewDetails.onclick = function() {
-  const isExpanded = description.style.webkitLineClamp === 'unset';
-
-  if (isExpanded) {
-    description.style.webkitLineClamp = '3';
-    description.style.display = '-webkit-box';
-    viewDetails.textContent = 'View Details';
-  } else {
-    description.style.webkitLineClamp = 'unset';
-    description.style.display = 'block';
-    viewDetails.textContent = 'Show Less';
-  }
-};
-
-    const apply = document.createElement('button');
-apply.textContent = 'Apply Now';
-apply.className = 'apply-job-btn';
-
-apply.style.display = 'inline-block';
-apply.style.width = '100%';
-apply.style.marginTop = '16px';
-apply.style.padding = '11px 20px';
-apply.style.border = 'none';
-apply.style.borderRadius = '10px';
-apply.style.background = '#2563eb';
-apply.style.boxShadow = '0 4px 10px rgba(37, 99, 235, 0.22)';
-apply.style.color = '#ffffff';
-apply.style.fontSize = '14px';
-apply.style.fontWeight = '700';
-apply.style.cursor = 'pointer';
-apply.style.transition = 'background 0.2s ease, transform 0.2s ease';
-
-apply.onmouseenter = function() {
-  apply.style.background = '#1d4ed8';
-  apply.style.transform = 'translateY(-1px)';
-};
-
-apply.onmouseleave = function() {
-  apply.style.background = '#2563eb';
-  apply.style.transform = 'translateY(0)';
-};
-
-apply.onclick = function() {
-sessionStorage.setItem('sightxSelectedJob', JSON.stringify(job));
-sessionStorage.setItem('sightxOpenPage', 'jobApplicationPage');
-showApplicationForm(job);
-};
-
-    card.append(titleRow, company, locationRow, details, description, viewDetails, apply);
-    jobsContent.appendChild(card);
-  });
-}
-  function showSavedJobs() {
-  const savedButton = document.querySelector('button[onclick="showSavedJobs()"]');
-  const showingSaved = savedButton.dataset.showingSaved === 'true';
-  const cards = document.querySelectorAll('#jobsContent .post');
-  const resultsCount = document.getElementById('jobResultsCount');
-
-  if (showingSaved) {
-    savedButton.dataset.showingSaved = 'false';
-    savedButton.textContent = '♥ Saved Jobs';
-    applyFilters();
-    return;
-  }
-
-  const savedKeys = JSON.parse(
-    localStorage.getItem('sightxSavedJobs') || '[]'
-  );
-
-  let visibleCount = 0;
-
-  cards.forEach(card => {
-    const isSaved = savedKeys.includes(card.dataset.savedJobKey);
-    card.style.display = isSaved ? '' : 'none';
-
-    if (isSaved) visibleCount++;
-  });
-
-  if (resultsCount) {
-    resultsCount.textContent = visibleCount === 0
-      ? 'No saved jobs yet'
-      : visibleCount === 1
-        ? 'Showing 1 saved job'
-        : 'Showing ' + visibleCount + ' saved jobs';
-  }
-
-  savedButton.dataset.showingSaved = 'true';
-  savedButton.textContent = '♥ All Jobs';
-  }
-function showApplicationForm(job) {
-sessionStorage.setItem('sightxCurrentView', 'Jobs');
-sessionStorage.setItem('sightxOpenPage', 'jobApplicationPage');
-sessionStorage.setItem('sightxSelectedJob', JSON.stringify(job));
-localStorage.setItem('sightxSelectedJob', JSON.stringify(job));
-document.getElementById('applyJobPage').style.display = 'none';
-document.getElementById('postJobPage').style.display = 'none';
-document.getElementById('applyJobPage').classList.remove('active-job-form');
-document.getElementById('postJobPage').classList.remove('active-job-form');
-document.getElementById('jobFormArea').style.display = 'none';
-const jobsContent = document.getElementById('jobsContent');
-jobsContent.innerHTML = '';
-jobsContent.classList.add('application-form-view');
-document.querySelector('.layout')?.classList.add('application-mode');
-document.getElementById('rightSidebar').style.display = 'none';
-document.getElementById('jobsPage').style.display = 'block';
-jobsContent.style.display = 'block';
-document.getElementById('rightSidebar').style.display = 'none';
-document.getElementById('jobsWelcomeBanner').style.display = 'none';
-document.getElementById('jobsActionBar').style.display = 'none';
-document.getElementById('jobsFilters').style.display = 'none';
-const savedButton = document.querySelector('button[onclick="showSavedJobs()"]');
-if (savedButton) savedButton.style.display = 'none';
-
-  const heading = document.createElement('h2');
-  heading.textContent = 'Apply for: ' + job.title;
-  jobsContent.appendChild(heading);
-
-  const form = document.createElement('form');
-  form.id = 'applicationForm';
-
-  form.innerHTML = `
-    <div class="form-row">
-      <label for="applicantName">Full Name</label>
-      <input id="applicantName" name="name" type="text" required>
-    </div>
-
-    <div class="form-row">
-      <label for="applicantEmail">Email Address</label>
-      <input id="applicantEmail" name="email" type="email" required>
-    </div>
-
-    <div class="form-row">
-      <label for="applicantPhone">Phone Number</label>
-      <input id="applicantPhone" name="phone" type="tel" required>
-    </div>
-
-    <div class="form-row">
-      <label for="applicantResume">Resume Link</label>
-      <input id="applicantResume" name="resume" type="url" required>
-    </div>
-
-    <div class="form-row">
-      <label for="applicantCover">Cover Letter (Optional)</label>
-      <textarea id="applicantCover" name="coverLetter"></textarea>
-    </div>
-
-    <button type="submit" class="apply-job-btn">
-      Submit Application
-    </button>
-
-    <button type="button" id="backToJobs" class="apply-job-btn">
-      Back to Jobs
-    </button>
-  `;
-
-  jobsContent.appendChild(form);
-
-  document.getElementById('backToJobs').addEventListener('click', function() {
-    showJobListings();
-});
-
-  form.addEventListener('submit', async function(event) {
-    
-    event.preventDefault();
-    alert('TEST: Submit button clicked!');
-
-    const application = {
-      id: Date.now(),
-      jobId: job.id,
-      jobTitle: job.title,
-      company: job.company,
-      name: document.getElementById('applicantName').value.trim(),
-      email: document.getElementById('applicantEmail').value.trim(),
-      phone: document.getElementById('applicantPhone').value.trim(),
-      resume: document.getElementById('applicantResume').value.trim(),
-      coverLetter: document.getElementById('applicantCover').value.trim(),
-      submittedAt: new Date().toISOString()
-    };
-
-    const applications = JSON.parse(
-      localStorage.getItem('sightxApplications') || '[]'
-    );
-
-    applications.unshift(application);
-
-    localStorage.setItem(
-      'sightxApplications',
-      JSON.stringify(applications)
-    );
-        try {
-      const { createClient } = await import(
-        'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
-      );
-
-      const supabaseClient = createClient(
-        'https://ycfnsufdxztkmtyuceqy.supabase.co',
-        'sb_publishable_EbJZKeEdRR6l_UsRucmpnA_yzWHmVXJ'
-      );
-
-      const { error } = await supabaseClient
-        .from('applications')
-        .insert([{
-          applicant_name: application.name,
-          applicant_email: application.email,
-          applicant_phone: application.phone,
-          job_title: application.jobTitle,
-          resume_file_name: application.resume,
-          cover_letter: application.coverLetter
-        }]);
-
-      if (error) {
-        throw error;
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SIGHTX | Business Network</title>
+    <style>
+      :root {
+        --bg: #f3f6fb;
+        --panel: #ffffff;
+        --panel-alt: #f8fafc;
+        --line: #e2e8f0;
+        --line-strong: #cbd5e1;
+        --text: #102a43;
+        --muted: #60708a;
+        --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+        --primary-soft: #edf4ff;
+        --success: #10b981;
+        --shadow: 0 12px 28px rgba(15, 35, 70, 0.08);
       }
 
-      console.log('Application saved to Supabase.');
-      alert('Application submitted online successfully!');
+      * { box-sizing: border-box; }
 
-    } catch (error) {
-      console.error('Supabase submission failed:', error);
-      alert('Online submission failed. Please try again.');
-    }
+      html { scroll-behavior: smooth; }
 
-    alert('Application saved on this device. Check whether online submission succeeded.');
-
-    showJobListings();
-  });
-}
-  function showJobForm() {
-  const formArea = document.getElementById('jobFormArea');
-
-  formArea.innerHTML = `
-  <h2>Post a Job</h2>
-
-  <form id="jobForm">
-    <div class="form-row">
-      <label for="jobTitle">Job Title</label>
-      <input type="text" id="jobTitle" placeholder="e.g. Marketing Manager" required>
-    </div>
-
-    <div class="form-row">
-      <label for="jobCompany">Company Name</label>
-      <input type="text" id="jobCompany" placeholder="Enter company name" required>
-    </div>
-
-    <div class="form-row">
-      <label for="jobLocation">Location</label>
-      <input type="text" id="jobLocation" placeholder="e.g. Bengaluru, India" required>
-    </div>
-
-    <div class="form-row">
-      <label for="jobSalary">Salary (optional)</label>
-      <input type="text" id="jobSalary" placeholder="e.g. ₹30,000–₹50,000/month">
-    </div>
-
-    <div class="form-row">
-      <label for="jobType">Job Type</label>
-      <select id="jobType" required>
-        <option value="">Select job type</option>
-        <option>Full-time</option>
-        <option>Part-time</option>
-        <option>Internship</option>
-        <option>Contract</option>
-        <option>Remote</option>
-      </select>
-    </div>
-
-    <div class="form-row">
-      <label for="jobDescription">Job Description</label>
-      <textarea id="jobDescription" placeholder="Describe the job and responsibilities" required></textarea>
-    </div>
-
-    <div class="form-row">
-      <label for="jobApply">How to Apply</label>
-      <input type="text" id="jobApply" placeholder="Email or application instructions" required>
-    </div>
-
-    <button type="submit" class="postbtn">Publish Job</button>
-  </form>
-`;
-
-  sessionStorage.setItem('sightxOpenPage', 'postJobPage');
-sessionStorage.setItem('sightxCurrentView', currentView);
-
-document.getElementById('jobsPage').style.display = 'none';
-document.getElementById('jobsContent').style.display = 'none';
-document.getElementById('applyJobPage').style.display = 'none';
-
-formArea.style.display = 'block';
-formArea.scrollIntoView({ behavior: 'smooth' });
-
-  document.getElementById('jobForm').onsubmit = async function(event) {
-    event.preventDefault();
-
-    const title = document.getElementById('jobTitle').value.trim();
-    const company = document.getElementById('jobCompany').value.trim();
-    const location = document.getElementById('jobLocation').value.trim();
-    const salary = document.getElementById('jobSalary').value.trim();
-    const type = document.getElementById('jobType').value;
-    const description = document.getElementById('jobDescription').value.trim();
-    const apply = document.getElementById('jobApply').value.trim();
-
-    const article = document.createElement('article');
-    article.className = 'post';
-    article.dataset.category = 'Jobs';
-    article.dataset.jobListing = 'true';
-    const heading = document.createElement('h3');
-    heading.textContent = title;
-
-    const companyInfo = document.createElement('p');
-    companyInfo.textContent = '🏢 ' + company + ' · 📍 ' + location;
-
-    const jobInfo = document.createElement('p');
-    jobInfo.textContent = '💼 ' + type + (salary ? ' · 💰 ' + salary : '');
-
-    const details = document.createElement('p');
-    details.textContent = description;
-
-    const applyInfo = document.createElement('p');
-    applyInfo.textContent = 'How to apply: ' + apply;
-
-    article.append(heading, companyInfo, jobInfo, details, applyInfo);
-    const { data: userData, error: userError } =
-  await lxSupabase.auth.getUser();
-
-const user = userData?.user;
-
-if (userError || !user) {
-  alert('Please log in before posting a job.');
-  return;
-}
-
-const { error: saveError } = await lxSupabase
-  .from('jobs')
-  .insert({
-    title: title,
-    company: company,
-    location: location,
-    salary: salary,
-    job_type: type,
-    description: description,
-    apply: apply,
-    posted_by: user.id
-  });
-
-if (saveError) {
-  alert('Could not save job: ' + saveError.message);
-  return;
-}
-    
-
-    formArea.style.display = 'none';
-    formArea.innerHTML = '';
-    notice.textContent = 'Job added to this page!';
-    currentView = 'Jobs';
-    applyFilters();
-    showJobListings();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-  }
-
-function likePost(button) {
-  const count = button.querySelector('span');
-  let n = Number(count.textContent);
-  if (button.dataset.liked === 'true') {
-    n--;
-    button.dataset.liked = 'false';
-    button.firstChild.textContent = '♡ Like ';
-  } else {
-    n++;
-    button.dataset.liked = 'true';
-    button.firstChild.textContent = '♥ Liked ';
-  }
-  count.textContent = n;
-}
-
-function repost(button) {
-  notice.textContent = 'Repost is a demonstration. Shared reposts require a backend.';
-}
-
-function replyPost(button) {
-  const reply = prompt('Write a reply:');
-  if (reply && reply.trim()) {
-    const box = document.createElement('div');
-    box.className = 'smallnote';
-    box.style.marginTop = '10px';
-    box.textContent = 'Your reply (local demo): ' + reply.trim();
-    button.closest('.post').append(box);
-  }
-}
-
-function bookmarkPost(button) {
-  if (button.dataset.saved === 'true') {
-    button.dataset.saved = 'false';
-    button.textContent = '🔖 Save';
-    notice.textContent = 'Removed from demo bookmarks.';
-  } else {
-    button.dataset.saved = 'true';
-    button.textContent = '✓ Saved';
-    notice.textContent = 'Saved in this page demo.';
-  }
-}
-
-function followCompany(button) {
-  button.textContent = button.textContent === 'Follow' ? 'Following' : 'Follow';
-}
-
-function applyFilters() {
-  const jobsPage = document.getElementById('jobsPage');
-  const feedTabs = document.querySelector('.feedtabs');
-  const composer = document.getElementById('composer');
-  const feed = document.getElementById('feed');
-  const notice = document.getElementById('notice');
-  const jobFormArea = document.getElementById('jobFormArea');
-  const jobSearch = document.getElementById('search').value.toLowerCase();
-const jobTitleSearch = document.getElementById('jobTitleFilter').value.trim().toLowerCase();
-const jobTypeFilter = document.getElementById('jobTypeFilter').value.trim().toLowerCase();
-const jobLocationFilter = document.getElementById('jobLocationFilter').value.trim().toLowerCase();
-
-document.querySelectorAll('#jobsContent .post').forEach(jobCard => {
-const matchesSearch = jobCard.innerText.toLowerCase().includes(jobSearch);
-const matchesTitle = !jobTitleSearch ||
-(jobCard.dataset.jobTitle || '').includes(jobTitleSearch);
-const matchesJobType = !jobTypeFilter ||
-(jobCard.dataset.jobType || '') === jobTypeFilter;
-const matchesLocation = !jobLocationFilter ||
-(jobCard.dataset.jobLocation || '').includes(jobLocationFilter);
-
-jobCard.style.display =
-matchesSearch && matchesTitle && matchesJobType && matchesLocation
-? ''
-: 'none';
-});
-
-  const visibleJobCount = Array.from(
-  document.querySelectorAll('#jobsContent .post')
-).filter(jobCard => jobCard.style.display !== 'none').length;
-
-const resultsCount = document.getElementById('jobResultsCount');
-
-if (resultsCount) {
-  resultsCount.textContent = visibleJobCount === 1
-    ? 'Showing 1 job'
-    : 'Showing ' + visibleJobCount + ' jobs';
-}
-
-  const savedOpenPage = sessionStorage.getItem('sightxOpenPage');
-
-if (savedOpenPage === 'postJobPage') {
-document.querySelector('.layout')?.classList.add('application-mode');
-postJobPage.style.display = 'block';
-postJobPage.classList.add('active-job-form');
-applyJobPage.style.display = 'none';
-applyJobPage.classList.remove('active-job-form');
-document.getElementById('rightSidebar').style.display = 'none';
-jobsPage.style.display = 'none';
-document.getElementById('jobsContent').style.display = 'none';
-document.getElementById('jobsContent').classList.remove('application-form-view');
-feedTabs.style.display = 'none';
-composer.style.display = 'none';
-feed.style.display = 'none';
-notice.style.display = 'none';
-jobFormArea.style.display = 'none';
-return;
-}
-
-if (savedOpenPage === 'applyJobPage') {
-document.querySelector('.layout')?.classList.add('application-mode');
-applyJobPage.style.display = 'block';
-applyJobPage.classList.add('active-job-form');
-postJobPage.style.display = 'none';
-postJobPage.classList.remove('active-job-form');
-document.getElementById('rightSidebar').style.display = 'none';
-jobsPage.style.display = 'none';
-document.getElementById('jobsContent').style.display = 'none';
-document.getElementById('jobsContent').classList.remove('application-form-view');
-feedTabs.style.display = 'none';
-composer.style.display = 'none';
-feed.style.display = 'none';
-notice.style.display = 'none';
-jobFormArea.style.display = 'none';
-return;
-}
-
-if (currentView === 'Jobs') {
-jobsPage.style.setProperty('display', 'block', 'important');
-document.getElementById('jobsContent').style.setProperty('display', 'grid', 'important');
-const openPage = sessionStorage.getItem('sightxOpenPage');
-document.getElementById('rightSidebar').style.display =
-  (openPage === 'applyJobPage' || openPage === 'jobApplicationPage') ? 'none' : '';
-if (openPage === 'jobApplicationPage') {
-  document.querySelector('.layout')?.classList.add('application-mode');
-  document.getElementById('jobsContent').classList.add('application-form-view');
-  document.getElementById('jobsContent').style.setProperty('display', 'block', 'important');
-  document.getElementById('rightSidebar').style.setProperty('display', 'none', 'important');
-  document.getElementById('jobsWelcomeBanner').style.display = 'none';
-  document.getElementById('jobsActionBar').style.display = 'none';
-  document.getElementById('jobsFilters').style.display = 'none';
-  const savedButton = document.querySelector('button[onclick="showSavedJobs()"]');
-  if (savedButton) savedButton.style.display = 'none';
-  const selectedJobStored = sessionStorage.getItem('sightxSelectedJob') || localStorage.getItem('sightxSelectedJob');
-  const cachedJobs = JSON.parse(localStorage.getItem('sightxJobsCache') || '[]');
-  let selectedJob = null;
-  let selectedJobId = selectedJobStored;
-  if (selectedJobStored) {
-    try {
-      const parsedSelection = JSON.parse(selectedJobStored);
-      if (parsedSelection && typeof parsedSelection === 'object') {
-        selectedJob = parsedSelection;
-        selectedJobId = parsedSelection.id;
+      body {
+        margin: 0;
+        font-family: Inter, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.5;
       }
-    } catch (_) {
-      // Older sessions may store only the selected job ID.
-    }
-  }
-  if (!selectedJob && selectedJobId != null) {
-    selectedJob = cachedJobs.find(job => String(job.id) === String(selectedJobId));
-  }
-  if (selectedJob) {
-    showApplicationForm(selectedJob);
-  } else if (selectedJobId != null) {
-    document.getElementById('jobsContent').innerHTML =
-      '<div class="application-form-loading">Reloading application form…</div>';
-    fetchJobs(true).then(jobs => {
-      const job = jobs.find(item => String(item.id) === String(selectedJobId));
-      if (job) showApplicationForm(job);
-      else document.getElementById('jobsContent').innerHTML =
-        '<p>This job is no longer available. Please return to Jobs and select another listing.</p>';
-    }).catch(() => {
-      document.getElementById('jobsContent').innerHTML =
-        '<p>Could not reload this application. Please return to Jobs and select the job again.</p>';
-    });
-  } else {
-    sessionStorage.removeItem('sightxOpenPage');
-    document.getElementById('jobsContent').innerHTML =
-      '<p>Please return to Jobs and select a job to apply.</p>';
-  }
-}
-feedTabs.style.display = 'none';
-composer.style.display = 'none';
-feed.style.display = 'none';
-notice.style.display = 'none';
-jobFormArea.style.display = 'none';
-return;
-}
-
-    jobsPage.style.setProperty('display', 'none', 'important');
-  document.getElementById('jobsContent').style.setProperty('display', 'none', 'important');
-  document.getElementById('applyJobPage').style.display = 'none';
-  document.getElementById('postJobPage').style.display = 'none';
-  feedTabs.style.display = '';
-  composer.style.display = '';
-  feed.style.display = '';
-  notice.style.display = '';
-  jobFormArea.style.display = 'none';
-  jobFormArea.innerHTML = '';
-
-  const search = document.getElementById('search').value.toLowerCase();
-
-  document.querySelectorAll('#feed .post').forEach(post => {
-    const matchesSearch = post.innerText.toLowerCase().includes(search);
-
-    const matchesView =
-      (currentView === 'Home' && post.dataset.category !== 'Jobs') ||
-      currentView === 'Profile' ||
-      (currentView === 'Bookmarks' &&
-        post.querySelector('[data-saved="true"]')) ||
-      (currentView === 'Jobs' &&
-        post.dataset.category === 'Jobs') ||
-      (currentView === 'Market Intelligence' &&
-        post.dataset.category === 'Market Intelligence') ||
-      (currentView === 'B2B Network' &&
-        post.dataset.category === 'B2B Network');
-
-    post.style.display = matchesSearch && matchesView ? '' : 'none';
-  });
-
-  
-  const pageTitle = document.getElementById('pageTitle');
-  if (pageTitle) {
-    pageTitle.textContent = currentView === 'Home' ? '' : currentView;
-  }
-}
-
-document.querySelectorAll('.navitem').forEach(button => {
-  button.addEventListener('click', () => {
-    document.querySelector('.layout')?.classList.remove('application-mode');
-    document.getElementById('jobsContent')?.classList.remove('application-form-view');
-    sessionStorage.removeItem('sightxOpenPage');
-    currentView = button.dataset.view;
-    sessionStorage.setItem('sightxCurrentView', currentView);
-
-    document.querySelectorAll('.navitem').forEach(item => item.classList.toggle('active', item === button));
-
-    document.getElementById('applyJobPage').style.display = 'none';
-    document.getElementById('postJobPage').style.display = 'none';
-
-    // Immediately hide the Jobs container before any async loading can finish.
-    const jobsPageEl = document.getElementById('jobsPage');
-    const jobsContentEl = document.getElementById('jobsContent');
-    if (currentView === 'Jobs') {
-      jobsPageEl.style.setProperty('display', 'block', 'important');
-      jobsContentEl.style.setProperty('display', 'grid', 'important');
-      document.getElementById('rightSidebar').style.display = '';
-      showJobListings();
-    } else {
-      if (typeof sightxJobsLoadToken !== 'undefined') sightxJobsLoadToken++;
-      jobsPageEl.style.setProperty('display', 'none', 'important');
-      jobsContentEl.style.setProperty('display', 'none', 'important');
-      document.getElementById('rightSidebar').style.display = '';
-    }
-    applyFilters();
-    if (typeof sightxApplyWideLayout === 'function') sightxApplyWideLayout();
-  });
-});
-document.querySelectorAll('[data-feed]').forEach(button => {
-  button.addEventListener('click', () => {
-    currentFeed = button.dataset.feed;
-    document.querySelectorAll('[data-feed]').forEach(item => item.classList.remove('active'));
-    button.classList.add('active');
-    notice.textContent = currentFeed + ' feed selected. Personalized feeds require a backend.';
-  });
-});
-
-document.getElementById('search').addEventListener('input', applyFilters);
-document.getElementById('jobTypeFilter').addEventListener('change', applyFilters);
-  document.getElementById('jobTitleFilter').addEventListener('input', applyFilters);
-document.getElementById('jobLocationFilter').addEventListener('change', applyFilters);
-
-function mobileview(view) {
-  currentView = view;
-  sessionStorage.setItem('sightxCurrentView', view);
-  sessionStorage.removeItem('sightxOpenPage');
-  
-  document.querySelectorAll('.navitem').forEach(item => {
-    item.classList.toggle('active', item.dataset.view === view);
-  });
-
-  document.getElementById('applyJobPage').style.display = 'none';
-  document.getElementById('postJobPage').style.display = 'none';
-
-  if (view === 'Jobs') {
-    document.getElementById('jobsPage').style.display = 'block';
-  } else {
-    document.getElementById('jobsPage').style.display = 'none';
-  }
-
-  applyFilters();
-
-  if (view === 'Jobs') {
-    showJobListings();
-  }
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-const storedOpenPageOnLoad = sessionStorage.getItem('sightxOpenPage');
-// An application sub-page belongs to Jobs, even if an older/stale saved view says Home.
-const isSavedJobSubPage = ['jobApplicationPage', 'applyJobPage', 'postJobPage'].includes(storedOpenPageOnLoad);
-const savedViewOnLoad = isSavedJobSubPage
-  ? 'Jobs'
-  : (sessionStorage.getItem('sightxCurrentView') || 'Home');
-const savedOpenPage = savedViewOnLoad === 'Jobs' ? storedOpenPageOnLoad : null;
-if (isSavedJobSubPage) sessionStorage.setItem('sightxCurrentView', 'Jobs');
-
-currentView = savedViewOnLoad;
-document.querySelector('.layout')?.classList.remove('application-mode');
-document.getElementById('jobsContent')?.classList.remove('application-form-view');
-document.getElementById('applyJobPage')?.classList.remove('active-job-form');
-document.getElementById('postJobPage')?.classList.remove('active-job-form');
-document.querySelector('.layout > .leftcol')?.style.removeProperty('display');
-document.getElementById('rightSidebar')?.style.removeProperty('display');
-
-document.querySelectorAll('.navitem').forEach(item => {
-item.classList.toggle('active', item.dataset.view === currentView);
-});
-
-const jobsPage = document.getElementById('jobsPage');
-const jobsContent = document.getElementById('jobsContent');
-const applyJobPage = document.getElementById('applyJobPage');
-const postJobPage = document.getElementById('postJobPage');
-
-jobsPage.style.display = 'none';
-jobsContent.style.display = 'none';
-applyJobPage.style.display = 'none';
-postJobPage.style.display = 'none';
-
-if (savedOpenPage === 'postJobPage') {
-postJobPage.style.display = 'block';
-jobsPage.style.display = 'none';
-jobsContent.style.display = 'none';
-
-} else if (savedOpenPage === 'jobApplicationPage') {
-const selectedJobData = sessionStorage.getItem('sightxSelectedJob') || localStorage.getItem('sightxSelectedJob');
-
-if (selectedJobData) {
-try {
-const selectedJob = JSON.parse(selectedJobData);
-jobsPage.style.display = 'block';
-jobsContent.style.display = 'block';
-showApplicationForm(selectedJob);
-} catch (error) {
-sessionStorage.removeItem('sightxOpenPage');
-sessionStorage.removeItem('sightxSelectedJob');
-jobsPage.style.display = 'block';
-showJobListings();
-}
-} else {
-sessionStorage.removeItem('sightxOpenPage');
-jobsPage.style.display = 'block';
-showJobListings();
-}
-
-} else if (savedOpenPage === 'applyJobPage') {
-applyJobPage.style.display = 'block';
-jobsPage.style.display = 'none';
-jobsContent.style.display = 'none';
-
-} else if (currentView === 'Jobs') {
-jobsPage.style.display = 'block';
-jobsContent.style.display = 'grid';
-showJobListings();
-
-} else {
-currentView = savedViewOnLoad;
-sessionStorage.setItem('sightxCurrentView', currentView);
-}
-
-applyFilters();
-document.getElementById('newJobForm').addEventListener('submit',async function(event) {
-  event.preventDefault();
-  
-  // New-job form handler
-
-  const newJob = {
-    id: Date.now(),
-    title: document.getElementById('newJobTitle').value.trim(),
-    company: document.getElementById('newJobCompany').value.trim(),
-    location: document.getElementById('newJobLocation').value.trim(),
-    type: document.getElementById('newJobType').value,
-experience: document.getElementById('newJobExperience').value,
-salary: document.getElementById('newJobSalary').value.trim(),
-    description: document.getElementById('newJobDescription').value.trim()
-  };
-
-  const { data: userData, error: userError } =
-  await lxSupabase.auth.getUser();
-
-const user = userData?.user;
-
-if (userError || !user) {
-  alert('Please log in before posting a job.');
-  return;
-}
-
-const { error: saveError } = await window.lxSupabase
-  .from('jobs')
-  .insert({
-    title: newJob.title,
-    company: newJob.company,
-    location: newJob.location,
-    job_type: newJob.type,
-    experience: newJob.experience,
-    salary: newJob.salary,
-    description: newJob.description,
-    posted_by: user.id
-  });
-
-if (saveError) {
-  alert('Could not save job: ' + saveError.message);
-  return;
-}
-  this.reset();
-
-  document.getElementById('postJobPage').style.display = 'none';
-  document.getElementById('jobsPage').style.display = 'block';
-
-  showJobListings();
-
-  alert('Job posted successfully!');
-});
-  
-
-</script> <!-- LinsightX Login and Signup -->
-<div id="lx-auth-area" style="
-  position:fixed;
-  top:72px;
-  right:12px;
-  z-index:9999;
-  font-family:Arial,sans-serif;
-">
-  
-
-  <div id="lx-auth-panel" style="
-    display:none;
-    position:absolute;
-    right:0;
-    top:48px;
-    width:280px;
-    max-width:85vw;
-    padding:8px;
-    padding-top:32px;
-    background:white;
-    color:#222;
-    border:1px solid #ddd;
-    border-radius:10px;
-    box-shadow:0 4px 16px #0002;
-    box-sizing:border-box;
-  ">
-    <h3 id="lx-auth-heading"></h3>
-
-    <form id="lx-auth-form">
-      <label for="lx-full-name">Full name (for signup)</label>
-      <input id="lx-full-name" type="text"
-        autocomplete="name"
-        placeholder="Your full name"
-        style="display:block;width:100%;padding:10px;margin:6px 0 12px;box-sizing:border-box;">
-
-      <label for="lx-email">Email</label>
-      <input id="lx-email" type="email" required
-        autocomplete="email"
-        placeholder="you@example.com"
-        style="display:block;width:100%;padding:10px;margin:6px 0 12px;box-sizing:border-box;">
-
-      <label for="lx-password">Password</label>
-      <input id="lx-password" type="password" required
-        minlength="8"
-        autocomplete="current-password"
-        placeholder="At least 8 characters"
-        style="display:block;width:100%;padding:10px;margin:6px 0 12px;box-sizing:border-box;">
-
-      <button type="submit" id="lx-submit-button"
-        style="padding:10px;width:100%;cursor:pointer;">
-        Log In
-      </button>
-    </form>
-
-    <p id="lx-auth-message" role="status" aria-live="polite"></p>
-
-    <button id="lx-toggle-mode" type="button"
-      style="padding:8px;cursor:pointer;">
-      Need an account? Sign Up
-    </button>
-
-    <button id="lx-logout-button" type="button"
-      style="display:none;padding:8px;cursor:pointer;">
-      Log Out
-    </button>
-
-    <button id="lx-close-button" type="button"
-  aria-label="Close login window"
-  style="position:absolute;top:6px;right:8px;
-  border:0;background:transparent;font-size:22px;
-  line-height:1;cursor:pointer;padding:2px 6px;">
-  &times;
-</button>
-  </div>
-</div>
-
-<script type="module">
-import { createClient } from
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
-const SUPABASE_URL =
-  'https://ycfnsufdxztkmtyuceqy.supabase.co';
-
-const SUPABASE_PUBLISHABLE_KEY =
-  'sb_publishable_EbJZKeEdRR6l_UsRucmpnA_yzWHmVXJ';
-
-const lxSupabase = createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
-  window.lxSupabase = lxSupabase;
-  window.dispatchEvent(new Event('lx-supabase-ready'));
-
-const lxButton = document.getElementById('lx-account-button');
-const lxPanel = document.getElementById('lx-auth-panel');
-const lxForm = document.getElementById('lx-auth-form');
-const lxHeading = document.getElementById('lx-auth-heading');
-const lxName = document.getElementById('lx-full-name');
-const lxEmail = document.getElementById('lx-email');
-const lxPassword = document.getElementById('lx-password');
-const lxSubmit = document.getElementById('lx-submit-button');
-const lxMessage = document.getElementById('lx-auth-message');
-const lxToggle = document.getElementById('lx-toggle-mode');
-const lxLogout = document.getElementById('lx-logout-button');
-
-let lxSignupMode = false;
-
-lxButton.addEventListener('click', async () => {
-  lxPanel.style.display =
-    lxPanel.style.display === 'none' ? 'block' : 'none';
-
-  const { data: { session } } =
-    await lxSupabase.auth.getSession();
-
-  if (session) {
-    lxMessage.textContent =
-      'Signed in as ' + session.user.email;
-  }
-});
-
-document.getElementById('lx-close-button')
-  .addEventListener('click', () => {
-    lxPanel.style.display = 'none';
-  });
-
-lxToggle.addEventListener('click', () => {
-  lxSignupMode = !lxSignupMode;
-
-  lxHeading.textContent = lxSignupMode
-    ? 'Create your LinsightX account'
-    : 'Welcome to LinsightX';
-
-  lxSubmit.textContent = lxSignupMode
-    ? 'Sign Up'
-    : 'Log In';
-
-  lxToggle.textContent = lxSignupMode
-    ? 'Already registered? Log In'
-    : 'Need an account? Sign Up';
-
-  lxName.style.display = lxSignupMode ? 'block' : 'none';
-  lxName.required = lxSignupMode;
-  lxPassword.autocomplete = lxSignupMode
-    ? 'new-password'
-    : 'current-password';
-
-  lxMessage.textContent = '';
-});
-
-lxName.style.display = 'none';
-
-lxForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-
-  lxSubmit.disabled = true;
-  lxMessage.textContent = 'Please wait...';
-
-  try {
-    const email = lxEmail.value.trim();
-    const password = lxPassword.value;
-
-    if (lxSignupMode) {
-      const { data, error } = await lxSupabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: lxName.value.trim()
-          },
-          emailRedirectTo:
-            'https://linsightx.github.io/Linsightx/'
+
+      button, input, textarea, select {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        min-height: 72px;
+        padding: 0 24px;
+        background: rgba(255, 255, 255, 0.96);
+        border-bottom: 1px solid #dfeaf5;
+        box-shadow: 0 4px 18px rgba(19, 43, 77, 0.06);
+      }
+
+      .logo {
+        flex-shrink: 0;
+        font-size: 28px;
+        font-weight: 850;
+        letter-spacing: -1.2px;
+        color: #102d52;
+      }
+
+      .logo span { color: #3478f6; }
+
+      .search {
+        flex: 1;
+        width: min(520px, 100%);
+        min-width: 0;
+        padding: 12px 18px;
+        border: 1px solid #bfcee3;
+        border-radius: 24px;
+        background: #fff;
+        color: var(--text);
+        font-size: 14px;
+        outline: none;
+      }
+
+      .search:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        color: #1d4ed8;
+        border: 1px solid #bfdbfe;
+      }
+
+      .layout {
+        max-width: 1440px;
+        margin: 24px auto 40px;
+        padding: 0 22px;
+        display: grid;
+        grid-template-columns: 200px minmax(0, 1fr) 260px;
+        gap: 24px;
+      }
+
+      .leftcol, .rightcol, main {
+        min-width: 0;
+      }
+
+      .sidebar, .panel, .post, .composer, .feedtabs, .job-card, .form-card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: 0 5px 20px rgba(19, 43, 77, 0.035);
+      }
+
+      .sidebar {
+        padding: 18px 14px;
+        position: sticky;
+        top: 90px;
+        height: fit-content;
+      }
+
+      .navitem {
+        display: block;
+        width: 100%;
+        padding: 13px 14px;
+        margin: 6px 0;
+        border: 0;
+        background: transparent;
+        border-radius: 10px;
+        color: #475569;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: left;
+      }
+
+      .navitem:hover,
+      .navitem.active {
+        background: #eef4ff;
+        color: #1f5ec7;
+      }
+
+      .navitem.active {
+        box-shadow: inset 3px 0 0 #3478f6;
+      }
+
+      .primary {
+        width: 100%;
+        border: 0;
+        border-radius: 24px;
+        padding: 13px 20px;
+        margin: 18px 0 12px;
+        background: linear-gradient(135deg, var(--primary), #3b82f6);
+        color: #fff;
+        font-weight: 700;
+        box-shadow: 0 6px 18px rgba(37, 99, 235, 0.2);
+      }
+
+      .primary:hover {
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      }
+
+      .smallnote {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .feedtabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 18px;
+        padding: 6px;
+      }
+
+      .feedtabs button {
+        flex: 1;
+        padding: 12px 8px;
+        border: 0;
+        border-radius: 10px;
+        background: transparent;
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .feedtabs button.active {
+        background: #fff;
+        color: #1d4ed8;
+        box-shadow: 0 1px 4px rgba(15, 35, 70, 0.1);
+      }
+
+      .composer {
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .compose-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+      }
+
+      .composer textarea {
+        flex: 1;
+        min-height: 110px;
+        width: 100%;
+        resize: vertical;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: #f8fafc;
+        color: var(--text);
+        outline: none;
+      }
+
+      .composer textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      .compose-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+      }
+
+      .compose-bottom span {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .postbtn {
+        border: 0;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+        padding: 11px 22px;
+        border-radius: 10px;
+        font-weight: 700;
+      }
+
+      .postbtn:hover {
+        transform: translateY(-1px);
+      }
+
+      .post {
+        padding: 20px;
+        margin-bottom: 18px;
+        overflow-wrap: anywhere;
+      }
+
+      .posthead {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid #f1f5f9;
+      }
+
+      .person {
+        font-weight: 800;
+        font-size: 15px;
+        color: #102a56;
+      }
+
+      .handle {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .postbody {
+        margin: 18px 0;
+        color: #334155;
+        line-height: 1.8;
+        font-size: 14px;
+      }
+
+      .tag {
+        display: inline-block;
+        padding: 3px 6px;
+        background: #eff6ff;
+        color: var(--primary);
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 12px;
+      }
+
+      .postlabel {
+        display: inline-block;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        background: #eff6ff;
+        color: var(--primary);
+        border: 1px solid #dbeafe;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.7px;
+        padding: 6px 10px;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+      }
+
+      .actions button {
+        border: 1px solid transparent;
+        background: transparent;
+        color: #64748b;
+        border-radius: 8px;
+        padding: 9px 10px;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .panel {
+        padding: 20px;
+        margin-bottom: 18px;
+      }
+
+      .panel h3 {
+        margin: 0 0 16px;
+        font-size: 16px;
+      }
+
+      .trend {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .trend:last-child { border-bottom: none; }
+
+      .trend small {
+        color: var(--muted);
+      }
+
+      .trend strong {
+        display: block;
+        margin: 5px 0 0;
+        font-size: 13px;
+      }
+
+      .company {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 14px 0;
+      }
+
+      .company .avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 13px;
+      }
+
+      .follow {
+        margin-left: auto;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        background: white;
+        border-radius: 18px;
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      .jobsActionBar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 18px;
+        padding: 16px;
+        background: linear-gradient(135deg, #102d52, #174a87);
+        border-radius: 16px;
+        border: 1px solid #174a87;
+      }
+
+      .jobsActionBar button {
+        flex: 1 1 0;
+        padding: 12px 18px;
+        border: 1px solid rgba(255,255,255,0.8);
+        border-radius: 10px;
+        background: #fff;
+        color: #174a87;
+        font-weight: 700;
+      }
+
+      .jobsActionBar button:hover {
+        background: #ebf3ff;
+      }
+
+      .jobsUtilityBar {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      #jobsFilters {
+        position: relative;
+      }
+
+      .filter-panel {
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 0;
+        display: none;
+        min-width: 260px;
+        padding: 16px;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.15);
+        border: 1px solid var(--line);
+      }
+
+      #jobsFilters.open .filter-panel {
+        display: block;
+      }
+
+      .filter-panel label {
+        display: block;
+        margin-bottom: 12px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .filter-panel select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--line-strong);
+      }
+
+      .jobsActionBar.secondary {
+        background: #fff;
+        border: 1px solid var(--line);
+        box-shadow: none;
+      }
+
+      .jobsActionBar.secondary button {
+        background: #f8fafc;
+        color: var(--text);
+        border-color: #dfe7f1;
+      }
+
+      .job-card {
+        padding: 20px;
+        margin-bottom: 18px;
+      }
+
+      .job-card h3 {
+        margin: 0 0 10px;
+        font-size: 21px;
+      }
+
+      .job-company {
+        font-size: 16px;
+        font-weight: 700;
+        color: #344054;
+      }
+
+      .job-location {
+        margin: 4px 0 12px;
+        color: var(--muted);
+      }
+
+      .job-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 12px 0 14px;
+        padding: 10px 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .job-description {
+        color: #475467;
+        line-height: 1.8;
+      }
+
+      .apply-job-btn {
+        display: inline-block;
+        margin-top: 16px;
+        border: 0;
+        border-radius: 8px;
+        background: var(--primary);
+        color: #fff;
+        padding: 10px 18px;
+        font-weight: 700;
+      }
+
+      .form-card {
+        padding: 24px;
+        margin-top: 24px;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 160px minmax(0, 1fr);
+        gap: 14px;
+        align-items: center;
+      }
+
+      label {
+        font-weight: 600;
+        color: #334155;
+      }
+
+      input, textarea, select {
+        width: 100%;
+        padding: 11px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        background: #fff;
+        color: var(--text);
+      }
+
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      footer {
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+        padding: 22px;
+        border-top: 1px solid var(--line);
+      }
+
+      @media (max-width: 980px) {
+        .layout {
+          grid-template-columns: 180px minmax(0, 1fr);
         }
-      });
 
-      if (error) throw error;
-
-      if (data.session) {
-        lxMessage.textContent =
-          'Account created and signed in successfully.';
-      } else {
-        lxMessage.textContent =
-          'Account created. Check your email to confirm your account before logging in.';
+        .rightcol {
+          display: none;
+        }
       }
-    } else {
-      const { error } =
-        await lxSupabase.auth.signInWithPassword({
-          email,
-          password
+
+      @media (max-width: 640px) {
+        .topbar {
+          padding: 0 12px;
+          gap: 10px;
+          min-height: 58px;
+        }
+
+        .logo {
+          font-size: 20px;
+        }
+
+        .search {
+          width: auto;
+          padding: 9px 12px;
+          font-size: 12px;
+        }
+
+        .layout {
+          display: block;
+          padding: 0 12px 80px;
+        }
+
+        .leftcol {
+          display: none;
+        }
+
+        .composer, .job-card, .form-card, .panel, .post {
+          padding: 16px;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="logo">SIGHT<span>X</span></div>
+      <input class="search" type="search" aria-label="Search" placeholder="Search people, jobs, companies..." />
+      <div class="avatar" aria-label="User profile">LX</div>
+    </header>
+
+    <div class="layout">
+      <aside class="leftcol sidebar" aria-label="Sidebar navigation">
+        <button class="navitem active" type="button">Home</button>
+        <button class="navitem" type="button">Network</button>
+        <button class="navitem" type="button">Messages</button>
+        <button class="navitem" type="button">Jobs</button>
+        <button class="navitem" type="button">Market Intel</button>
+        <button class="primary" type="button">Create Post</button>
+        <div class="smallnote">Build your network with vetted leads, job opportunities, and market insight.</div>
+      </aside>
+
+      <main id="mainContent">
+        <section id="feedPage" class="page-panel">
+          <div class="feedtabs" aria-label="Feed tabs">
+            <button class="active" type="button">For You</button>
+            <button type="button">Trending</button>
+            <button type="button">Jobs</button>
+            <button type="button">My Network</button>
+          </div>
+
+          <div class="composer">
+            <div class="compose-row">
+              <div class="avatar" aria-label="User avatar">LX</div>
+              <textarea id="composerInput" placeholder="Share an update with your network..."></textarea>
+            </div>
+            <div class="compose-bottom">
+              <span>Post to your audience</span>
+              <button class="postbtn" id="postMessageBtn" type="button">Post</button>
+            </div>
+          </div>
+
+          <div id="feedList">
+            <article class="post">
+              <div class="posthead">
+                <div class="avatar">JT</div>
+                <div>
+                  <div class="person">Jordan Tate</div>
+                  <div class="handle">@jordantate · 18 min ago</div>
+                </div>
+              </div>
+              <div class="postbody">
+                <span class="postlabel">INSIGHT</span>
+                Scaling a sales pipeline in a fragmented market starts with better data and sharper outreach. Which channels are driving your highest quality conversations right now?
+              </div>
+              <div class="actions">
+                <button type="button">Like</button>
+                <button type="button">Comment</button>
+                <button type="button">Share</button>
+              </div>
+            </article>
+
+            <article class="post">
+              <div class="posthead">
+                <div class="avatar">MN</div>
+                <div>
+                  <div class="person">Mira Nair</div>
+                  <div class="handle">@miranair · 1 hr ago</div>
+                </div>
+              </div>
+              <div class="postbody">
+                <span class="tag">Hiring</span>
+                We're expanding our customer intelligence team and looking for one strong market researcher with B2B experience.
+              </div>
+              <div class="actions">
+                <button type="button">Like</button>
+                <button type="button">Comment</button>
+                <button type="button">Share</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="jobsPage" class="page-panel hidden">
+          <div class="jobsActionBar" aria-label="Jobs actions">
+            <button type="button" data-open-job-form="new">Post a job</button>
+            <button type="button">Saved jobs</button>
+          </div>
+
+          <div class="jobsUtilityBar">
+            <div id="jobsFilters">
+              <button class="primary" type="button" style="width:auto; margin:0; padding: 11px 18px; border-radius:10px;">Filters</button>
+              <div class="filter-panel">
+                <label>
+                  Location
+                  <select>
+                    <option>Remote</option>
+                    <option>New York</option>
+                    <option>London</option>
+                    <option>Berlin</option>
+                  </select>
+                </label>
+                <label>
+                  Role type
+                  <select>
+                    <option>All roles</option>
+                    <option>Full time</option>
+                    <option>Contract</option>
+                    <option>Internship</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div id="jobsList">
+            <article class="job-card">
+              <h3>Senior Business Development Manager</h3>
+              <div class="job-company">Northstar Advisory</div>
+              <div class="job-location">New York, NY • Hybrid</div>
+              <div class="job-details">
+                <span>Full-time</span>
+                <span>Revenue</span>
+                <span>Lead Gen</span>
+              </div>
+              <div class="job-description">
+                Lead strategic partnerships and build outbound pipeline across enterprise accounts. Own the full funnel from qualification to close with strong relationship-driven execution.
+              </div>
+              <button type="button" class="apply-job-btn" data-apply-job>Apply now</button>
+            </article>
+
+            <article class="job-card">
+              <h3>Market Research Analyst</h3>
+              <div class="job-company">Signal Forge</div>
+              <div class="job-location">Remote • Global</div>
+              <div class="job-details">
+                <span>Full-time</span>
+                <span>Research</span>
+                <span>Data</span>
+              </div>
+              <div class="job-description">
+                Investigate market trends, segment customer behavior, and transform research insights into executive-ready recommendations for sales and product teams.
+              </div>
+              <button type="button" class="apply-job-btn" data-apply-job>Apply now</button>
+            </article>
+          </div>
+
+          <div class="form-card hidden" id="jobFormCard">
+            <h3>Post a job</h3>
+            <form id="jobForm">
+              <div class="form-row">
+                <label for="jobTitle">Job title</label>
+                <input id="jobTitle" name="jobTitle" type="text" placeholder="e.g. Partnerships Manager" required />
+              </div>
+              <div class="form-row">
+                <label for="jobCompany">Company</label>
+                <input id="jobCompany" name="jobCompany" type="text" placeholder="Company name" required />
+              </div>
+              <div class="form-row">
+                <label for="jobLocation">Location</label>
+                <input id="jobLocation" name="jobLocation" type="text" placeholder="Remote / New York / London" required />
+              </div>
+              <div class="form-row">
+                <label for="jobDescription">Description</label>
+                <textarea id="jobDescription" name="jobDescription" placeholder="Tell candidates about the role and what you're looking for." required></textarea>
+              </div>
+              <button class="postbtn" type="submit">Publish job</button>
+            </form>
+          </div>
+
+          <div class="form-card hidden" id="applicationFormCard">
+            <h3>Apply for this role</h3>
+            <form id="applicationForm">
+              <div class="form-row">
+                <label for="applicantName">Your name</label>
+                <input id="applicantName" name="applicantName" type="text" placeholder="Jane Doe" required />
+              </div>
+              <div class="form-row">
+                <label for="applicantEmail">Email</label>
+                <input id="applicantEmail" name="applicantEmail" type="email" placeholder="jane@example.com" required />
+              </div>
+              <div class="form-row">
+                <label for="applicantCover">Cover note</label>
+                <textarea id="applicantCover" name="applicantCover" placeholder="Briefly explain why you're a fit for the role." required></textarea>
+              </div>
+              <button class="postbtn" type="submit">Submit application</button>
+            </form>
+          </div>
+        </section>
+      </main>
+
+      <aside class="rightcol">
+        <div class="panel">
+          <h3>Trending now</h3>
+          <div class="trend">
+            <small>Market intelligence</small>
+            <strong>#RecruitmentOps</strong>
+          </div>
+          <div class="trend">
+            <small>Sales</small>
+            <strong>#B2BSales</strong>
+          </div>
+          <div class="trend">
+            <small>Hiring</small>
+            <strong>#GrowthMarketing</strong>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Suggested companies</h3>
+          <div class="company">
+            <div class="avatar">A</div>
+            <div>Arc Labs</div>
+            <button class="follow" type="button">Follow</button>
+          </div>
+          <div class="company">
+            <div class="avatar">N</div>
+            <div>Northstar</div>
+            <button class="follow" type="button">Follow</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <footer>© 2026 SIGHTX</footer>
+
+    <script>
+      const navButtons = document.querySelectorAll('.navitem');
+      navButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          navButtons.forEach((item) => item.classList.remove('active'));
+          button.classList.add('active');
+
+          const label = button.textContent.trim().toLowerCase();
+          const feedPage = document.getElementById('feedPage');
+          const jobsPage = document.getElementById('jobsPage');
+
+          if (label === 'jobs') {
+            feedPage.classList.add('hidden');
+            jobsPage.classList.remove('hidden');
+          } else {
+            jobsPage.classList.add('hidden');
+            feedPage.classList.remove('hidden');
+          }
         });
-
-      if (error) throw error;
-
-      lxMessage.textContent = 'Login successful!';
-    }
-  } catch (error) {
-    lxMessage.textContent = error.message ||
-      'Something went wrong. Please try again.';
-  } finally {
-    lxSubmit.disabled = false;
-  }
-});
-
-lxLogout.addEventListener('click', async () => {
-  const { error } = await lxSupabase.auth.signOut();
-
-  lxMessage.textContent = error
-    ? error.message
-    : 'You have logged out.';
-});
-
-lxSupabase.auth.onAuthStateChange((event, session) => {
-  if (session) {
-    lxButton.textContent = 'My Account';
-    lxLogout.style.display = 'block';
-  } else {
-    lxButton.textContent = 'Login / Sign Up';
-    lxLogout.style.display = 'none';
-  }
-});
-</script> 
-<script>
-/* Keep Home and Jobs layout in a stable desktop grid after navigation and resize. */
-(function () {
-  window.sightxApplyWideLayout = function () {
-    var layout = document.querySelector('.layout');
-    if (!layout) return;
-    if (layout.classList.contains('application-mode')) {
-      var appLeft = layout.querySelector(':scope > .leftcol');
-      var appMain = layout.querySelector(':scope > main');
-      var appRight = layout.querySelector(':scope > #rightSidebar');
-      layout.style.setProperty('display', 'grid', 'important');
-      layout.style.setProperty('grid-template-columns', 'minmax(0, 1fr)', 'important');
-      layout.style.setProperty('width', 'calc(100% - 32px)', 'important');
-      layout.style.setProperty('max-width', '1440px', 'important');
-      layout.style.setProperty('gap', '0', 'important');
-      if (appLeft) appLeft.style.setProperty('display', 'none', 'important');
-      if (appRight) appRight.style.setProperty('display', 'none', 'important');
-      if (appMain) {
-        appMain.style.setProperty('display', 'block', 'important');
-        appMain.style.setProperty('grid-column', '1', 'important');
-        appMain.style.setProperty('grid-row', '1', 'important');
-        appMain.style.setProperty('width', '100%', 'important');
-        appMain.style.setProperty('min-width', '0', 'important');
-      }
-      return;
-    }
-    var width = window.innerWidth;
-    if (width > 600) {
-      var columns = width <= 800 ? '110px minmax(0, 1fr) 145px'
-        : width <= 1100 ? '150px minmax(0, 1fr) 190px'
-        : '190px minmax(0, 1fr) 245px';
-      layout.style.setProperty('display', 'grid', 'important');
-      layout.style.setProperty('grid-template-columns', columns, 'important');
-      layout.style.setProperty('grid-template-rows', 'auto', 'important');
-      layout.style.setProperty('align-items', 'start', 'important');
-      layout.style.setProperty('gap', width <= 800 ? '8px' : width <= 1100 ? '12px' : '20px', 'important');
-      layout.style.setProperty('width', width <= 800 ? 'calc(100% - 16px)' : width <= 1100 ? 'calc(100% - 24px)' : 'calc(100% - 40px)', 'important');
-      layout.style.setProperty('max-width', '1440px', 'important');
-      layout.style.setProperty('margin', '24px auto', 'important');
-      layout.style.setProperty('padding', '0', 'important');
-      var left = layout.querySelector(':scope > .leftcol');
-      var main = layout.querySelector(':scope > main');
-      var right = layout.querySelector(':scope > #rightSidebar');
-      [[left, '1'], [main, '2'], [right, '3']].forEach(function (entry) {
-        if (!entry[0]) return;
-        entry[0].style.setProperty('display', 'block', 'important');
-        entry[0].style.setProperty('grid-column', entry[1], 'important');
-        entry[0].style.setProperty('grid-row', '1', 'important');
-        entry[0].style.setProperty('min-width', '0', 'important');
-        entry[0].style.setProperty('width', 'auto', 'important');
-        entry[0].style.setProperty('max-width', 'none', 'important');
       });
-      var jobs = document.getElementById('jobsContent');
-      if (jobs) {
-        jobs.style.setProperty('display', 'grid', 'important');
-        jobs.style.setProperty('grid-template-columns', 'repeat(2, minmax(0, 1fr))', 'important');
-        jobs.style.setProperty('gap', '16px', 'important');
-      }
-    } else {
-      layout.style.removeProperty('display');
-      layout.style.removeProperty('grid-template-columns');
-      layout.style.removeProperty('grid-template-rows');
-      layout.style.removeProperty('align-items');
-      layout.style.removeProperty('gap');
-      layout.style.removeProperty('width');
-      layout.style.removeProperty('max-width');
-      layout.style.removeProperty('margin');
-      layout.style.removeProperty('padding');
-      var children = [layout.querySelector(':scope > .leftcol'), layout.querySelector(':scope > main'), layout.querySelector(':scope > #rightSidebar')];
-      children.forEach(function (el) {
-        if (!el) return;
-        ['display','grid-column','grid-row','min-width','width','max-width'].forEach(function (prop) { el.style.removeProperty(prop); });
+
+      document.querySelectorAll('.feedtabs button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document.querySelectorAll('.feedtabs button').forEach((tab) => tab.classList.remove('active'));
+          button.classList.add('active');
+        });
       });
-    }
-  };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.sightxApplyWideLayout);
-  else window.sightxApplyWideLayout();
-  window.addEventListener('resize', window.sightxApplyWideLayout);
-  document.addEventListener('click', function (event) {
-    if (event.target.closest('[data-view]')) setTimeout(window.sightxApplyWideLayout, 0);
-  });
-})();
-</script>
 
+      const jobsFilters = document.getElementById('jobsFilters');
+      const filterToggleButton = jobsFilters.querySelector('button');
+      filterToggleButton.addEventListener('click', () => {
+        jobsFilters.classList.toggle('open');
+      });
 
-<script>
-/* SIGHTX_BROWSER_HISTORY_FIX_V1: keep browser Back/Forward aligned with in-app navigation. */
-(function () {
-  function selectedJobFromStorage() {
-    var raw = sessionStorage.getItem('sightxSelectedJob') || localStorage.getItem('sightxSelectedJob');
-    if (!raw) return null;
-    try {
-      var job = JSON.parse(raw);
-      return job && typeof job === 'object' ? job : null;
-    } catch (_) {
-      return null;
-    }
-  }
+      document.querySelector('[data-open-job-form="new"]').addEventListener('click', () => {
+        document.getElementById('jobFormCard').classList.remove('hidden');
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      });
 
-  function captureRoute() {
-    var page = sessionStorage.getItem('sightxOpenPage') || '';
-    var view = sessionStorage.getItem('sightxCurrentView') || currentView || 'Home';
-    if (page === 'jobApplicationPage') {
-      return { sightxRoute: true, page: page, view: 'Jobs', job: selectedJobFromStorage() };
-    }
-    if (page === 'applyJobPage' || page === 'postJobPage') {
-      return { sightxRoute: true, page: page, view: 'Jobs' };
-    }
-    return { sightxRoute: true, page: view === 'Jobs' ? 'jobs' : 'view', view: view };
-  }
+      document.querySelectorAll('[data-apply-job]').forEach((button) => {
+        button.addEventListener('click', () => {
+          document.getElementById('applicationFormCard').classList.remove('hidden');
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        });
+      });
 
-  function pushCurrentRoute() {
-    var next = captureRoute();
-    var current = history.state;
-    if (current && current.sightxRoute &&
-        current.page === next.page && current.view === next.view &&
-        ((current.job && next.job && String(current.job.id) === String(next.job.id)) ||
-         (!current.job && !next.job))) return;
-    history.pushState(next, '', window.location.href);
-  }
+      document.getElementById('postMessageBtn').addEventListener('click', () => {
+        const field = document.getElementById('composerInput');
+        if (!field.value.trim()) {
+          field.focus();
+          return;
+        }
 
-  function setActiveView(view) {
-    currentView = view;
-    sessionStorage.setItem('sightxCurrentView', view);
-    document.querySelectorAll('.navitem').forEach(function (item) {
-      item.classList.toggle('active', item.dataset.view === view);
-    });
-  }
+        const article = document.createElement('article');
+        article.className = 'post';
+        article.innerHTML = `
+          <div class="posthead">
+            <div class="avatar">LX</div>
+            <div>
+              <div class="person">You</div>
+              <div class="handle">@you · just now</div>
+            </div>
+          </div>
+          <div class="postbody">
+            ${field.value.trim()}
+          </div>
+          <div class="actions">
+            <button type="button">Like</button>
+            <button type="button">Comment</button>
+            <button type="button">Share</button>
+          </div>
+        `;
 
-  function restoreRoute(route) {
-    if (!route || !route.sightxRoute) return;
-    var layout = document.querySelector('.layout');
-    var jobsContent = document.getElementById('jobsContent');
+        const feedList = document.getElementById('feedList');
+        feedList.prepend(article);
+        field.value = '';
+      });
 
-    if (route.page === 'jobApplicationPage') {
-      if (route.job) {
-        setActiveView('Jobs');
-        sessionStorage.setItem('sightxOpenPage', 'jobApplicationPage');
-        sessionStorage.setItem('sightxSelectedJob', JSON.stringify(route.job));
-        localStorage.setItem('sightxSelectedJob', JSON.stringify(route.job));
-        showApplicationForm(route.job);
-      } else {
-        setActiveView('Jobs');
-        sessionStorage.removeItem('sightxOpenPage');
-        sessionStorage.removeItem('sightxSelectedJob');
-        showJobListings();
-      }
-    } else if (route.page === 'jobs') {
-      setActiveView('Jobs');
-      sessionStorage.removeItem('sightxOpenPage');
-      sessionStorage.removeItem('sightxSelectedJob');
-      if (jobsContent) jobsContent.classList.remove('application-form-view');
-      if (layout) layout.classList.remove('application-mode');
-      showJobListings();
-    } else if (route.page === 'applyJobPage' || route.page === 'postJobPage') {
-      setActiveView('Jobs');
-      sessionStorage.setItem('sightxOpenPage', route.page);
-      sessionStorage.removeItem('sightxSelectedJob');
-      applyFilters();
-    } else {
-      setActiveView(route.view || 'Home');
-      sessionStorage.removeItem('sightxOpenPage');
-      sessionStorage.removeItem('sightxSelectedJob');
-      if (jobsContent) jobsContent.classList.remove('application-form-view');
-      if (layout) layout.classList.remove('application-mode');
-      document.getElementById('rightSidebar').style.display = '';
-      document.getElementById('applyJobPage').style.display = 'none';
-      document.getElementById('postJobPage').style.display = 'none';
-      applyFilters();
-    }
+      document.getElementById('jobForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const title = document.getElementById('jobTitle').value.trim();
+        if (!title) return;
 
-    if (typeof window.sightxApplyWideLayout === 'function') window.sightxApplyWideLayout();
-    window.scrollTo({ top: 0, behavior: 'auto' });
-  }
+        const card = document.createElement('article');
+        card.className = 'job-card';
+        card.innerHTML = `
+          <h3>${document.getElementById('jobTitle').value}</h3>
+          <div class="job-company">${document.getElementById('jobCompany').value}</div>
+          <div class="job-location">${document.getElementById('jobLocation').value}</div>
+          <div class="job-details"><span>New listing</span></div>
+          <div class="job-description">${document.getElementById('jobDescription').value}</div>
+          <button type="button" class="apply-job-btn" data-apply-job>Apply now</button>
+        `;
 
-  history.replaceState(captureRoute(), '', window.location.href);
-  document.addEventListener('click', function (event) {
-    var target = event.target;
-    if (!target || !target.closest) return;
-    var navItem = target.closest('.navitem');
-    var mobileItem = target.closest('.mobile-nav button');
-    var jobCardApply = target.closest('#jobsContent .post .apply-job-btn');
-    var jobsAction = target.closest('#jobsActionBar button');
-    var backToJobs = target.closest('#backToJobs');
-    if (jobCardApply || navItem || mobileItem || jobsAction || backToJobs) {
-      window.setTimeout(pushCurrentRoute, 0);
-    }
-  });
-  window.addEventListener('popstate', function (event) { restoreRoute(event.state); });
-})();
-</script>
+        document.getElementById('jobsList').prepend(card);
+        event.target.reset();
+        document.getElementById('jobFormCard').classList.add('hidden');
 
-</body>
+        card.querySelector('[data-apply-job]').addEventListener('click', () => {
+          document.getElementById('applicationFormCard').classList.remove('hidden');
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        });
+      });
+
+      document.getElementById('applicationForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        event.target.reset();
+        document.getElementById('applicationFormCard').classList.add('hidden');
+        window.alert('Application submitted successfully.');
+      });
+    </script>
+  </body>
 </html>
