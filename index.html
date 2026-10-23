@@ -1042,6 +1042,35 @@ font-size: 13px;
   }
 }
 
+/* Give the Apply Now form comfortable width on laptop screens. */
+@media screen and (min-width: 801px) {
+  html body #applyJobPage {
+    width: 100% !important;
+    max-width: 900px !important;
+    margin: 24px auto !important;
+    padding: 32px !important;
+    box-sizing: border-box !important;
+  }
+  html body #applyJobPage form {
+    width: 100% !important;
+  }
+  html body #applyJobPage input,
+  html body #applyJobPage textarea,
+  html body #applyJobPage select {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+@media screen and (max-width: 800px) {
+  html body #applyJobPage {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 16px auto !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
+  }
+}
+
 /* Right sidebar: use its space efficiently and keep Follow buttons inside cards. */
 @media screen and (min-width: 1101px) {
   html body .layout {
@@ -1210,7 +1239,7 @@ Login / Sign Up
 <button type="button" onclick="showJobListings()" style="padding:14px 24px;margin-left:10px;background:#ffffff;color:#2563eb;border:1px solid #bfdbfe;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">Back to Jobs</button>
   </form>
     </div>
-    <div id="applyJobPage" style="display:none; max-width:600px; margin:30px auto; padding:24px; background:white; border-radius:12px;">
+    <div id="applyJobPage" style="display:none; width:100%; max-width:900px; margin:24px auto; padding:32px; background:white; border:1px solid #dbe4f0; border-radius:16px; box-shadow:0 8px 28px rgba(15,35,70,0.08); box-sizing:border-box;">
   <h2>Apply for a Job</h2>
   <p>Fill in all required fields marked with <span style="color:red;">*</span>.</p>  <form id="jobApplicationForm">
     <label for="appFullName">Full Name <span style="color:red;">*</span></label>
