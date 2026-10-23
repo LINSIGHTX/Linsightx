@@ -1644,7 +1644,7 @@ function showApplicationForm(job) {
 sessionStorage.setItem('sightxCurrentView', 'Jobs');
 const jobsContent = document.getElementById('jobsContent');
 jobsContent.innerHTML = '';
-document.getElementById('jobsPage').style.display = 'none';
+document.getElementById('jobsPage').style.display = 'block';
 jobsContent.style.display = 'block';
 document.getElementById('rightSidebar').style.display = 'none';
 
@@ -2136,9 +2136,19 @@ postJobPage.style.display = 'block';
 jobsPage.style.display = 'none';
 jobsContent.style.display = 'none';
 } else if (savedOpenPage === 'applyJobPage') {
+const selectedJobData = sessionStorage.getItem('sightxSelectedJob');
+
+if (selectedJobData) {
+const selectedJob = JSON.parse(selectedJobData);
+jobsPage.style.display = 'block';
+jobsContent.style.display = 'block';
+applyJobPage.style.display = 'none';
+showApplicationForm(selectedJob);
+} else {
 applyJobPage.style.display = 'block';
 jobsPage.style.display = 'none';
 jobsContent.style.display = 'none';
+}
 } else if (currentView === 'Jobs') {
 jobsPage.style.display = 'block';
 jobsContent.style.display = 'grid';
