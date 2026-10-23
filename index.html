@@ -2084,7 +2084,8 @@ document.getElementById('jobLocationFilter').addEventListener('change', applyFil
 function mobileview(view) {
   currentView = view;
   sessionStorage.setItem('sightxCurrentView', view);
-
+  sessionStorage.removeItem('sightxOpenPage');
+  
   document.querySelectorAll('.navitem').forEach(item => {
     item.classList.toggle('active', item.dataset.view === view);
   });
