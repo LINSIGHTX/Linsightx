@@ -1201,6 +1201,72 @@ font-size: 13px;
   }
 }
 
+/* Keep Apply for a Job and Post a Job consistent, spacious, and stable after refresh. */
+@media screen and (min-width: 801px) {
+  html body .layout.application-mode {
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: calc(100% - 64px) !important;
+    max-width: 1440px !important;
+    gap: 0 !important;
+  }
+  html body .layout.application-mode > .leftcol,
+  html body .layout.application-mode > #rightSidebar {
+    display: none !important;
+  }
+  html body .layout.application-mode > main {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  html body #applyJobPage.active-job-form,
+  html body #postJobPage.active-job-form {
+    width: 100% !important;
+    max-width: 1000px !important;
+    margin: 24px auto !important;
+    padding: 32px !important;
+    background: #fff !important;
+    border: 1px solid #dbe4f0 !important;
+    border-radius: 18px !important;
+    box-shadow: 0 10px 30px rgba(15,35,70,.08) !important;
+    box-sizing: border-box !important;
+  }
+  html body #applyJobPage.active-job-form form,
+  html body #postJobPage.active-job-form form {
+    width: 100% !important;
+    max-width: none !important;
+  }
+  html body #applyJobPage.active-job-form input:not([type="submit"]),
+  html body #applyJobPage.active-job-form textarea,
+  html body #applyJobPage.active-job-form select,
+  html body #postJobPage.active-job-form input:not([type="submit"]),
+  html body #postJobPage.active-job-form textarea,
+  html body #postJobPage.active-job-form select {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 50px !important;
+    padding: 13px 15px !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 10px !important;
+    background: #f8fafc !important;
+    box-sizing: border-box !important;
+  }
+  html body #applyJobPage.active-job-form h2,
+  html body #postJobPage.active-job-form h2 {
+    color: #102a56 !important;
+    font-size: 28px !important;
+    font-weight: 800 !important;
+  }
+}
+@media screen and (max-width: 800px) {
+  html body #applyJobPage.active-job-form,
+  html body #postJobPage.active-job-form {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 16px auto !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
+  }
+}
+
 /* Professional, spacious application form layout. */
 html body #applyJobPage {
   display: none;
@@ -1399,9 +1465,9 @@ Login / Sign Up
   <p style="margin:0;font-size:14px;line-height:1.7;color:#eff6ff;">Discover jobs, connect with professionals, and find new opportunities to grow.</p>
 </div>
 <div id="jobsActionBar" class="jobsActionBar">
-  <button type="button" onclick="sessionStorage.setItem('sightxOpenPage','applyJobPage'); sessionStorage.removeItem('sightxSelectedJob'); sessionStorage.setItem('sightxCurrentView',currentView); document.getElementById('jobsPage').style.display='none'; document.getElementById('jobsContent').style.display='none'; document.getElementById('jobFormArea').style.display='none'; document.getElementById('postJobPage').style.display='none'; document.getElementById('applyJobPage').style.display='block';document.getElementById('rightSidebar').style.display='none';">Apply for Job</button>
+  <button type="button" onclick="sessionStorage.setItem('sightxOpenPage','applyJobPage'); sessionStorage.removeItem('sightxSelectedJob'); sessionStorage.setItem('sightxCurrentView',currentView); document.getElementById('jobsPage').style.display='none'; document.getElementById('jobsContent').style.display='none'; document.getElementById('jobFormArea').style.display='none'; document.getElementById('postJobPage').style.display='none'; document.getElementById('applyJobPage').style.display='block';document.getElementById('rightSidebar').style.display='none';document.querySelector('.layout')?.classList.add('application-mode');document.getElementById('applyJobPage').classList.add('active-job-form');document.getElementById('postJobPage').classList.remove('active-job-form');">Apply for Job</button>
 
-<button type="button" onclick="sessionStorage.setItem('sightxOpenPage','postJobPage'); sessionStorage.setItem('sightxCurrentView',currentView); document.getElementById('jobsPage').style.display='none'; document.getElementById('jobsContent').style.display='none'; document.getElementById('jobFormArea').style.display='none'; document.getElementById('applyJobPage').style.display='none'; document.getElementById('postJobPage').style.display='block';document.getElementById('rightSidebar').style.display='none';">Post a Job</button>
+<button type="button" onclick="sessionStorage.setItem('sightxOpenPage','postJobPage'); sessionStorage.setItem('sightxCurrentView',currentView); document.getElementById('jobsPage').style.display='none'; document.getElementById('jobsContent').style.display='none'; document.getElementById('jobFormArea').style.display='none'; document.getElementById('applyJobPage').style.display='none'; document.getElementById('postJobPage').style.display='block';document.getElementById('rightSidebar').style.display='none';document.querySelector('.layout')?.classList.add('application-mode');document.getElementById('postJobPage').classList.add('active-job-form');document.getElementById('applyJobPage').classList.remove('active-job-form');">Post a Job</button>
 
 </div>
 <div class="jobsUtilityBar">
@@ -2501,6 +2567,11 @@ if (resultsCount) {
   const savedOpenPage = sessionStorage.getItem('sightxOpenPage');
 
 if (savedOpenPage === 'postJobPage') {
+document.querySelector('.layout')?.classList.add('application-mode');
+postJobPage.style.display = 'block';
+postJobPage.classList.add('active-job-form');
+applyJobPage.classList.remove('active-job-form');
+document.getElementById('rightSidebar').style.display = 'none';
 jobsPage.style.display = 'none';
 document.getElementById('jobsContent').style.display = 'none';
 feedTabs.style.display = 'none';
@@ -2513,6 +2584,11 @@ return;
 }
 
 if (savedOpenPage === 'applyJobPage') {
+document.querySelector('.layout')?.classList.add('application-mode');
+applyJobPage.style.display = 'block';
+applyJobPage.classList.add('active-job-form');
+postJobPage.classList.remove('active-job-form');
+document.getElementById('rightSidebar').style.display = 'none';
 jobsPage.style.display = 'none';
 document.getElementById('jobsContent').style.display = 'none';
 feedTabs.style.display = 'none';
