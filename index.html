@@ -1640,10 +1640,15 @@ apply.onclick = function() {
 function showApplicationForm(job) {
 sessionStorage.setItem('sightxOpenPage', 'applyJobPage');
 sessionStorage.setItem('sightxCurrentView', 'Jobs');
+
 const jobsContent = document.getElementById('jobsContent');
-jobsContent.innerHTML = '';
-document.getElementById('jobsPage').style.display = 'block';
-jobsContent.style.display = 'block';
+const jobsPage = document.getElementById('jobsPage');
+const formArea = document.getElementById('jobFormArea');
+
+jobsContent.style.display = 'none';
+jobsPage.style.display = 'block';
+formArea.style.display = 'block';
+formArea.innerHTML = '';
 
   const heading = document.createElement('h2');
   heading.textContent = 'Apply for: ' + job.title;
@@ -1687,7 +1692,7 @@ jobsContent.style.display = 'block';
     </button>
   `;
 
-  jobsContent.appendChild(form);
+  formarea.appendChild(form);
 
   document.getElementById('backToJobs').addEventListener('click', function() {
     showJobListings();
