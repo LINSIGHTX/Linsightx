@@ -1039,6 +1039,58 @@ font-size: 13px;
     font-size: 12px !important;
   }
 }
+
+/* Right sidebar: use its space efficiently and keep Follow buttons inside cards. */
+@media screen and (min-width: 1101px) {
+  html body .layout {
+    grid-template-columns: 190px minmax(0, 1fr) 280px !important;
+    gap: 16px !important;
+    max-width: 1440px !important;
+  }
+}
+html body #rightSidebar {
+  min-width: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+html body #rightSidebar .panel {
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 14px !important;
+  margin: 0 0 14px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+html body #rightSidebar .panel h3 {
+  margin-top: 0;
+  overflow-wrap: anywhere;
+}
+html body #rightSidebar .company {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 12px 0 !important;
+  box-sizing: border-box !important;
+}
+html body #rightSidebar .company .avatar {
+  flex: 0 0 34px !important;
+}
+html body #rightSidebar .company > div:not(.avatar) {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere;
+}
+html body #rightSidebar .company .follow {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding: 6px 9px !important;
+  white-space: nowrap !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
 /* End SIGHTX FINAL LAYOUT */
 
 </style>
