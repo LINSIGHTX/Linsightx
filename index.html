@@ -2001,7 +2001,9 @@ return;
 
 if (currentView === 'Jobs') {
 jobsPage.style.display = 'block';
-document.getElementById('rightSidebar').style.display = '';
+const openPage = sessionStorage.getItem('sightxOpenPage');
+document.getElementById('rightSidebar').style.display =
+  openPage === 'applyJobPage' ? 'none' : '';
 feedTabs.style.display = 'none';
 composer.style.display = 'none';
 feed.style.display = 'none';
