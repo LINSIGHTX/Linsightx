@@ -980,6 +980,77 @@ font-size: 13px;
 }
 /* End HOME DESKTOP LAYOUT FIX */
 
+
+/* FINAL RESPONSIVE LAYOUT OVERRIDE: desktop/tablet columns on Home and Jobs. */
+@media screen and (min-width: 601px) {
+  html body .layout {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: flex-start !important;
+    justify-content: stretch !important;
+    gap: 18px !important;
+    width: calc(100% - 32px) !important;
+    max-width: 1440px !important;
+    margin: 24px auto !important;
+    padding: 0 !important;
+  }
+  html body .layout > .leftcol {
+    display: block !important;
+    flex: 0 0 190px !important;
+    width: 190px !important;
+    min-width: 190px !important;
+    max-width: 190px !important;
+  }
+  html body .layout > main {
+    display: block !important;
+    flex: 1 1 0% !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+  html body .layout > #rightSidebar {
+    display: block !important;
+    flex: 0 0 245px !important;
+    width: 245px !important;
+    min-width: 245px !important;
+    max-width: 245px !important;
+  }
+  html body #jobsContent {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    align-items: start !important;
+    gap: 16px !important;
+    width: 100% !important;
+  }
+  html body #jobsContent > * {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+}
+@media screen and (min-width: 601px) and (max-width: 1050px) {
+  html body .layout {
+    gap: 12px !important;
+    width: calc(100% - 24px) !important;
+  }
+  html body .layout > .leftcol {
+    flex-basis: 150px !important;
+    width: 150px !important;
+    min-width: 150px !important;
+    max-width: 150px !important;
+  }
+  html body .layout > #rightSidebar {
+    flex-basis: 190px !important;
+    width: 190px !important;
+    min-width: 190px !important;
+    max-width: 190px !important;
+  }
+  html body #jobsContent {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+/* End FINAL RESPONSIVE LAYOUT OVERRIDE */
+
 </style>
 </head>
 <body>
@@ -2535,5 +2606,74 @@ lxSupabase.auth.onAuthStateChange((event, session) => {
     lxLogout.style.display = 'none';
   }
 });
-</script> </body>
+</script> 
+<script>
+/* Reinforce the desktop layout after page scripts toggle Home/Jobs views. */
+(function () {
+  function sightxApplyWideLayout() {
+    var wide = window.innerWidth > 600;
+    var layout = document.querySelector('body > .layout');
+    if (!layout) return;
+    if (wide) {
+      layout.style.setProperty('display', 'flex', 'important');
+      layout.style.setProperty('flex-direction', 'row', 'important');
+      layout.style.setProperty('flex-wrap', 'nowrap', 'important');
+      layout.style.setProperty('align-items', 'flex-start', 'important');
+      layout.style.setProperty('width', 'calc(100% - 32px)', 'important');
+      layout.style.setProperty('max-width', '1440px', 'important');
+      layout.style.setProperty('margin', '24px auto', 'important');
+      var left = layout.querySelector(':scope > .leftcol');
+      var main = layout.querySelector(':scope > main');
+      var right = layout.querySelector(':scope > #rightSidebar');
+      if (left) {
+        left.style.setProperty('display', 'block', 'important');
+        left.style.setProperty('flex', window.innerWidth <= 1050 ? '0 0 150px' : '0 0 190px', 'important');
+        left.style.setProperty('width', window.innerWidth <= 1050 ? '150px' : '190px', 'important');
+        left.style.setProperty('min-width', window.innerWidth <= 1050 ? '150px' : '190px', 'important');
+      }
+      if (main) {
+        main.style.setProperty('display', 'block', 'important');
+        main.style.setProperty('flex', '1 1 0%', 'important');
+        main.style.setProperty('width', 'auto', 'important');
+        main.style.setProperty('min-width', '0', 'important');
+        main.style.setProperty('max-width', 'none', 'important');
+      }
+      if (right) {
+        right.style.setProperty('display', 'block', 'important');
+        right.style.setProperty('flex', window.innerWidth <= 1050 ? '0 0 190px' : '0 0 245px', 'important');
+        right.style.setProperty('width', window.innerWidth <= 1050 ? '190px' : '245px', 'important');
+        right.style.setProperty('min-width', window.innerWidth <= 1050 ? '190px' : '245px', 'important');
+      }
+      var jobs = document.getElementById('jobsContent');
+      if (jobs) {
+        jobs.style.setProperty('display', 'grid', 'important');
+        jobs.style.setProperty('grid-template-columns', 'repeat(2, minmax(0, 1fr))', 'important');
+        jobs.style.setProperty('gap', '16px', 'important');
+      }
+    } else {
+      layout.style.removeProperty('display');
+      layout.style.removeProperty('flex-direction');
+      layout.style.removeProperty('flex-wrap');
+      layout.style.removeProperty('width');
+      layout.style.removeProperty('max-width');
+      layout.style.removeProperty('margin');
+      var leftSmall = layout.querySelector(':scope > .leftcol');
+      var mainSmall = layout.querySelector(':scope > main');
+      var rightSmall = layout.querySelector(':scope > #rightSidebar');
+      [leftSmall, mainSmall, rightSmall].forEach(function (el) {
+        if (!el) return;
+        ['display','flex','width','min-width','max-width'].forEach(function (p) { el.style.removeProperty(p); });
+      });
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sightxApplyWideLayout);
+  else sightxApplyWideLayout();
+  window.addEventListener('resize', sightxApplyWideLayout);
+  document.addEventListener('click', function (event) {
+    if (event.target.closest('[data-view]')) setTimeout(sightxApplyWideLayout, 0);
+  });
+})();
+</script>
+
+</body>
 </html>
