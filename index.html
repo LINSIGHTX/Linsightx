@@ -2132,7 +2132,6 @@ const jobsPage = document.getElementById('jobsPage');
 const jobsContent = document.getElementById('jobsContent');
 const applyJobPage = document.getElementById('applyJobPage');
 const postJobPage = document.getElementById('postJobPage');
-const rightSidebar = document.getElementById('rightSidebar');
 
 jobsPage.style.display = 'none';
 jobsContent.style.display = 'none';
@@ -2141,47 +2140,34 @@ postJobPage.style.display = 'none';
 
 if (savedOpenPage === 'postJobPage') {
 postJobPage.style.display = 'block';
-if (rightSidebar) rightSidebar.style.display = 'none';
+jobsPage.style.display = 'none';
+jobsContent.style.display = 'none';
 
 } else if (savedOpenPage === 'applyJobPage') {
 const selectedJobData = sessionStorage.getItem('sightxSelectedJob');
 
 if (selectedJobData) {
-try {
 const selectedJob = JSON.parse(selectedJobData);
 jobsPage.style.display = 'block';
 jobsContent.style.display = 'block';
 showApplicationForm(selectedJob);
-if (rightSidebar) rightSidebar.style.display = 'none';
-} catch (error) {
-sessionStorage.removeItem('sightxOpenPage');
-sessionStorage.removeItem('sightxSelectedJob');
-currentView = 'Jobs';
-jobsPage.style.display = 'block';
-jobsContent.style.display = 'grid';
-showJobListings();
-}
 } else {
 applyJobPage.style.display = 'block';
-if (rightSidebar) rightSidebar.style.display = 'none';
+jobsPage.style.display = 'none';
+jobsContent.style.display = 'none';
 }
 
 } else if (currentView === 'Jobs') {
 jobsPage.style.display = 'block';
 jobsContent.style.display = 'grid';
-if (rightSidebar) rightSidebar.style.display = '';
 showJobListings();
 
 } else {
-currentView = 'Home';
-sessionStorage.setItem('sightxCurrentView', 'Home');
-sessionStorage.removeItem('sightxOpenPage');
-if (rightSidebar) rightSidebar.style.display = '';
+currentView = savedViewOnLoad;
+sessionStorage.setItem('sightxCurrentView', currentView);
 }
 
-if (savedOpenPage !== 'applyJobPage' && savedOpenPage !== 'postJobPage') {
 applyFilters();
-}
 document.getElementById('newJobForm').addEventListener('submit',async function(event) {
   event.preventDefault();
   
