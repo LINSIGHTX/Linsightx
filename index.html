@@ -1650,6 +1650,8 @@ document.getElementById('rightSidebar').style.display = 'none';
 document.getElementById('jobsWelcomeBanner').style.display = 'none';
 document.getElementById('jobsActionBar').style.display = 'none';
 document.getElementById('jobsFilters').style.display = 'none';
+const savedButton = document.querySelector('button[onclick="showSavedJobs()"]');
+if (savedButton) savedButton.style.display = 'none';
 
   const heading = document.createElement('h2');
   heading.textContent = 'Apply for: ' + job.title;
