@@ -2104,6 +2104,12 @@ postJobPage.style.display = 'none';
 
 if (savedOpenPage === 'postJobPage') {
 postJobPage.style.display = 'block';
+jobsPage.style.display = 'none';
+jobsContent.style.display = 'none';
+} else if (savedOpenPage === 'applyJobPage') {
+applyJobPage.style.display = 'block';
+jobsPage.style.display = 'none';
+jobsContent.style.display = 'none';
 } else if (savedOpenPage === 'applyJobPage') {
 applyJobPage.style.display = 'block';
 } else if (currentView === 'Jobs') {
