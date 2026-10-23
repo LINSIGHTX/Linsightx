@@ -2278,6 +2278,8 @@ showApplicationForm(job);
 function showApplicationForm(job) {
 sessionStorage.setItem('sightxCurrentView', 'Jobs');
 sessionStorage.setItem('sightxOpenPage', 'jobApplicationPage');
+sessionStorage.setItem('sightxSelectedJob', JSON.stringify(job));
+localStorage.setItem('sightxSelectedJob', JSON.stringify(job));
 const jobsContent = document.getElementById('jobsContent');
 jobsContent.innerHTML = '';
 jobsContent.classList.add('application-form-view');
@@ -2838,7 +2840,7 @@ jobsPage.style.display = 'none';
 jobsContent.style.display = 'none';
 
 } else if (savedOpenPage === 'jobApplicationPage') {
-const selectedJobData = sessionStorage.getItem('sightxSelectedJob');
+const selectedJobData = sessionStorage.getItem('sightxSelectedJob') || localStorage.getItem('sightxSelectedJob');
 
 if (selectedJobData) {
 try {
@@ -3154,6 +3156,25 @@ lxSupabase.auth.onAuthStateChange((event, session) => {
   window.sightxApplyWideLayout = function () {
     var layout = document.querySelector('.layout');
     if (!layout) return;
+    if (layout.classList.contains('application-mode')) {
+      layout.style.setProperty('display', 'grid', 'important');
+      layout.style.setProperty('grid-template-columns', 'minmax(0, 1fr)', 'important');
+      layout.style.setProperty('width', 'calc(100% - 40px)', 'important');
+      layout.style.setProperty('max-width', '1440px', 'important');
+      layout.style.setProperty('gap', '0', 'important');
+      var appLeft = layout.querySelector(':scope > .leftcol');
+      var appMain = layout.querySelector(':scope > main');
+      var appRight = layout.querySelector(':scope > #rightSidebar');
+      if (appLeft) appLeft.style.setProperty('display', 'none', 'important');
+      if (appRight) appRight.style.setProperty('display', 'none', 'important');
+      if (appMain) {
+        appMain.style.setProperty('display', 'block', 'important');
+        appMain.style.setProperty('grid-column', '1', 'important');
+        appMain.style.setProperty('width', '100%', 'important');
+        appMain.style.setProperty('min-width', '0', 'important');
+      }
+      return;
+    }
     var width = window.innerWidth;
     if (width > 600) {
       var columns = width <= 800 ? '110px minmax(0, 1fr) 145px'
