@@ -2084,8 +2084,7 @@ function mobileview(view) {
 }
 
 const savedViewOnLoad = sessionStorage.getItem('sightxCurrentView');
-
-currentView = 'Home';
+currentView = savedViewOnLoad || 'Home';
 
 document.querySelectorAll('.navitem').forEach(item => {
   item.classList.toggle('active', item.dataset.view === currentView);
