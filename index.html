@@ -1643,8 +1643,9 @@ sessionStorage.setItem('sightxOpenPage', 'applyJobPage');
 sessionStorage.setItem('sightxCurrentView', 'Jobs');
 const jobsContent = document.getElementById('jobsContent');
 jobsContent.innerHTML = '';
-document.getElementById('jobsPage').style.display = 'block';
+document.getElementById('jobsPage').style.display = 'none';
 jobsContent.style.display = 'block';
+document.getElementById('rightSidebar').style.display = 'none';
 
   const heading = document.createElement('h2');
   heading.textContent = 'Apply for: ' + job.title;
