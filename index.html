@@ -3385,6 +3385,7 @@ lxSupabase.auth.onAuthStateChange((event, session) => {
       sessionStorage.removeItem('sightxSelectedJob');
       if (jobsContent) jobsContent.classList.remove('application-form-view');
       if (layout) layout.classList.remove('application-mode');
+      document.getElementById('rightSidebar').style.display = '';
       document.getElementById('applyJobPage').style.display = 'none';
       document.getElementById('postJobPage').style.display = 'none';
       applyFilters();
