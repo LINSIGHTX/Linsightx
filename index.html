@@ -3304,5 +3304,112 @@ lxSupabase.auth.onAuthStateChange((event, session) => {
 })();
 </script>
 
+
+<script>
+/* SIGHTX_BROWSER_HISTORY_FIX_V1: keep browser Back/Forward aligned with in-app navigation. */
+(function () {
+  function selectedJobFromStorage() {
+    var raw = sessionStorage.getItem('sightxSelectedJob') || localStorage.getItem('sightxSelectedJob');
+    if (!raw) return null;
+    try {
+      var job = JSON.parse(raw);
+      return job && typeof job === 'object' ? job : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function captureRoute() {
+    var page = sessionStorage.getItem('sightxOpenPage') || '';
+    var view = sessionStorage.getItem('sightxCurrentView') || currentView || 'Home';
+    if (page === 'jobApplicationPage') {
+      return { sightxRoute: true, page: page, view: 'Jobs', job: selectedJobFromStorage() };
+    }
+    if (page === 'applyJobPage' || page === 'postJobPage') {
+      return { sightxRoute: true, page: page, view: 'Jobs' };
+    }
+    return { sightxRoute: true, page: view === 'Jobs' ? 'jobs' : 'view', view: view };
+  }
+
+  function pushCurrentRoute() {
+    var next = captureRoute();
+    var current = history.state;
+    if (current && current.sightxRoute &&
+        current.page === next.page && current.view === next.view &&
+        ((current.job && next.job && String(current.job.id) === String(next.job.id)) ||
+         (!current.job && !next.job))) return;
+    history.pushState(next, '', window.location.href);
+  }
+
+  function setActiveView(view) {
+    currentView = view;
+    sessionStorage.setItem('sightxCurrentView', view);
+    document.querySelectorAll('.navitem').forEach(function (item) {
+      item.classList.toggle('active', item.dataset.view === view);
+    });
+  }
+
+  function restoreRoute(route) {
+    if (!route || !route.sightxRoute) return;
+    var layout = document.querySelector('.layout');
+    var jobsContent = document.getElementById('jobsContent');
+
+    if (route.page === 'jobApplicationPage') {
+      if (route.job) {
+        setActiveView('Jobs');
+        sessionStorage.setItem('sightxOpenPage', 'jobApplicationPage');
+        sessionStorage.setItem('sightxSelectedJob', JSON.stringify(route.job));
+        localStorage.setItem('sightxSelectedJob', JSON.stringify(route.job));
+        showApplicationForm(route.job);
+      } else {
+        setActiveView('Jobs');
+        sessionStorage.removeItem('sightxOpenPage');
+        sessionStorage.removeItem('sightxSelectedJob');
+        showJobListings();
+      }
+    } else if (route.page === 'jobs') {
+      setActiveView('Jobs');
+      sessionStorage.removeItem('sightxOpenPage');
+      sessionStorage.removeItem('sightxSelectedJob');
+      if (jobsContent) jobsContent.classList.remove('application-form-view');
+      if (layout) layout.classList.remove('application-mode');
+      showJobListings();
+    } else if (route.page === 'applyJobPage' || route.page === 'postJobPage') {
+      setActiveView('Jobs');
+      sessionStorage.setItem('sightxOpenPage', route.page);
+      sessionStorage.removeItem('sightxSelectedJob');
+      applyFilters();
+    } else {
+      setActiveView(route.view || 'Home');
+      sessionStorage.removeItem('sightxOpenPage');
+      sessionStorage.removeItem('sightxSelectedJob');
+      if (jobsContent) jobsContent.classList.remove('application-form-view');
+      if (layout) layout.classList.remove('application-mode');
+      document.getElementById('applyJobPage').style.display = 'none';
+      document.getElementById('postJobPage').style.display = 'none';
+      applyFilters();
+    }
+
+    if (typeof window.sightxApplyWideLayout === 'function') window.sightxApplyWideLayout();
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  history.replaceState(captureRoute(), '', window.location.href);
+  document.addEventListener('click', function (event) {
+    var target = event.target;
+    if (!target || !target.closest) return;
+    var navItem = target.closest('.navitem');
+    var mobileItem = target.closest('.mobile-nav button');
+    var jobCardApply = target.closest('#jobsContent .post .apply-job-btn');
+    var jobsAction = target.closest('#jobsActionBar button');
+    var backToJobs = target.closest('#backToJobs');
+    if (jobCardApply || navItem || mobileItem || jobsAction || backToJobs) {
+      window.setTimeout(pushCurrentRoute, 0);
+    }
+  });
+  window.addEventListener('popstate', function (event) { restoreRoute(event.state); });
+})();
+</script>
+
 </body>
 </html>
