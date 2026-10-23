@@ -1967,6 +1967,19 @@ if (resultsCount) {
     : 'Showing ' + visibleJobCount + ' jobs';
 }
 
+  const savedOpenPage = sessionStorage.getItem('sightxOpenPage');
+
+if (savedOpenPage === 'postJobPage' || savedOpenPage === 'applyJobPage') {
+jobsPage.style.display = 'none';
+document.getElementById('jobsContent').style.display = 'none';
+feedTabs.style.display = 'none';
+composer.style.display = 'none';
+feed.style.display = 'none';
+notice.style.display = 'none';
+jobFormArea.style.display = 'none';
+return;
+}
+
 if (currentView === 'Jobs') {
 jobsPage.style.display = 'block';
 feedTabs.style.display = 'none';
