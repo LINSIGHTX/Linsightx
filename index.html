@@ -1640,19 +1640,14 @@ apply.onclick = function() {
 function showApplicationForm(job) {
 sessionStorage.setItem('sightxOpenPage', 'applyJobPage');
 sessionStorage.setItem('sightxCurrentView', 'Jobs');
-
 const jobsContent = document.getElementById('jobsContent');
-const jobsPage = document.getElementById('jobsPage');
-const formArea = document.getElementById('jobFormArea');
-
-jobsContent.style.display = 'none';
-jobsPage.style.display = 'block';
-formArea.style.display = 'block';
-formArea.innerHTML = '';
+jobsContent.innerHTML = '';
+document.getElementById('jobsPage').style.display = 'block';
+jobsContent.style.display = 'block';
 
   const heading = document.createElement('h2');
   heading.textContent = 'Apply for: ' + job.title;
-  formArea.appendChild(heading);
+  jobcontent.appendChild(heading);
 
   const form = document.createElement('form');
   form.id = 'applicationForm';
@@ -1692,14 +1687,10 @@ formArea.innerHTML = '';
     </button>
   `;
 
-  formArea.appendChild(form);
+  jocontent.appendChild(form);
 
   document.getElementById('backToJobs').addEventListener('click', function() {
-sessionStorage.removeItem('sightxOpenPage');
-document.getElementById('jobFormArea').style.display = 'none';
-document.getElementById('jobFormArea').innerHTML = '';
-document.getElementById('jobsContent').style.display = 'grid';
-showJobListings();
+    showJobListings();
 });
 
   form.addEventListener('submit', async function(event) {
