@@ -1594,7 +1594,9 @@ apply.onmouseleave = function() {
 };
 
 apply.onclick = function() {
-  showApplicationForm(job);
+sessionStorage.setItem('sightxSelectedJob', JSON.stringify(job));
+sessionStorage.setItem('sightxOpenPage', 'applyJobPage');
+showApplicationForm(job);
 };
 
     card.append(titleRow, company, locationRow, details, description, viewDetails, apply);
