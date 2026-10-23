@@ -931,41 +931,51 @@ font-size: 13px;
 }
 
 
-/* HOME DESKTOP LAYOUT FIX: keep feed and sidebars in columns on laptops. */
+/* HOME DESKTOP LAYOUT FIX: laptop columns override older responsive rules. */
 @media screen and (min-width: 768px) {
-  .layout {
+  html body .layout {
     display: grid !important;
-    grid-template-columns: 190px minmax(0, 1fr) 245px !important;
-    align-items: start;
-    gap: 20px;
-    max-width: 1440px;
-    margin: 24px auto;
-    padding: 0 20px;
+    grid-template-columns: 190px minmax(420px, 1fr) 245px !important;
+    grid-template-rows: auto !important;
+    align-items: start !important;
+    gap: 20px !important;
+    width: calc(100% - 40px) !important;
+    max-width: 1440px !important;
+    margin: 24px auto !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
   }
-  .layout > .leftcol {
+  html body .layout > aside.leftcol {
     display: block !important;
-    grid-column: 1;
-    min-width: 0;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    float: none !important;
   }
-  .layout > main {
+  html body .layout > main {
     display: block !important;
-    grid-column: 2;
-    min-width: 0;
-    width: auto;
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    float: none !important;
   }
-  .layout > #rightSidebar {
+  html body .layout > aside#rightSidebar {
     display: block !important;
-    grid-column: 3;
-    min-width: 0;
-    width: auto;
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    float: none !important;
   }
 }
-@media screen and (min-width: 768px) and (max-width: 1050px) {
-  .layout {
-    grid-template-columns: 160px minmax(0, 1fr) 210px !important;
-    gap: 14px;
-    padding-left: 12px;
-    padding-right: 12px;
+@media screen and (min-width: 768px) and (max-width: 1100px) {
+  html body .layout {
+    grid-template-columns: 160px minmax(300px, 1fr) 200px !important;
+    gap: 12px !important;
+    width: calc(100% - 24px) !important;
   }
 }
 /* End HOME DESKTOP LAYOUT FIX */
