@@ -2710,12 +2710,27 @@ if (openPage === 'jobApplicationPage') {
   document.getElementById('jobsFilters').style.display = 'none';
   const savedButton = document.querySelector('button[onclick="showSavedJobs()"]');
   if (savedButton) savedButton.style.display = 'none';
-  const selectedJobId = sessionStorage.getItem('sightxSelectedJob');
+  const selectedJobStored = sessionStorage.getItem('sightxSelectedJob') || localStorage.getItem('sightxSelectedJob');
   const cachedJobs = JSON.parse(localStorage.getItem('sightxJobsCache') || '[]');
-  const selectedJob = cachedJobs.find(job => String(job.id) === String(selectedJobId));
+  let selectedJob = null;
+  let selectedJobId = selectedJobStored;
+  if (selectedJobStored) {
+    try {
+      const parsedSelection = JSON.parse(selectedJobStored);
+      if (parsedSelection && typeof parsedSelection === 'object') {
+        selectedJob = parsedSelection;
+        selectedJobId = parsedSelection.id;
+      }
+    } catch (_) {
+      // Older sessions may store only the selected job ID.
+    }
+  }
+  if (!selectedJob && selectedJobId != null) {
+    selectedJob = cachedJobs.find(job => String(job.id) === String(selectedJobId));
+  }
   if (selectedJob) {
     showApplicationForm(selectedJob);
-  } else {
+  } else if (selectedJobId != null) {
     document.getElementById('jobsContent').innerHTML =
       '<div class="application-form-loading">Reloading application form…</div>';
     fetchJobs(true).then(jobs => {
@@ -2727,6 +2742,10 @@ if (openPage === 'jobApplicationPage') {
       document.getElementById('jobsContent').innerHTML =
         '<p>Could not reload this application. Please return to Jobs and select the job again.</p>';
     });
+  } else {
+    sessionStorage.removeItem('sightxOpenPage');
+    document.getElementById('jobsContent').innerHTML =
+      '<p>Please return to Jobs and select a job to apply.</p>';
   }
 }
 feedTabs.style.display = 'none';
@@ -3201,19 +3220,27 @@ lxSupabase.auth.onAuthStateChange((event, session) => {
     var layout = document.querySelector('.layout');
     if (!layout) return;
     if (layout.classList.contains('application-mode')) {
-      layout.style.setProperty('display', 'grid', 'important');
-      layout.style.setProperty('grid-template-columns', 'minmax(0, 1fr)', 'important');
-      layout.style.setProperty('width', 'calc(100% - 40px)', 'important');
-      layout.style.setProperty('max-width', '1440px', 'important');
-      layout.style.setProperty('gap', '0', 'important');
+      var appWidth = window.innerWidth;
       var appLeft = layout.querySelector(':scope > .leftcol');
       var appMain = layout.querySelector(':scope > main');
       var appRight = layout.querySelector(':scope > #rightSidebar');
-      if (appLeft) appLeft.style.setProperty('display', 'none', 'important');
+      layout.style.setProperty('display', 'grid', 'important');
+      layout.style.setProperty('grid-template-columns', appWidth > 800 ? '220px minmax(0, 1fr)' : 'minmax(0, 1fr)', 'important');
+      layout.style.setProperty('width', appWidth > 800 ? 'calc(100% - 48px)' : 'calc(100% - 24px)', 'important');
+      layout.style.setProperty('max-width', '1440px', 'important');
+      layout.style.setProperty('gap', appWidth > 800 ? '20px' : '12px', 'important');
+      if (appLeft) {
+        appLeft.style.setProperty('display', appWidth > 800 ? 'block' : 'none', 'important');
+        appLeft.style.setProperty('grid-column', '1', 'important');
+        appLeft.style.setProperty('grid-row', '1', 'important');
+        appLeft.style.setProperty('width', 'auto', 'important');
+        appLeft.style.setProperty('min-width', '0', 'important');
+      }
       if (appRight) appRight.style.setProperty('display', 'none', 'important');
       if (appMain) {
         appMain.style.setProperty('display', 'block', 'important');
-        appMain.style.setProperty('grid-column', '1', 'important');
+        appMain.style.setProperty('grid-column', appWidth > 800 ? '2' : '1', 'important');
+        appMain.style.setProperty('grid-row', '1', 'important');
         appMain.style.setProperty('width', '100%', 'important');
         appMain.style.setProperty('min-width', '0', 'important');
       }
