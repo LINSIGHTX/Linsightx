@@ -2816,9 +2816,19 @@ function mobileview(view) {
 }
 
 const savedViewOnLoad = sessionStorage.getItem('sightxCurrentView') || 'Home';
-const savedOpenPage = sessionStorage.getItem('sightxOpenPage');
+// Only restore a sub-page when the saved main view is Jobs.
+// Prevent stale application state from hiding the Home navigation after refresh.
+const savedOpenPage = savedViewOnLoad === 'Jobs'
+  ? sessionStorage.getItem('sightxOpenPage')
+  : null;
 
 currentView = savedViewOnLoad;
+document.querySelector('.layout')?.classList.remove('application-mode');
+document.getElementById('jobsContent')?.classList.remove('application-form-view');
+document.getElementById('applyJobPage')?.classList.remove('active-job-form');
+document.getElementById('postJobPage')?.classList.remove('active-job-form');
+document.querySelector('.layout > .leftcol')?.style.removeProperty('display');
+document.getElementById('rightSidebar')?.style.removeProperty('display');
 
 document.querySelectorAll('.navitem').forEach(item => {
 item.classList.toggle('active', item.dataset.view === currentView);
