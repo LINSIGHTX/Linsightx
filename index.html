@@ -1652,7 +1652,7 @@ formArea.innerHTML = '';
 
   const heading = document.createElement('h2');
   heading.textContent = 'Apply for: ' + job.title;
-  jobsContent.appendChild(heading);
+  formArea.appendChild(heading);
 
   const form = document.createElement('form');
   form.id = 'applicationForm';
@@ -1692,11 +1692,15 @@ formArea.innerHTML = '';
     </button>
   `;
 
-  formarea.appendChild(form);
+  formArea.appendChild(form);
 
   document.getElementById('backToJobs').addEventListener('click', function() {
-    showJobListings();
-  });
+sessionStorage.removeItem('sightxOpenPage');
+document.getElementById('jobFormArea').style.display = 'none';
+document.getElementById('jobFormArea').innerHTML = '';
+document.getElementById('jobsContent').style.display = 'grid';
+showJobListings();
+});
 
   form.addEventListener('submit', async function(event) {
     
