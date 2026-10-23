@@ -1064,6 +1064,143 @@ font-size: 13px;
   }
 }
 
+/* Make the dynamic Apply Now form visually match the polished Apply for a Job card. */
+@media screen and (min-width: 801px) {
+  html body .layout.application-mode {
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: calc(100% - 64px) !important;
+    max-width: 1440px !important;
+    gap: 0 !important;
+  }
+  html body .layout.application-mode > .leftcol,
+  html body .layout.application-mode > #rightSidebar {
+    display: none !important;
+  }
+  html body .layout.application-mode > main {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  html body #jobsContent.application-form-view {
+    display: block !important;
+    width: 100% !important;
+    max-width: 1200px !important;
+    margin: 24px auto !important;
+  }
+  html body #jobsContent.application-form-view > h2 {
+    margin: 0 !important;
+    padding: 26px 32px 22px !important;
+    color: #102a56 !important;
+    background: #fff !important;
+    border: 1px solid #dbe4f0 !important;
+    border-bottom: 0 !important;
+    border-radius: 18px 18px 0 0 !important;
+    font-size: 28px !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+  }
+  html body #jobsContent.application-form-view #applicationForm {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 22px 24px !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 28px 32px 32px !important;
+    background: #fff !important;
+    border: 1px solid #dbe4f0 !important;
+    border-radius: 0 0 18px 18px !important;
+    box-shadow: 0 12px 32px rgba(15,35,70,.09) !important;
+    box-sizing: border-box !important;
+  }
+  html body #jobsContent.application-form-view #applicationForm .form-row {
+    min-width: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  html body #jobsContent.application-form-view #applicationForm .form-row label {
+    color: #334155 !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+  }
+  html body #jobsContent.application-form-view #applicationForm .form-row input,
+  html body #jobsContent.application-form-view #applicationForm .form-row textarea {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    min-height: 52px !important;
+    padding: 14px 16px !important;
+    margin: 0 !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 10px !important;
+    background: #f8fafc !important;
+    color: #0f172a !important;
+    font: inherit !important;
+    font-size: 15px !important;
+    box-sizing: border-box !important;
+  }
+  html body #jobsContent.application-form-view #applicationForm .form-row input:focus,
+  html body #jobsContent.application-form-view #applicationForm .form-row textarea:focus {
+    outline: none !important;
+    border-color: #3b82f6 !important;
+    background: #fff !important;
+    box-shadow: 0 0 0 3px rgba(59,130,246,.13) !important;
+  }
+  html body #jobsContent.application-form-view #applicationForm .form-row:has(#applicantCover) {
+    grid-column: 1 / -1 !important;
+  }
+  html body #jobsContent.application-form-view #applicationForm #applicantCover {
+    min-height: 150px !important;
+    resize: vertical !important;
+  }
+  html body #jobsContent.application-form-view #applicationForm > button {
+    min-height: 48px !important;
+    padding: 12px 24px !important;
+    margin: 0 8px 0 0 !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+  }
+  html body #jobsContent.application-form-view #applicationForm > button[type="submit"] {
+    background: #2563eb !important;
+    color: #fff !important;
+  }
+  html body #jobsContent.application-form-view #applicationForm > button[type="button"] {
+    background: #eff6ff !important;
+    color: #1d4ed8 !important;
+    border: 1px solid #bfdbfe !important;
+  }
+}
+@media screen and (max-width: 800px) {
+  html body .layout.application-mode {
+    display: block !important;
+    width: auto !important;
+  }
+  html body #jobsContent.application-form-view {
+    display: block !important;
+    width: 100% !important;
+    margin: 16px auto !important;
+  }
+  html body #jobsContent.application-form-view #applicationForm {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 16px !important;
+    width: 100% !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
+  }
+  html body #jobsContent.application-form-view #applicationForm .form-row input,
+  html body #jobsContent.application-form-view #applicationForm #applicantCover {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
 /* Professional, spacious application form layout. */
 html body #applyJobPage {
   display: none;
@@ -1615,6 +1752,8 @@ function createPost() {
 let sightxJobsLoadToken = 0;
 
 async function showJobListings(skipCache = false) {
+  document.querySelector('.layout')?.classList.remove('application-mode');
+  document.getElementById('jobsContent')?.classList.remove('application-form-view');
   const thisLoadToken = ++sightxJobsLoadToken;
   sessionStorage.setItem('sightxCurrentView', 'Jobs');
   sessionStorage.removeItem('sightxOpenPage');
@@ -2016,6 +2155,8 @@ sessionStorage.setItem('sightxCurrentView', 'Jobs');
 sessionStorage.setItem('sightxOpenPage', 'jobApplicationPage');
 const jobsContent = document.getElementById('jobsContent');
 jobsContent.innerHTML = '';
+jobsContent.classList.add('application-form-view');
+document.querySelector('.layout')?.classList.add('application-mode');
 document.getElementById('jobsPage').style.display = 'block';
 jobsContent.style.display = 'block';
 document.getElementById('rightSidebar').style.display = 'none';
@@ -2437,6 +2578,8 @@ return;
 
 document.querySelectorAll('.navitem').forEach(button => {
   button.addEventListener('click', () => {
+    document.querySelector('.layout')?.classList.remove('application-mode');
+    document.getElementById('jobsContent')?.classList.remove('application-form-view');
     sessionStorage.removeItem('sightxOpenPage');
     currentView = button.dataset.view;
     sessionStorage.setItem('sightxCurrentView', currentView);
