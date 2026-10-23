@@ -1042,112 +1042,6 @@ font-size: 13px;
   }
 }
 
-/* Actual Apply Now form is generated inside #jobsContent; expand that view on laptops. */
-@media screen and (min-width: 801px) {
-  html body .layout.application-mode {
-    grid-template-columns: minmax(0, 1fr) !important;
-    max-width: 1440px !important;
-    width: calc(100% - 64px) !important;
-    gap: 0 !important;
-  }
-  html body .layout.application-mode > .sidebar,
-  html body .layout.application-mode > #rightSidebar {
-    display: none !important;
-  }
-  html body #jobsContent.application-form-view {
-    display: block !important;
-    width: 100% !important;
-    max-width: 1200px !important;
-    margin: 24px auto !important;
-    padding: 0 !important;
-  }
-  html body #jobsContent.application-form-view > h2 {
-    margin: 0 !important;
-    padding: 26px 32px 22px !important;
-    background: #ffffff !important;
-    border: 1px solid #dbe4f0 !important;
-    border-bottom: 0 !important;
-    border-radius: 18px 18px 0 0 !important;
-    color: #102a56 !important;
-    font-size: 28px !important;
-    font-weight: 800 !important;
-  }
-  html body #jobsContent #applicationForm {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 22px 28px !important;
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding: 30px 32px 34px !important;
-    background: #ffffff !important;
-    border: 1px solid #dbe4f0 !important;
-    border-radius: 0 0 18px 18px !important;
-    box-shadow: 0 12px 32px rgba(15,35,70,.09) !important;
-    box-sizing: border-box !important;
-  }
-  html body #jobsContent #applicationForm .form-row {
-    min-width: 0 !important;
-    margin: 0 !important;
-  }
-  html body #jobsContent #applicationForm .form-row label {
-    display: block !important;
-    margin: 0 0 8px !important;
-    color: #334155 !important;
-    font-size: 14px !important;
-    font-weight: 700 !important;
-  }
-  html body #jobsContent #applicationForm .form-row input,
-  html body #jobsContent #applicationForm .form-row textarea {
-    display: block !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    min-height: 54px !important;
-    padding: 14px 16px !important;
-    margin: 0 !important;
-    border: 1px solid #cbd5e1 !important;
-    border-radius: 10px !important;
-    background: #f8fafc !important;
-    font-size: 15px !important;
-    box-sizing: border-box !important;
-  }
-  html body #jobsContent #applicationForm .form-row:has(#applicantCover) {
-    grid-column: 1 / -1 !important;
-  }
-  html body #jobsContent #applicationForm #applicantCover {
-    min-height: 160px !important;
-    resize: vertical;
-  }
-  html body #jobsContent #applicationForm button {
-    min-height: 48px !important;
-    padding: 12px 24px !important;
-    border-radius: 10px !important;
-    font-size: 15px !important;
-    font-weight: 700 !important;
-  }
-}
-@media screen and (max-width: 800px) {
-  html body .layout.application-mode {
-    display: block !important;
-    width: auto !important;
-  }
-  html body #jobsContent.application-form-view {
-    display: block !important;
-    width: 100% !important;
-  }
-  html body #jobsContent #applicationForm {
-    width: 100% !important;
-    box-sizing: border-box !important;
-    padding: 18px !important;
-  }
-  html body #jobsContent #applicationForm .form-row input,
-  html body #jobsContent #applicationForm .form-row textarea {
-    width: 100% !important;
-    box-sizing: border-box !important;
-    min-height: 48px !important;
-  }
-}
-
 /* Let the application view escape the normal narrow three-column feed grid on laptops. */
 @media screen and (min-width: 801px) {
   html body .layout:has(#applyJobPage[style*="display: block"]),
@@ -1721,8 +1615,6 @@ function createPost() {
 let sightxJobsLoadToken = 0;
 
 async function showJobListings(skipCache = false) {
-  document.querySelector('.layout')?.classList.remove('application-mode');
-  document.getElementById('jobsContent')?.classList.remove('application-form-view');
   const thisLoadToken = ++sightxJobsLoadToken;
   sessionStorage.setItem('sightxCurrentView', 'Jobs');
   sessionStorage.removeItem('sightxOpenPage');
@@ -2124,8 +2016,6 @@ sessionStorage.setItem('sightxCurrentView', 'Jobs');
 sessionStorage.setItem('sightxOpenPage', 'jobApplicationPage');
 const jobsContent = document.getElementById('jobsContent');
 jobsContent.innerHTML = '';
-jobsContent.classList.add('application-form-view');
-document.querySelector('.layout')?.classList.add('application-mode');
 document.getElementById('jobsPage').style.display = 'block';
 jobsContent.style.display = 'block';
 document.getElementById('rightSidebar').style.display = 'none';
