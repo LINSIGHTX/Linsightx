@@ -117,7 +117,7 @@ box-sizing: border-box;
 }
   .jobsActionBar {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: center;
   gap: 12px;
@@ -132,7 +132,9 @@ box-sizing: border-box;
 /* Keep only the two primary job actions inside the bordered box. */
 .jobsActionBar > button:nth-of-type(1),
 .jobsActionBar > button:nth-of-type(2) {
-  flex: 1 1 calc(50% - 6px);
+  flex: 1 1 0;
+  width: 50%;
+  min-width: 0;
 }
 
 .jobsUtilityBar {
