@@ -1924,6 +1924,9 @@ async function showJobListings(skipCache = false) {
   document.getElementById('rightSidebar').style.display = '';
   document.getElementById('applyJobPage').style.display = 'none';
   document.getElementById('postJobPage').style.display = 'none';
+  document.getElementById('applyJobPage').classList.remove('active-job-form');
+  document.getElementById('postJobPage').classList.remove('active-job-form');
+  document.getElementById('jobFormArea').style.display = 'none';
   const savedJobsButton = document.querySelector('button[onclick="showSavedJobs()"]');
   if (savedJobsButton) {
     savedJobsButton.style.display = '';
@@ -2312,6 +2315,11 @@ sessionStorage.setItem('sightxCurrentView', 'Jobs');
 sessionStorage.setItem('sightxOpenPage', 'jobApplicationPage');
 sessionStorage.setItem('sightxSelectedJob', JSON.stringify(job));
 localStorage.setItem('sightxSelectedJob', JSON.stringify(job));
+document.getElementById('applyJobPage').style.display = 'none';
+document.getElementById('postJobPage').style.display = 'none';
+document.getElementById('applyJobPage').classList.remove('active-job-form');
+document.getElementById('postJobPage').classList.remove('active-job-form');
+document.getElementById('jobFormArea').style.display = 'none';
 const jobsContent = document.getElementById('jobsContent');
 jobsContent.innerHTML = '';
 jobsContent.classList.add('application-form-view');
@@ -2664,16 +2672,17 @@ if (savedOpenPage === 'postJobPage') {
 document.querySelector('.layout')?.classList.add('application-mode');
 postJobPage.style.display = 'block';
 postJobPage.classList.add('active-job-form');
+applyJobPage.style.display = 'none';
 applyJobPage.classList.remove('active-job-form');
 document.getElementById('rightSidebar').style.display = 'none';
 jobsPage.style.display = 'none';
 document.getElementById('jobsContent').style.display = 'none';
+document.getElementById('jobsContent').classList.remove('application-form-view');
 feedTabs.style.display = 'none';
 composer.style.display = 'none';
 feed.style.display = 'none';
 notice.style.display = 'none';
 jobFormArea.style.display = 'none';
-document.getElementById('rightSidebar').style.display = 'none';
 return;
 }
 
@@ -2681,16 +2690,17 @@ if (savedOpenPage === 'applyJobPage') {
 document.querySelector('.layout')?.classList.add('application-mode');
 applyJobPage.style.display = 'block';
 applyJobPage.classList.add('active-job-form');
+postJobPage.style.display = 'none';
 postJobPage.classList.remove('active-job-form');
 document.getElementById('rightSidebar').style.display = 'none';
 jobsPage.style.display = 'none';
 document.getElementById('jobsContent').style.display = 'none';
+document.getElementById('jobsContent').classList.remove('application-form-view');
 feedTabs.style.display = 'none';
 composer.style.display = 'none';
 feed.style.display = 'none';
 notice.style.display = 'none';
 jobFormArea.style.display = 'none';
-document.getElementById('rightSidebar').style.display = 'none';
 return;
 }
 
@@ -3220,26 +3230,19 @@ lxSupabase.auth.onAuthStateChange((event, session) => {
     var layout = document.querySelector('.layout');
     if (!layout) return;
     if (layout.classList.contains('application-mode')) {
-      var appWidth = window.innerWidth;
       var appLeft = layout.querySelector(':scope > .leftcol');
       var appMain = layout.querySelector(':scope > main');
       var appRight = layout.querySelector(':scope > #rightSidebar');
       layout.style.setProperty('display', 'grid', 'important');
-      layout.style.setProperty('grid-template-columns', appWidth > 800 ? '220px minmax(0, 1fr)' : 'minmax(0, 1fr)', 'important');
-      layout.style.setProperty('width', appWidth > 800 ? 'calc(100% - 48px)' : 'calc(100% - 24px)', 'important');
+      layout.style.setProperty('grid-template-columns', 'minmax(0, 1fr)', 'important');
+      layout.style.setProperty('width', 'calc(100% - 32px)', 'important');
       layout.style.setProperty('max-width', '1440px', 'important');
-      layout.style.setProperty('gap', appWidth > 800 ? '20px' : '12px', 'important');
-      if (appLeft) {
-        appLeft.style.setProperty('display', appWidth > 800 ? 'block' : 'none', 'important');
-        appLeft.style.setProperty('grid-column', '1', 'important');
-        appLeft.style.setProperty('grid-row', '1', 'important');
-        appLeft.style.setProperty('width', 'auto', 'important');
-        appLeft.style.setProperty('min-width', '0', 'important');
-      }
+      layout.style.setProperty('gap', '0', 'important');
+      if (appLeft) appLeft.style.setProperty('display', 'none', 'important');
       if (appRight) appRight.style.setProperty('display', 'none', 'important');
       if (appMain) {
         appMain.style.setProperty('display', 'block', 'important');
-        appMain.style.setProperty('grid-column', appWidth > 800 ? '2' : '1', 'important');
+        appMain.style.setProperty('grid-column', '1', 'important');
         appMain.style.setProperty('grid-row', '1', 'important');
         appMain.style.setProperty('width', '100%', 'important');
         appMain.style.setProperty('min-width', '0', 'important');
