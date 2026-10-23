@@ -1042,6 +1042,28 @@ font-size: 13px;
   }
 }
 
+/* Let the application view escape the normal narrow three-column feed grid on laptops. */
+@media screen and (min-width: 801px) {
+  html body .layout:has(#applyJobPage[style*="display: block"]),
+  html body .layout:has(#applyJobPage[style*="display:block"]) {
+    grid-template-columns: minmax(0, 1fr) !important;
+    max-width: 1440px !important;
+    width: calc(100% - 48px) !important;
+    gap: 0 !important;
+  }
+  html body .layout:has(#applyJobPage[style*="display: block"]) > .sidebar,
+  html body .layout:has(#applyJobPage[style*="display:block"]) > .sidebar,
+  html body .layout:has(#applyJobPage[style*="display: block"]) > #rightSidebar,
+  html body .layout:has(#applyJobPage[style*="display:block"]) > #rightSidebar {
+    display: none !important;
+  }
+  html body #applyJobPage {
+    width: 100% !important;
+    max-width: 1200px !important;
+    margin: 24px auto !important;
+  }
+}
+
 /* Professional, spacious application form layout. */
 html body #applyJobPage {
   display: none;
