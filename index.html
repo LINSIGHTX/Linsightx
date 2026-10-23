@@ -2083,24 +2083,37 @@ function mobileview(view) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-const savedViewOnLoad = sessionStorage.getItem('sightxCurrentView');
-currentView = savedViewOnLoad || 'Home';
+const savedViewOnLoad = sessionStorage.getItem('sightxCurrentView') || 'Home';
+const savedOpenPage = sessionStorage.getItem('sightxOpenPage');
+
+currentView = savedViewOnLoad;
 
 document.querySelectorAll('.navitem').forEach(item => {
-  item.classList.toggle('active', item.dataset.view === currentView);
+item.classList.toggle('active', item.dataset.view === currentView);
 });
 
-document.getElementById('applyJobPage').style.display = 'none';
-document.getElementById('postJobPage').style.display = 'none';
+const jobsPage = document.getElementById('jobsPage');
+const jobsContent = document.getElementById('jobsContent');
+const applyJobPage = document.getElementById('applyJobPage');
+const postJobPage = document.getElementById('postJobPage');
 
-if (currentView === 'Jobs') {
-  document.getElementById('jobsPage').style.display = 'block';
-  showJobListings();
+jobsPage.style.display = 'none';
+jobsContent.style.display = 'none';
+applyJobPage.style.display = 'none';
+postJobPage.style.display = 'none';
+
+if (savedOpenPage === 'postJobPage') {
+postJobPage.style.display = 'block';
+} else if (savedOpenPage === 'applyJobPage') {
+applyJobPage.style.display = 'block';
+} else if (currentView === 'Jobs') {
+jobsPage.style.display = 'block';
+jobsContent.style.display = 'grid';
+showJobListings();
 } else {
-  currentView = 'Home';
-  sessionStorage.setItem('sightxCurrentView', 'Home');
-  sessionStorage.removeItem('sightxOpenPage');
-  document.getElementById('jobsPage').style.display = 'none';
+currentView = 'Home';
+sessionStorage.setItem('sightxCurrentView', 'Home');
+sessionStorage.removeItem('sightxOpenPage');
 }
 
 applyFilters();
