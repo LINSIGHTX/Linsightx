@@ -1042,32 +1042,118 @@ font-size: 13px;
   }
 }
 
-/* Give the Apply Now form comfortable width on laptop screens. */
-@media screen and (min-width: 801px) {
-  html body #applyJobPage {
-    width: 100% !important;
-    max-width: 900px !important;
-    margin: 24px auto !important;
-    padding: 32px !important;
-    box-sizing: border-box !important;
-  }
-  html body #applyJobPage form {
-    width: 100% !important;
-  }
-  html body #applyJobPage input,
-  html body #applyJobPage textarea,
-  html body #applyJobPage select {
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
+/* Professional, spacious application form layout. */
+html body #applyJobPage {
+  display: none;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 18px 0 28px !important;
+  padding: 0 !important;
+  background: #ffffff !important;
+  border: 1px solid #dbe4f0 !important;
+  border-radius: 18px !important;
+  box-shadow: 0 12px 32px rgba(15, 35, 70, 0.09) !important;
+  overflow: hidden;
+  box-sizing: border-box !important;
+}
+html body #applyJobPage h2 {
+  margin: 0 !important;
+  padding: 26px 32px 10px !important;
+  color: #102a56 !important;
+  font-size: 28px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+}
+html body #applyJobPage > p {
+  margin: 0 !important;
+  padding: 0 32px 24px !important;
+  color: #64748b !important;
+  font-size: 15px !important;
+  border-bottom: 1px solid #e8eef6;
+}
+html body #applyJobPage #jobApplicationForm {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px 24px !important;
+  width: 100% !important;
+  padding: 26px 32px 32px !important;
+  box-sizing: border-box !important;
+}
+html body #applyJobPage #jobApplicationForm label {
+  display: block !important;
+  align-self: end !important;
+  margin: 0 0 2px !important;
+  color: #334155 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+}
+html body #applyJobPage #jobApplicationForm input:not([type="submit"]),
+html body #applyJobPage #jobApplicationForm textarea,
+html body #applyJobPage #jobApplicationForm select {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 52px !important;
+  margin: 0 0 12px !important;
+  padding: 14px 16px !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px !important;
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  font: inherit !important;
+  font-size: 15px !important;
+  box-sizing: border-box !important;
+  outline: none;
+}
+html body #applyJobPage #jobApplicationForm input:focus,
+html body #applyJobPage #jobApplicationForm textarea:focus {
+  border-color: #3b82f6 !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.13) !important;
+}
+html body #applyJobPage #jobApplicationForm label[for="appResume"],
+html body #applyJobPage #jobApplicationForm #appResume,
+html body #applyJobPage #jobApplicationForm label[for="appCoverLetter"],
+html body #applyJobPage #jobApplicationForm #appCoverLetter {
+  grid-column: 1 / -1 !important;
+}
+html body #applyJobPage #jobApplicationForm #appCoverLetter {
+  min-height: 150px !important;
+  resize: vertical;
+}
+html body #applyJobPage #jobApplicationForm button {
+  min-height: 48px !important;
+  padding: 12px 24px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  cursor: pointer;
+  margin: 8px 8px 0 0 !important;
+}
+html body #applyJobPage #jobApplicationForm button[type="submit"] {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+html body #applyJobPage #jobApplicationForm button[type="button"] {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border: 1px solid #bfdbfe !important;
 }
 @media screen and (max-width: 800px) {
-  html body #applyJobPage {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 16px auto !important;
+  html body #applyJobPage h2 { padding: 22px 20px 8px !important; font-size: 24px !important; }
+  html body #applyJobPage > p { padding: 0 20px 18px !important; }
+  html body #applyJobPage #jobApplicationForm {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 4px !important;
     padding: 20px !important;
-    box-sizing: border-box !important;
+  }
+  html body #applyJobPage #jobApplicationForm label[for="appResume"],
+  html body #applyJobPage #jobApplicationForm #appResume,
+  html body #applyJobPage #jobApplicationForm label[for="appCoverLetter"],
+  html body #applyJobPage #jobApplicationForm #appCoverLetter {
+    grid-column: 1 !important;
   }
 }
 
