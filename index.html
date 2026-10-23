@@ -1637,10 +1637,13 @@ apply.onclick = function() {
   savedButton.dataset.showingSaved = 'true';
   savedButton.textContent = '♥ All Jobs';
   }
-
 function showApplicationForm(job) {
-  const jobsContent = document.getElementById('jobsContent');
-  jobsContent.innerHTML = '';
+sessionStorage.setItem('sightxOpenPage', 'applyJobPage');
+sessionStorage.setItem('sightxCurrentView', 'Jobs');
+const jobsContent = document.getElementById('jobsContent');
+jobsContent.innerHTML = '';
+document.getElementById('jobsPage').style.display = 'block';
+jobsContent.style.display = 'block';
 
   const heading = document.createElement('h2');
   heading.textContent = 'Apply for: ' + job.title;
