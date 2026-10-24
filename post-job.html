@@ -9,3 +9,23 @@
 <form id="jobForm"><label>Job title<input name="title" required></label><label>Company<input name="company" required></label><label>Location<input name="location" placeholder="City, remote, or hybrid" required></label><label>Employment type<select name="type"><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option></select></label><label>Job description<textarea name="description" placeholder="Responsibilities, requirements, and what you offer." required></textarea></label><label>Application email<input name="email" type="email" placeholder="hiring@company.com" required></label><div class="actions"><a class="btn secondary" href="./index.html#jobs">Cancel</a><button class="btn" type="submit">Publish Job</button></div></form></section></main>
 <script>document.getElementById('jobForm').addEventListener('submit',e=>{e.preventDefault();if(!e.target.reportValidity())return;document.getElementById('notice').classList.add('show');e.target.reset();});</script>
 </body></html>
+<style>
+/* Use the site's clean white-and-dark-blue button style on job forms. */
+.btn:not(.secondary){
+  background:#fff!important;
+  color:#123c70!important;
+  border:1px solid #b8cbe2!important;
+  box-shadow:0 2px 6px rgba(16,45,82,.06)!important;
+}
+.btn:not(.secondary):hover{
+  background:#f0f5fb!important;
+  border-color:#174a86!important;
+  box-shadow:0 4px 10px rgba(16,45,82,.10)!important;
+}
+.btn.secondary{
+  background:#fff!important;
+  color:#123c70!important;
+  border:1px solid #cbd8e8!important;
+}
+.btn.secondary:hover{background:#f4f7fc!important;border-color:#9db4d2!important}
+</style>
