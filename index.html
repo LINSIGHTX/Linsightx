@@ -965,6 +965,46 @@ document.addEventListener('click',e=>{const save=e.target.closest('.save-btn');i
   #page-jobs .job-card .job-meta span{font-size:11px!important;padding:6px 8px!important}
   #page-jobs .job-card .job-desc{margin-bottom:16px!important}
 }
+
+/* Flat metadata badges: no shadows; type left, experience centered, salary right */
+#page-jobs .job-card .job-meta{
+  display:grid!important;
+  grid-template-columns:1fr 1fr 1fr!important;
+  align-items:center!important;
+  gap:8px!important;
+  box-shadow:none!important;
+}
+#page-jobs .job-card .job-meta .job-type-tag{
+  justify-self:start!important;
+}
+#page-jobs .job-card .job-meta .job-experience-tag{
+  justify-self:center!important;
+  color:#6d28d9!important;
+  background:#f3e8ff!important;
+  border:1px solid #d8b4fe!important;
+  box-shadow:none!important;
+  text-align:center!important;
+}
+#page-jobs .job-card .job-meta .job-salary-tag{
+  justify-self:end!important;
+  box-shadow:none!important;
+  text-align:right!important;
+}
+#page-jobs .job-card .job-meta span{
+  box-shadow:none!important;
+  filter:none!important;
+}
+@media(max-width:600px){
+  #page-jobs .job-card .job-meta{
+    grid-template-columns:1fr 1fr 1fr!important;
+    gap:5px!important;
+  }
+  #page-jobs .job-card .job-meta span{
+    max-width:100%!important;
+    padding:6px 7px!important;
+    font-size:10px!important;
+  }
+}
 </style>
 
 
