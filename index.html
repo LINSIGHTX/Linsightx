@@ -717,3 +717,33 @@ document.addEventListener('click',e=>{const save=e.target.closest('.save-btn');i
   box-shadow:0 5px 12px rgba(11,45,92,.17)!important;
 }
 </style>
+
+
+<script>
+/* Reliable immediate navigation for job forms: handle clicks before other page listeners. */
+(function(){
+  document.addEventListener('click',function(event){
+    const applyCta=event.target.closest('#jobsApplyCta');
+    const postCta=event.target.closest('#postJobCta');
+    const cardApply=event.target.closest('#page-jobs [data-open-form]');
+    if(!applyCta&&!postCta&&!cardApply)return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    ensureWorkflowForms();
+    if(postCta){showWorkflowPage('post-job');return;}
+    if(applyCta){
+      const firstJob=[...document.querySelectorAll('#page-jobs .job-card')].find(job=>getComputedStyle(job).display!=='none');
+      const role=firstJob?.querySelector('h3')?.textContent||'Open position';
+      document.getElementById('applicationRole').textContent='Role: '+role;
+      document.getElementById('applicationFormFields').dataset.role=role;
+      showWorkflowPage('apply');
+      return;
+    }
+    const card=cardApply.closest('.job-card');
+    const role=card?.querySelector('h3')?.textContent||'Open position';
+    document.getElementById('applicationRole').textContent='Role: '+role;
+    document.getElementById('applicationFormFields').dataset.role=role;
+    showWorkflowPage('apply');
+  },true);
+})();
+</script>
