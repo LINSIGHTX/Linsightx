@@ -477,3 +477,37 @@ document.addEventListener('click',e=>{const save=e.target.closest('.save-btn');i
 #page-jobs .jobs-cta{flex:0 1 210px!important;width:210px!important;max-width:calc(50% - 5px)!important}
 @media(max-width:480px){#page-jobs .jobs-cta{flex:0 1 165px!important;width:165px!important;max-width:calc(50% - 5px)!important}}
 </style>
+
+<style>
+/* Center the job actions inside a shared highlighted border. */
+#page-jobs .jobs-cta-row{
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:12px!important;
+  width:fit-content!important;
+  max-width:100%!important;
+  margin:0 auto 20px!important;
+  padding:10px!important;
+  border:2px solid #b8ccff!important;
+  border-radius:17px!important;
+  background:linear-gradient(135deg,#f5f8ff,#edf3ff)!important;
+  box-shadow:0 5px 16px rgba(37,99,235,.10)!important;
+}
+#page-jobs .jobs-cta{
+  flex:0 1 190px!important;
+  width:190px!important;
+  max-width:calc(50vw - 50px)!important;
+  min-height:44px!important;
+  padding:9px 12px!important;
+  border:1px solid #1748cf!important;
+  border-radius:10px!important;
+  color:#fff!important;
+  background:linear-gradient(120deg,#1748cf,#3478ff)!important;
+  box-shadow:0 4px 10px rgba(37,99,235,.18)!important;
+}
+@media(max-width:480px){
+  #page-jobs .jobs-cta-row{gap:8px!important;padding:7px!important;border-radius:14px!important}
+  #page-jobs .jobs-cta{width:145px!important;max-width:calc(50vw - 38px)!important;padding:8px 5px!important;font-size:11px!important}
+}
+</style>
