@@ -43,6 +43,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .searchbox:focus-within{background:#fff;border-color:#8fb0ff;box-shadow:0 0 0 4px rgba(36,91,234,.09)}
 .searchbox input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--ink);font-size:13px}
 .searchbox input::placeholder{color:#8998ad}
+.mobile-notification{display:none;position:relative;flex:0 0 36px;width:36px;height:36px;align-items:center;justify-content:center;border:1px solid #e0e8f3;border-radius:11px;background:#fff;color:#244b83;padding:8px}
+.mobile-notification svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mobile-notification .notification-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border:1.5px solid #fff;border-radius:50%;background:#ef4444}
 .toplinks{display:flex;align-items:center;gap:4px;margin-left:auto}
 .toplink{display:flex;align-items:center;gap:7px;padding:9px 10px;border:0;border-radius:10px;background:transparent;color:#526681;font-size:12px;font-weight:750}
 .toplink:hover,.toplink.active{background:#edf3ff;color:var(--blue-dark)}
@@ -233,6 +236,7 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
  .searchbox{flex:0 1 190px;width:190px;max-width:42vw;min-width:0;padding:7px 9px;gap:7px;border-radius:10px}
  .searchbox input{font-size:11px}
  .searchbox input::placeholder{font-size:11px}
+ .mobile-notification{display:inline-flex}
  .layout{display:block;margin-top:16px;padding:0 12px 90px}
  .leftcol{display:none;position:fixed;z-index:50;left:10px;right:10px;top:72px;bottom:85px;overflow:auto;padding:0;border:1px solid #dfe8f4;border-radius:16px;background:#fff;box-shadow:0 18px 42px rgba(19,45,85,.2)}
  .leftcol.mobile-open{display:block}
@@ -277,7 +281,7 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 </style>
 </head>
 <body>
-<header class="topbar"><button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button><a href="#home" class="brand" aria-label="SIGHTX home"><span class="brandmark">S</span><span>SIGHTX</span></a><div class="searchbox"><span>⌕</span><input id="globalSearch" type="search" placeholder="Search people, jobs, insights" aria-label="Search"></div><nav class="toplinks" aria-label="Top navigation"><button class="toplink" data-page="home"><span class="ico">H</span><span>Home</span></button><button class="toplink" data-page="network"><span class="ico">N</span><span>Network</span></button><button class="toplink" data-page="jobs"><span class="ico">J</span><span>Jobs</span></button><button class="toplink" data-page="intel"><span class="ico">I</span><span>Insights</span></button><button class="toplink" data-page="saved"><span class="ico">S</span><span>Saved</span></button></nav></header>
+<header class="topbar"><button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button><a href="#home" class="brand" aria-label="SIGHTX home"><span class="brandmark">S</span><span>SIGHTX</span></a><div class="searchbox"><span>⌕</span><input id="globalSearch" type="search" placeholder="Search people, jobs, insights" aria-label="Search"></div><button class="mobile-notification" id="mobileNotification" type="button" aria-label="Notifications" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-dot" aria-hidden="true"></span></button><nav class="toplinks" aria-label="Top navigation"><button class="toplink" data-page="home"><span class="ico">H</span><span>Home</span></button><button class="toplink" data-page="network"><span class="ico">N</span><span>Network</span></button><button class="toplink" data-page="jobs"><span class="ico">J</span><span>Jobs</span></button><button class="toplink" data-page="intel"><span class="ico">I</span><span>Insights</span></button><button class="toplink" data-page="saved"><span class="ico">S</span><span>Saved</span></button></nav></header>
 <div class="layout">
 <aside class="leftcol" id="leftcol"><section class="card profile-card"><div class="profile-cover"></div><div class="profile-info"><div class="avatar">LX</div><h3>Welcome to SIGHTX</h3><p>Your professional hub for growth, hiring, and insight.</p><button class="small-cta" id="leftCreate" type="button">Create post</button></div></section><nav class="card side-nav" aria-label="Side navigation"><button class="navitem active" type="button" data-page="home"><span class="nav-ico" aria-hidden="true">🏠</span>Home</button><button class="navitem" type="button" data-page="network"><span class="nav-ico" aria-hidden="true">🤝</span>Network</button><button class="navitem" type="button" data-page="jobs"><span class="nav-ico" aria-hidden="true">💼</span>Jobs</button><button class="navitem" type="button" data-page="intel"><span class="nav-ico" aria-hidden="true">📊</span>Insights</button><button class="navitem" type="button" data-page="saved"><span class="nav-ico" aria-hidden="true">🔖</span>Saved</button><button class="navitem" type="button" data-page="messages"><span class="nav-ico" aria-hidden="true">💬</span>Messages</button></nav></aside>
 <main class="maincol">
