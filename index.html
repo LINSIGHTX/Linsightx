@@ -431,7 +431,7 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
     <div class="workflow-promo"><div class="workflow-brand"><span class="workflow-brand-mark">S</span><span>SIGHTX</span></div><div class="eyebrow">TAKE THE NEXT STEP</div><h1>Make your next move.</h1><p>Share a few details and let your experience speak for itself. Your next opportunity could start here.</p><div class="workflow-promo-note"><span>✦</span> Your next chapter starts with one application.</div></div>
     <section id="applicationForm" class="workflow-form"><div class="workflow-form-heading"><h3>Apply for a Job</h3><p class="form-help" id="applicationRole">Role: Your application</p></div>
     <form id="applicationFormFields">
-      <label>Full name<input name="name" type="text" autocomplete="name" required></label>
+      <label>Job you are applying for<select id="applicationJobSelect" name="role" required><option value="">Choose a job</option></select></label><label>Full name<input name="name" type="text" autocomplete="name" required></label>
       <label>Email address<input name="email" type="email" autocomplete="email" required></label>
       <label>Portfolio or LinkedIn URL<input name="profile" type="url" placeholder="https://..." required></label>
       <label>Cover message<textarea name="message" placeholder="Tell us a little about yourself and your experience." required></textarea></label>
@@ -512,19 +512,32 @@ function showWorkflowPage(page){
 }
 function openApplicationForm(role){
  ensureWorkflowForms();
- document.getElementById('applicationRole').textContent='Role: '+role;
- document.getElementById('applicationFormFields').dataset.role=role;
+ const form=document.getElementById('applicationFormFields');
+ const roleLabel=document.getElementById('applicationRole');
+ const select=document.getElementById('applicationJobSelect');
+ if(select){
+  const previous=select.value;
+  select.replaceChildren();
+  const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Choose a job';select.appendChild(placeholder);
+  document.querySelectorAll('#page-jobs .job-card h3').forEach(function(title){
+   const name=title.textContent.trim();const option=document.createElement('option');option.value=name;option.textContent=name;select.appendChild(option);
+  });
+  select.value=role&&[...select.options].some(option=>option.value===role)?role:(previous&&[...select.options].some(option=>option.value===previous)?previous:'');
+  select.onchange=function(){form.dataset.role=select.value;roleLabel.textContent=select.value?'Role: '+select.value:'Choose a job to apply for';};
+ }
+ form.dataset.role=select?select.value:(role||'');
+ if(roleLabel)roleLabel.textContent=(select&&select.value)?'Role: '+select.value:'Choose a job to apply for';
  showWorkflowPage('apply');
 }
 document.getElementById('postJobCta').addEventListener('click',()=>showWorkflowPage('post-job'));
-document.getElementById('jobsApplyCta').addEventListener('click',e=>{e.preventDefault();const firstJob=[...document.querySelectorAll('#page-jobs .job-card')].find(job=>getComputedStyle(job).display!=='none');const role=firstJob?.querySelector('h3')?.textContent||'Open position';openApplicationForm(role);});
+document.getElementById('jobsApplyCta').addEventListener('click',e=>{e.preventDefault();openApplicationForm('');});
 document.addEventListener('click',e=>{const applyLink=e.target.closest('a.apply-btn');if(!applyLink)return;e.preventDefault();const job=applyLink.closest('.job-card');const role=job?.querySelector('h3')?.textContent||new URL(applyLink.href,location.href).searchParams.get('role')||'Open position';openApplicationForm(role);});
 document.addEventListener('click',e=>{const trigger=e.target.closest('[data-open-form]');if(trigger){e.preventDefault();const role=(trigger.closest('.job-card')||document).querySelector('h3')?.textContent||'Open position';openApplicationForm(role);}});
 document.addEventListener('submit',e=>{
  if(e.target.id==='applicationFormFields'){
   e.preventDefault();if(!e.target.reportValidity())return;
   const name=e.target.elements.namedItem('name').value.trim();
-  const role=e.target.dataset.role||document.getElementById('applicationRole').textContent.replace('Role: ','');
+  const role=e.target.elements.namedItem('role')?.value||e.target.dataset.role||'';
   toast('Thanks, '+name+'. Your application form is complete for '+role+'.');
   e.target.reset();go('jobs');
  }
@@ -608,36 +621,21 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
 })();
 </script>
 <!-- Focused repair: route job actions directly to the existing in-page forms. -->
-<!-- Focused repair: open the correct in-page job form without hiding other pages. -->
+
+<!-- Job form routing: keep Post a Job separate and Apply Now role-specific. -->
 <script>
 (function(){
  if(window.__sightxJobFormRepairInstalled)return;
  window.__sightxJobFormRepairInstalled=true;
- if(typeof ensureWorkflowForms==='function')ensureWorkflowForms();
- function openForm(which,role){
-  if(typeof ensureWorkflowForms==='function')ensureWorkflowForms();
-  const target=document.getElementById(which==='apply'?'page-apply':'page-post-job');
-  if(!target)return;
-  document.querySelectorAll('.page').forEach(function(page){page.classList.toggle('active',page===target);page.style.removeProperty('display');});
-  if(which==='apply'){
-   const label=document.getElementById('applicationRole');
-   const form=document.getElementById('applicationFormFields');
-   if(label)label.textContent='Role: '+(role||'Open position');
-   if(form)form.dataset.role=role||'Open position';
-  }
-  document.querySelectorAll('.navitem,.toplink,.mobile-bottom-nav .nav-btn').forEach(function(btn){btn.classList.toggle('active',btn.dataset.page==='jobs');});
-  try{history.replaceState(null,'','#jobs');}catch(err){}
-  target.scrollIntoView({behavior:'auto',block:'start'});
- }
  document.addEventListener('click',function(event){
-  const el=event.target.closest('#jobsApplyCta,#postJobCta,#page-jobs .apply-btn,#page-jobs [data-open-form]');
+  const el=event.target.closest('#postJobCta,#jobsApplyCta,#page-jobs .apply-btn,#page-jobs [data-open-form]');
   if(!el)return;
   event.preventDefault();
   event.stopImmediatePropagation();
-  if(el.id==='postJobCta'){openForm('post-job');return;}
+  if(el.id==='postJobCta'){showWorkflowPage('post-job');return;}
   const card=el.closest('.job-card');
-  const role=card&&card.querySelector('h3')?card.querySelector('h3').textContent.trim():'Open position';
-  openForm('apply',role);
+  const role=card&&card.querySelector('h3')?card.querySelector('h3').textContent.trim():'';
+  openApplicationForm(el.id==='jobsApplyCta'?'':role);
  },true);
 })();
 </script>
