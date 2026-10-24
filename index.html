@@ -511,3 +511,62 @@ document.addEventListener('click',e=>{const save=e.target.closest('.save-btn');i
   #page-jobs .jobs-cta{width:145px!important;max-width:calc(50vw - 38px)!important;padding:8px 5px!important;font-size:11px!important}
 }
 </style>
+
+
+<style>
+/* Final polish: premium shared action panel, crisp icons, and gentle interaction. */
+#page-jobs .jobs-cta-row{
+  gap:12px!important;
+  padding:10px!important;
+  border:1px solid #9dbaff!important;
+  border-radius:16px!important;
+  background:linear-gradient(145deg,#f8faff 0%,#eaf1ff 100%)!important;
+  box-shadow:0 7px 20px rgba(23,72,207,.12),inset 0 1px 0 rgba(255,255,255,.95)!important;
+}
+#page-jobs .jobs-cta{
+  position:relative!important;
+  overflow:hidden!important;
+  min-height:44px!important;
+  font-size:13px!important;
+  font-weight:750!important;
+  letter-spacing:.005em!important;
+  box-shadow:0 3px 8px rgba(23,72,207,.18)!important;
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease!important;
+}
+#page-jobs .jobs-cta span{
+  display:inline-flex!important;
+  width:17px!important;
+  height:17px!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:0!important;
+}
+#page-jobs .jobs-cta-apply span:before{
+  content:"";
+  width:15px;height:15px;display:block;
+  background:currentColor;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17 17 7M7 7h10v10'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17 17 7M7 7h10v10'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+#page-jobs .jobs-cta-post span:before{
+  content:"";
+  width:15px;height:15px;display:block;
+  background:currentColor;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+#page-jobs .jobs-cta:hover{
+  transform:translateY(-2px)!important;
+  filter:brightness(1.06)!important;
+  box-shadow:0 7px 14px rgba(23,72,207,.25)!important;
+}
+#page-jobs .jobs-cta:active{transform:translateY(0)!important}
+#page-jobs .jobs-cta:focus-visible{outline:3px solid #7aa4ff!important;outline-offset:3px!important}
+@media(max-width:480px){
+  #page-jobs .jobs-cta-row{gap:8px!important;padding:7px!important}
+  #page-jobs .jobs-cta{font-size:11px!important;letter-spacing:0!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #page-jobs .jobs-cta{transition:none!important}
+}
+</style>
