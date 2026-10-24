@@ -517,7 +517,8 @@ function openApplicationForm(role){
  showWorkflowPage('apply');
 }
 document.getElementById('postJobCta').addEventListener('click',()=>showWorkflowPage('post-job'));
-document.getElementById('jobsApplyCta').addEventListener('click',()=>{const firstJob=[...document.querySelectorAll('#page-jobs .job-card')].find(job=>getComputedStyle(job).display!=='none');const role=firstJob?.querySelector('h3')?.textContent||'Open position';openApplicationForm(role);});
+document.getElementById('jobsApplyCta').addEventListener('click',e=>{e.preventDefault();const firstJob=[...document.querySelectorAll('#page-jobs .job-card')].find(job=>getComputedStyle(job).display!=='none');const role=firstJob?.querySelector('h3')?.textContent||'Open position';openApplicationForm(role);});
+document.addEventListener('click',e=>{const applyLink=e.target.closest('a.apply-btn');if(!applyLink)return;e.preventDefault();const job=applyLink.closest('.job-card');const role=job?.querySelector('h3')?.textContent||new URL(applyLink.href,location.href).searchParams.get('role')||'Open position';openApplicationForm(role);});
 document.addEventListener('click',e=>{const trigger=e.target.closest('[data-open-form]');if(trigger){e.preventDefault();const role=(trigger.closest('.job-card')||document).querySelector('h3')?.textContent||'Open position';openApplicationForm(role);}});
 document.addEventListener('submit',e=>{
  if(e.target.id==='applicationFormFields'){
