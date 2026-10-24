@@ -1005,6 +1005,33 @@ document.addEventListener('click',e=>{const save=e.target.closest('.save-btn');i
     font-size:10px!important;
   }
 }
+
+/* Two job cards per row on laptop/desktop; retain single column on mobile */
+@media(min-width:768px){
+  #page-jobs #jobsGrid,
+  #page-jobs .jobs-grid,
+  #page-jobs .job-listings,
+  #page-jobs .job-cards{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:22px!important;
+    align-items:stretch!important;
+  }
+  #page-jobs .job-card{
+    width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+    height:100%!important;
+  }
+}
+@media(max-width:767px){
+  #page-jobs #jobsGrid,
+  #page-jobs .jobs-grid,
+  #page-jobs .job-listings,
+  #page-jobs .job-cards{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+}
 </style>
 
 
