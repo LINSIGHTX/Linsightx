@@ -1010,34 +1010,45 @@ document.addEventListener('click',e=>{const save=e.target.closest('.save-btn');i
 
 /* Job descriptions show two lines by default, with an accessible More/Less toggle. */
 #page-jobs .job-card .job-desc{
+  position:relative!important;
   display:-webkit-box!important;
   -webkit-box-orient:vertical!important;
   -webkit-line-clamp:2!important;
   overflow:hidden!important;
+  padding-right:0!important;
 }
 #page-jobs .job-card .job-desc.is-expanded{
   display:block!important;
   -webkit-line-clamp:unset!important;
   overflow:visible!important;
+  padding-bottom:0!important;
 }
 #page-jobs .job-card .job-desc-toggle{
   display:inline-block!important;
-  margin:-10px 0 16px!important;
-  padding:0!important;
+  position:absolute!important;
+  right:0!important;
+  bottom:0!important;
+  margin:0!important;
+  padding:0 0 0 5px!important;
   border:0!important;
-  background:transparent!important;
+  background:#fff!important;
   color:#174a86!important;
   font:inherit!important;
   font-weight:700!important;
   cursor:pointer!important;
   text-decoration:underline!important;
+  line-height:inherit!important;
+}
+#page-jobs .job-card .job-desc.is-expanded .job-desc-toggle{
+  position:static!important;
+  display:block!important;
+  margin:5px 0 16px!important;
+  padding:0!important;
+  background:transparent!important;
 }
 #page-jobs .job-card .job-desc-toggle:focus-visible{
   outline:2px solid #2563eb!important;
   outline-offset:3px!important;
-}
-@media(max-width:600px){
-  #page-jobs .job-card .job-desc-toggle{margin-top:-8px!important;margin-bottom:14px!important}
 }
 
 /* Two job cards per row on laptop/desktop; retain single column on mobile */
@@ -1105,7 +1116,7 @@ document.addEventListener('click',e=>{const save=e.target.closest('.save-btn');i
    toggle.textContent='More';
    toggle.setAttribute('aria-expanded','false');
    toggle.setAttribute('aria-label','Show full job description');
-   desc.insertAdjacentElement('afterend',toggle);
+   desc.appendChild(toggle);
    toggle.addEventListener('click',function(){
     var expanded=desc.classList.toggle('is-expanded');
     toggle.textContent=expanded?'Less':'More';
