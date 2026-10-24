@@ -622,3 +622,30 @@ document.addEventListener('click',e=>{const save=e.target.closest('.save-btn');i
 }
 #page-jobs .jobs-cta:focus-visible{outline:3px solid #93c5fd!important;outline-offset:3px!important}
 </style>
+
+
+<style>
+/* Fill the full Jobs action panel in blue; keep the two buttons white. */
+#page-jobs .jobs-cta-row{
+  width:100%!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+  border:2px solid #2563eb!important;
+  background:linear-gradient(120deg,#1748cf 0%,#3478ff 100%)!important;
+  box-shadow:0 7px 18px rgba(37,99,235,.18)!important;
+}
+#page-jobs .jobs-cta,
+#page-jobs .jobs-cta-apply,
+#page-jobs .jobs-cta-post{
+  color:#1748cf!important;
+  background:#fff!important;
+  border:1px solid rgba(255,255,255,.9)!important;
+  box-shadow:0 2px 7px rgba(12,40,120,.12)!important;
+}
+#page-jobs .jobs-cta:hover{
+  color:#123db5!important;
+  background:#f0f5ff!important;
+  border-color:#d9e5ff!important;
+  box-shadow:0 5px 12px rgba(12,40,120,.18)!important;
+}
+</style>
