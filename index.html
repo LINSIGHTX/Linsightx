@@ -474,9 +474,7 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
   event.stopImmediatePropagation();
   if(post){window.location.href='./post-job.html';return;}
   if(apply){
-   const first=[...document.querySelectorAll('#page-jobs .job-card')].find(job=>getComputedStyle(job).display!=='none');
-   const role=first?.querySelector('h3')?.textContent||'Open position';
-   window.location.href='./apply.html?role='+encodeURIComponent(role);return;
+   window.location.href='./apply.html';return;
   }
   const card=cardApply.closest('.job-card');
   const role=card?.querySelector('h3')?.textContent||'Open position';
