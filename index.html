@@ -608,23 +608,24 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
 })();
 </script>
 <!-- Focused repair: route job actions directly to the existing in-page forms. -->
+<!-- Focused repair: open the correct in-page job form without hiding other pages. -->
 <script>
 (function(){
  if(window.__sightxJobFormRepairInstalled)return;
  window.__sightxJobFormRepairInstalled=true;
+ if(typeof ensureWorkflowForms==='function')ensureWorkflowForms();
  function openForm(which,role){
+  if(typeof ensureWorkflowForms==='function')ensureWorkflowForms();
   const target=document.getElementById(which==='apply'?'page-apply':'page-post-job');
   if(!target)return;
-  document.querySelectorAll('.page').forEach(function(page){page.classList.remove('active');page.style.display='none';});
-  target.classList.add('active');
-  target.style.display='block';
-  document.querySelectorAll('.navitem,.toplink,.mobile-bottom-nav .nav-btn').forEach(function(btn){btn.classList.toggle('active',btn.dataset.page==='jobs');});
+  document.querySelectorAll('.page').forEach(function(page){page.classList.toggle('active',page===target);page.style.removeProperty('display');});
   if(which==='apply'){
    const label=document.getElementById('applicationRole');
    const form=document.getElementById('applicationFormFields');
    if(label)label.textContent='Role: '+(role||'Open position');
    if(form)form.dataset.role=role||'Open position';
   }
+  document.querySelectorAll('.navitem,.toplink,.mobile-bottom-nav .nav-btn').forEach(function(btn){btn.classList.toggle('active',btn.dataset.page==='jobs');});
   try{history.replaceState(null,'','#jobs');}catch(err){}
   target.scrollIntoView({behavior:'auto',block:'start'});
  }
