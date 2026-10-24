@@ -519,6 +519,72 @@ document.addEventListener('submit',e=>{
 function updateSaved(){const saved=[...document.querySelectorAll('.save-btn.saved')].map(b=>b.closest('.job-card').querySelector('h3').textContent+' — '+b.closest('.job-card').querySelector('.job-meta').textContent);document.getElementById('savedCount')?.replaceChildren(document.createTextNode(saved.length));}
 document.addEventListener('click',e=>{const save=e.target.closest('.save-btn');if(!save){return}save.classList.toggle('saved');save.textContent=save.classList.contains('saved')?'Saved':'Save';updateSaved();});
 </script>
+
+<style>
+/* Restore the previous job-card colour palette without changing current text or links. */
+#page-jobs .job-card{
+  background:#fff!important;
+  border:1px solid #e5edf7!important;
+  border-radius:12px!important;
+  box-shadow:0 7px 22px rgba(23,43,77,.045)!important;
+}
+#page-jobs .job-card:hover{
+  border-color:#cbdcf1!important;
+  box-shadow:0 12px 28px rgba(23,43,77,.09)!important;
+}
+#page-jobs .job-card .job-title-row h3{
+  color:#172b4d!important;
+}
+#page-jobs .job-card .hiring{
+  background:#dcf8ed!important;
+  border:1px solid #b9eedb!important;
+  color:#116b59!important;
+  border-radius:7px!important;
+  font-weight:900!important;
+  letter-spacing:.5px!important;
+}
+#page-jobs .job-card .hiring:before{
+  content:""!important;
+  display:inline-block!important;
+  width:5px!important;height:5px!important;
+  margin-right:5px!important;border-radius:50%!important;
+  background:#15966f!important;
+}
+#page-jobs .job-card .job-meta{
+  color:#5c6c84!important;
+}
+#page-jobs .job-card .job-meta span:not(:nth-child(even)){
+  color:#5c6c84!important;
+  background:#f7faff!important;
+  border:1px solid #e5edf7!important;
+  border-radius:6px!important;
+  padding:4px 7px!important;
+}
+#page-jobs .job-card .job-meta span:nth-child(9){
+  color:#116b43!important;
+  background:#e3f8eb!important;
+  border-color:#b8e8cb!important;
+  font-weight:850!important;
+}
+#page-jobs .job-card .job-desc{
+  color:#475569!important;
+}
+#page-jobs .job-card .job-footer{
+  border-top-color:#e5edf7!important;
+}
+#page-jobs .job-card .save-btn{
+  color:#5c6c84!important;
+  background:#fff!important;
+  border-color:#e5edf7!important;
+}
+#page-jobs .job-card .apply-btn{
+  color:#fff!important;
+  background:#2563eb!important;
+  border:1px solid #2563eb!important;
+  box-shadow:none!important;
+}
+</style>
+
 </body></html>
 
 <style>
