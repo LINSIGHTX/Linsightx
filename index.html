@@ -570,3 +570,30 @@ document.addEventListener('click',e=>{const save=e.target.closest('.save-btn');i
   #page-jobs .jobs-cta{transition:none!important}
 }
 </style>
+
+
+<style>
+/* Expand the Jobs action panel to align with the banner above it. */
+#page-jobs .jobs-cta-row{
+  width:100%!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+  justify-content:stretch!important;
+  gap:14px!important;
+  padding:12px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+#page-jobs .jobs-cta{
+  flex:1 1 0!important;
+  width:auto!important;
+  max-width:none!important;
+  min-width:0!important;
+  min-height:48px!important;
+  box-sizing:border-box!important;
+}
+@media(max-width:480px){
+  #page-jobs .jobs-cta-row{gap:9px!important;padding:8px!important}
+  #page-jobs .jobs-cta{flex:1 1 0!important;width:auto!important;max-width:none!important;min-height:44px!important;padding:9px 6px!important}
+}
+</style>
