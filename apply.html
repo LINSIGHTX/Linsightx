@@ -5,9 +5,9 @@
 </style></head><body>
 <header class="top"><a class="brand" href="./index.html">SIGHTX</a><a class="back" href="./index.html#jobs">← Back to jobs</a></header>
 <main class="wrap"><div class="eyebrow">TAKE THE NEXT STEP</div><h1>Apply for a Job</h1><p>Share your details and tell the hiring team why you are a great fit.</p>
-<section class="panel"><h2>Job application</h2><p id="roleLabel">Role: Open position</p><div id="notice" class="notice" role="status">Your details have been checked, but this demo does not upload resumes or send/store applications.</div>
+<section class="panel"><h2>Job application</h2><div id="notice" class="notice" role="status">Your details have been checked, but this demo does not upload resumes or send/store applications.</div>
 <form id="applicationForm"><label>Full name<input name="name" autocomplete="name" required></label><label>Email address<input name="email" type="email" autocomplete="email" required></label><label>Phone number<input name="phone" type="tel" autocomplete="tel" placeholder="Enter your phone number" required></label><label>Resume (PDF, DOC, or DOCX)<input name="resume" type="file" accept=".pdf,.doc,.docx" required></label><label>Cover letter (optional)<textarea name="message" placeholder="Tell us why you are suitable for this job."></textarea></label><div class="actions"><a class="btn secondary" href="./index.html#jobs">Cancel</a><button class="btn" type="submit">Submit Application</button></div></form></section></main>
-<script>const role=new URLSearchParams(location.search).get('role');if(role){document.getElementById('roleLabel').textContent='Role: '+role;}document.getElementById('applicationForm').addEventListener('submit',e=>{e.preventDefault();if(!e.target.reportValidity())return;document.getElementById('notice').classList.add('show');});</script>
+<script>document.getElementById('applicationForm').addEventListener('submit',e=>{e.preventDefault();if(!e.target.reportValidity())return;document.getElementById('notice').classList.add('show');});</script>
 </body></html>
 <style>
 /* Use the site's clean white-and-dark-blue button style on job forms. */
