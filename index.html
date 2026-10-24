@@ -278,6 +278,30 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
  *,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
 }
 
+
+/* Desktop polish: roomier main feed and a compact supporting column */
+@media(min-width:801px){
+ .layout{gap:22px;margin-top:24px;padding-left:26px;padding-right:26px}
+ .maincol{min-width:0}
+ .page-heading{min-height:126px;margin-bottom:16px;padding:23px 25px;border-radius:18px}
+ .composer{padding:16px;margin-bottom:13px;border-radius:15px}
+ .compose-input{min-height:68px}
+ .feed-tabs{margin:12px 0;padding:4px}
+ .feed-tabs button{padding:8px 11px}
+ .post{padding:16px;margin-bottom:12px;border-radius:15px}
+ .post-body{margin-top:11px;line-height:1.72}
+ .post-actions{margin-top:12px;padding-top:9px}
+ .right-panel{padding:14px;margin-bottom:12px;border-radius:15px}
+ .panel-title{margin-bottom:9px}
+ .trending{padding:8px 0}
+ .job-cards,.jobs-grid,.jobs-listings{gap:13px}
+ .job-card{padding:16px;border-radius:15px}
+}
+@media(min-width:1121px){
+ .layout{grid-template-columns:minmax(0,7fr) minmax(270px,3fr);gap:26px}
+ .rightcol{top:88px}
+}
+
 </style>
 </head>
 <body>
