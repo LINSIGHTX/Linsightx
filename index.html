@@ -334,10 +334,26 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
  .rightcol{top:88px}
 }
 
+
+/* Header search suggestions: compact, responsive, and consistent with SIGHTX. */
+.searchbox{position:relative}
+.search-results{position:absolute;top:calc(100% + 9px);left:0;width:min(430px,calc(100vw - 32px));max-height:min(68vh,520px);overflow:auto;padding:7px;border:1px solid #dce6f4;border-radius:14px;background:#fff;box-shadow:0 18px 45px rgba(20,48,90,.18);color:var(--ink);z-index:60}
+.search-results[hidden]{display:none}
+.search-results-heading{padding:7px 9px 5px;color:#71839a;font-size:10px;font-weight:850;letter-spacing:.1em;text-transform:uppercase}
+.search-result{display:flex;width:100%;align-items:flex-start;gap:10px;padding:10px;border:0;border-radius:10px;background:#fff;text-align:left;color:var(--ink)}
+.search-result:hover,.search-result:focus-visible{background:#f0f5ff}
+.search-result-icon{display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;border-radius:9px;background:#eaf1ff;color:#245bea;font-size:13px;font-weight:900}
+.search-result-copy{min-width:0;flex:1}
+.search-result-title{display:block;font-size:12px;font-weight:850;line-height:1.4;overflow-wrap:anywhere}
+.search-result-detail{display:-webkit-box;margin-top:3px;overflow:hidden;color:#687b94;font-size:11px;line-height:1.5;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+.search-result-type{display:block;margin-top:4px;color:#245bea;font-size:9px;font-weight:850;letter-spacing:.07em;text-transform:uppercase}
+.search-results-empty{padding:18px 12px;text-align:center;color:#657891;font-size:12px}
+@media(max-width:520px){.search-results{left:auto;right:-44px;width:min(430px,calc(100vw - 24px));max-height:60vh}.searchbox{min-width:0}}
+
 </style>
 </head>
 <body>
-<header class="topbar"><button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button><a href="#home" class="brand" aria-label="SIGHTX home"><span class="brandmark">S</span><span>SIGHTX</span></a><div class="searchbox"><span>⌕</span><input id="globalSearch" type="search" placeholder="Search people, jobs, insights" aria-label="Search"></div><button class="mobile-notification" id="mobileNotification" type="button" aria-label="Notifications" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-dot" aria-hidden="true"></span></button><nav class="toplinks" aria-label="Top navigation"><button class="toplink" data-page="home"><span class="ico">H</span><span>Home</span></button><button class="toplink" data-page="jobs"><span class="ico">J</span><span>Jobs</span></button><button class="toplink" data-page="saved"><span class="ico">S</span><span>Saved</span></button><button class="toplink" data-page="about"><span class="ico">A</span><span>About Us</span></button><button class="desktop-notification" id="desktopNotification" type="button" aria-label="Notifications" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-dot" aria-hidden="true"></span></button></nav></header>
+<header class="topbar"><button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button><a href="#home" class="brand" aria-label="SIGHTX home"><span class="brandmark">S</span><span>SIGHTX</span></a><div class="searchbox"><span>⌕</span><input id="globalSearch" type="search" placeholder="Search people, jobs, insights" aria-label="Search"><div id="globalSearchResults" class="search-results" role="listbox" aria-label="Search results" hidden></div></div><button class="mobile-notification" id="mobileNotification" type="button" aria-label="Notifications" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-dot" aria-hidden="true"></span></button><nav class="toplinks" aria-label="Top navigation"><button class="toplink" data-page="home"><span class="ico">H</span><span>Home</span></button><button class="toplink" data-page="jobs"><span class="ico">J</span><span>Jobs</span></button><button class="toplink" data-page="saved"><span class="ico">S</span><span>Saved</span></button><button class="toplink" data-page="about"><span class="ico">A</span><span>About Us</span></button><button class="desktop-notification" id="desktopNotification" type="button" aria-label="Notifications" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-dot" aria-hidden="true"></span></button></nav></header>
 <div class="layout">
 <aside class="leftcol" id="leftcol"><section class="card profile-card"><div class="profile-cover"></div><div class="profile-info"><div class="avatar">LX</div><h3>Welcome to SIGHTX</h3><p>Your professional hub for growth, hiring, and insight.</p><button class="small-cta" id="leftCreate" type="button">Create post</button></div></section><nav class="card side-nav" aria-label="Side navigation"><button class="navitem active" type="button" data-page="home"><span class="nav-ico" aria-hidden="true">🏠</span>Home</button><button class="navitem" type="button" data-page="network"><span class="nav-ico" aria-hidden="true">🤝</span>Network</button><button class="navitem" type="button" data-page="jobs"><span class="nav-ico" aria-hidden="true">💼</span>Jobs</button><button class="navitem" type="button" data-page="intel"><span class="nav-ico" aria-hidden="true">📊</span>Insights</button><button class="navitem" type="button" data-page="saved"><span class="nav-ico" aria-hidden="true">🔖</span>Saved</button><button class="navitem" type="button" data-page="messages"><span class="nav-ico" aria-hidden="true">💬</span>Messages</button></nav></aside>
 <main class="maincol">
@@ -407,7 +423,7 @@ document.getElementById('feedTabs').addEventListener('click',e=>{const btn=e.tar
 function filterJobs(){const q=(document.getElementById('jobSearch').value||'').trim().toLowerCase();const type=document.getElementById('jobType').value;let count=0;document.querySelectorAll('#page-jobs .job-card').forEach(job=>{const match=((job.dataset.search||'')+' '+(job.textContent||'')).toLowerCase().includes(q);const typeMatches=type==='all'||job.dataset.type===type;const visible=match&&typeMatches;job.style.display=visible?'':'none';if(visible)count++;});const heading=document.querySelector('#page-jobs .jobs-header-row h2');if(heading)heading.textContent=count===1?'Featured opening (1)':count?'Featured openings ('+count+')':'No matching roles';const empty=document.getElementById('jobsEmptyState');if(empty)empty.hidden=count!==0;}
 document.getElementById('jobSearch').addEventListener('input',filterJobs);document.getElementById('jobType').addEventListener('change',filterJobs);
 document.getElementById('clearJobFilters').addEventListener('click',()=>{document.getElementById('jobSearch').value='';document.getElementById('jobType').value='all';filterJobs();});
-document.getElementById('globalSearch').addEventListener('keydown',e=>{if(e.key!=='Enter')return;const q=e.target.value.trim().toLowerCase();if(!q)return;const pages=[...document.querySelectorAll('.page')];const match=pages.find(p=>p.id!=='page-apply'&&p.id!=='page-post-job'&&(p.textContent||'').toLowerCase().includes(q));if(match){const name=match.id.replace('page-','');go(name);if(name==='jobs'){document.getElementById('jobSearch').value=q;filterJobs();}toast('Showing results for “'+e.target.value.trim()+'”.');}else{toast('No matches found. Try a different search.');}});
+/* Global search is initialized below after the page content is available. */
 function ensureWorkflowForms(){
  let app=document.getElementById('page-apply');
  if(!app){
@@ -582,4 +598,92 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
 
 
 
+
+
+
+<script>
+/* Search across jobs, people, and feed posts. Suggestions navigate to the matching item. */
+(function(){
+ const input=document.getElementById('globalSearch');
+ const panel=document.getElementById('globalSearchResults');
+ if(!input||!panel)return;
+ let results=[];
+ const norm=value=>(value||'').toLowerCase().replace(/\\s+/g,' ').trim();
+ const snippet=(value,max=150)=>{const text=(value||'').replace(/\\s+/g,' ').trim();return text.length>max?text.slice(0,max-1)+'…':text;};
+ function collect(){
+  const items=[];
+  document.querySelectorAll('#page-jobs .job-card').forEach((el,index)=>{
+   const title=el.querySelector('.job-title-row h3')?.textContent||'Job opening';
+   const company=el.querySelector('.job-company')?.textContent||'';
+   const detail=[company,el.querySelector('.job-location-text')?.textContent,el.querySelector('.job-desc')?.textContent].filter(Boolean).join(' · ');
+   items.push({type:'Job',icon:'J',title,detail,haystack:norm(title+' '+detail+' '+(el.dataset.search||'')),page:'jobs',el});
+  });
+  document.querySelectorAll('#page-network .person-card').forEach(el=>{
+   const title=el.querySelector('h3')?.textContent||'Community member';
+   const detail=el.querySelector('p')?.textContent||'';
+   items.push({type:'Person',icon:'P',title,detail,haystack:norm(title+' '+detail),page:'network',el});
+  });
+  document.querySelectorAll('#feedList .post').forEach((el,index)=>{
+   const title=el.querySelector('.post-person strong')?.textContent||'Community post';
+   const body=el.querySelector('.post-body')?.textContent||'';
+   const detail=snippet(body,170);
+   items.push({type:'Post',icon:'↗',title,detail,haystack:norm(title+' '+body+' '+(el.dataset.category||'')),page:'home',el});
+  });
+  return items;
+ }
+ function hide(){panel.hidden=true;input.setAttribute('aria-expanded','false');}
+ function open(){panel.hidden=false;input.setAttribute('aria-expanded','true');}
+ function render(){
+  const q=norm(input.value);
+  panel.replaceChildren();results=[];
+  if(!q){hide();return;}
+  results=collect().filter(item=>item.haystack.includes(q)).slice(0,12);
+  if(!results.length){
+   const empty=document.createElement('div');empty.className='search-results-empty';empty.textContent='No matches found. Try a job title, person, or post keyword.';panel.appendChild(empty);open();return;
+  }
+  const heading=document.createElement('div');heading.className='search-results-heading';heading.textContent=results.length+' matching '+(results.length===1?'result':'results');panel.appendChild(heading);
+  results.forEach((item,index)=>{
+   const button=document.createElement('button');button.type='button';button.className='search-result';button.setAttribute('role','option');button.dataset.resultIndex=String(index);
+   const icon=document.createElement('span');icon.className='search-result-icon';icon.setAttribute('aria-hidden','true');icon.textContent=item.icon;
+   const copy=document.createElement('span');copy.className='search-result-copy';
+   const title=document.createElement('span');title.className='search-result-title';title.textContent=item.title;
+   const detail=document.createElement('span');detail.className='search-result-detail';detail.textContent=snippet(item.detail,155);
+   const type=document.createElement('span');type.className='search-result-type';type.textContent=item.type;
+   copy.append(title,detail,type);button.append(icon,copy);
+   button.addEventListener('click',()=>navigate(item));
+   panel.appendChild(button);
+  });
+  open();
+ }
+ function navigate(item){
+  hide();go(item.page);
+  if(item.page==='jobs'){
+   const search=document.getElementById('jobSearch');const type=document.getElementById('jobType');
+   if(search){search.value='';if(type)type.value='all';filterJobs();}
+  }
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   if(item.el&&item.el.isConnected){
+    item.el.scrollIntoView({behavior:'smooth',block:'center'});
+    item.el.setAttribute('tabindex','-1');
+    item.el.focus({preventScroll:true});
+   }
+  }));
+ }
+ input.setAttribute('aria-controls','globalSearchResults');
+ input.setAttribute('aria-expanded','false');
+ input.setAttribute('autocomplete','off');
+ input.addEventListener('input',render);
+ input.addEventListener('focus',()=>{if(input.value.trim())render();});
+ input.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){hide();return;}
+  if(event.key==='Enter'){
+   event.preventDefault();
+   if(!panel.hidden&&results.length){navigate(results[0]);}
+   else if(input.value.trim())render();
+  }
+  if(event.key==='ArrowDown'&&!panel.hidden){event.preventDefault();panel.querySelector('.search-result')?.focus();}
+ });
+ document.addEventListener('click',event=>{if(!event.target.closest('.searchbox'))hide();});
+})();
+</script>
 
