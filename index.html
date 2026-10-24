@@ -51,6 +51,88 @@ body{background:linear-gradient(180deg,#f8fbff 0%,#eff5ff 100%);color:var(--ink)
 footer{color:#6b7c95}
 @media(max-width:600px){.layout{background:transparent}.page-heading h1{letter-spacing:-.045em}.card,.workflow-form{box-shadow:0 6px 20px rgba(36,72,128,.06)}}
 
+
+/* SIGHTX signature design system — stronger, more distinctive visual direction */
+:root{
+ --bg:#f4f7fc;--ink:#132644;--muted:#64748b;--line:#e3eaf5;--white:#fff;
+ --blue:#245bea;--blue-soft:#edf3ff;--aqua:#18b8b0;--green:#0b805f;
+ --green-bg:#e0f7ed;--shadow:0 12px 32px rgba(24,51,91,.065)
+}
+body{background:#f4f7fc;color:#132644;letter-spacing:-.01em}
+.topbar{height:74px;padding-left:max(24px,calc((100vw - 1380px)/2));padding-right:max(24px,calc((100vw - 1380px)/2));gap:28px;background:rgba(255,255,255,.96);border-bottom:1px solid #e5ebf5;box-shadow:0 5px 24px rgba(23,49,88,.045);backdrop-filter:blur(16px)}
+.brand{font-size:25px;letter-spacing:-1.5px;gap:11px;color:#11284a}
+.brandmark{width:36px;height:36px;border-radius:12px;background:linear-gradient(145deg,#2463eb 0%,#4c7dff 55%,#21c5bb 100%);color:white;box-shadow:0 6px 14px rgba(37,99,235,.2)}
+.searchbox{max-width:480px;border-radius:13px;background:#f5f8fd;border:1px solid #e8edf6;padding:11px 15px}
+.searchbox:focus-within{background:#fff;border-color:#9bb8ff;box-shadow:0 0 0 4px rgba(37,99,235,.075)}
+.layout{max-width:1380px;grid-template-columns:226px minmax(0,1fr) 270px;gap:24px;margin-top:28px;padding-left:24px;padding-right:24px}
+.page-heading{position:relative;overflow:hidden;min-height:145px;align-items:center;margin:0 0 20px;padding:25px 27px;border:1px solid #e3eafa;border-radius:20px;background:linear-gradient(112deg,#fff 0%,#f7faff 58%,#edf7ff 100%);box-shadow:0 8px 24px rgba(35,74,130,.045)}
+.page-heading:after{content:"";position:absolute;right:-34px;top:-68px;width:205px;height:205px;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(56,130,255,.18),rgba(35,199,189,.08) 56%,transparent 72%);pointer-events:none}
+.page-heading>div{position:relative;z-index:1}
+.eyebrow{font-size:10px;letter-spacing:.17em;color:#3867ce;font-weight:850}
+.page-heading h1{font-size:clamp(29px,3.3vw,40px);line-height:1.08;letter-spacing:-.065em;margin-top:9px;color:#122746}
+.page-heading p{font-size:14px;line-height:1.65;margin-top:10px;color:#657792;max-width:550px}
+.card{border:1px solid #e4eaf4;border-radius:18px;box-shadow:0 7px 24px rgba(25,51,88,.045)}
+.side-nav{padding:10px;background:#fff;border-radius:18px}
+.navitem{padding:11px 12px;border-radius:12px;font-size:13px;transition:background .16s,color .16s,transform .16s}
+.navitem:hover{transform:translateX(2px);background:#f1f6ff;color:#1d4ed8}
+.navitem.active{background:linear-gradient(100deg,#eaf1ff,#f4f8ff);color:#1e50c4;box-shadow:inset 3px 0 #3168ee}
+.navitem .nav-ico{width:30px;height:30px;border-radius:10px;background:#f0f5ff;color:#3566d8}
+.profile-card{border-radius:18px}
+.profile-cover{height:78px;background:linear-gradient(115deg,#cfe2ff 0%,#d7f6f2 58%,#e8edff 100%);position:relative}
+.profile-cover:after{content:"";position:absolute;width:100px;height:100px;right:14px;top:-40px;border:1px solid rgba(255,255,255,.7);border-radius:50%;box-shadow:0 0 0 14px rgba(255,255,255,.16),0 0 0 28px rgba(255,255,255,.12)}
+.profile-info{padding:0 18px 18px}
+.profile-info h3{font-size:18px;letter-spacing:-.035em}
+.profile-info p{line-height:1.6}
+.composer{padding:19px;margin-bottom:17px}
+.composer-top{gap:13px}
+.compose-input{min-height:82px;background:#fbfcff;border-color:#e0e8f4;border-radius:14px;padding:14px 15px;font-size:14px}
+.composer-actions{padding-top:14px;margin-top:14px}
+.publish,.apply-btn{border-radius:12px;padding:11px 17px;background:linear-gradient(115deg,#245bea,#426df2);box-shadow:0 7px 15px rgba(36,91,234,.17);transition:transform .15s,box-shadow .15s}
+.publish:hover,.apply-btn:hover{transform:translateY(-1px);box-shadow:0 10px 20px rgba(36,91,234,.23)}
+.feed-tabs{padding:5px;background:#eaf0fa;border:1px solid #e4eaf5;border-radius:13px;margin:17px 0}
+.feed-tabs button{border-radius:10px;padding:10px 13px;font-size:13px}
+.feed-tabs button.active{box-shadow:0 3px 10px rgba(23,48,87,.09);color:#214fc1}
+.post{padding:20px;margin-bottom:16px}
+.post-person strong{font-size:13px;color:#182d4a}
+.post-person span{font-size:11px;color:#7a8aa1}
+.post-body{font-size:14px;line-height:1.8;color:#354761}
+.post-actions{margin-top:16px;padding-top:13px}
+.post-actions button{font-size:12px;border-radius:10px;padding:9px 12px}
+.right-panel{padding:18px;margin-bottom:16px}
+.panel-title h3{font-size:13px;letter-spacing:-.015em}
+.trending{padding:12px 0}
+.trending small{font-size:11px;color:#8391a6}
+.trending strong{font-size:13px;color:#203958;line-height:1.5}
+.jobs-intro{padding:27px;border-radius:20px;background:linear-gradient(118deg,#1946a6 0%,#2563eb 56%,#0f9eaa 100%);box-shadow:0 14px 28px rgba(37,99,235,.16)}
+.jobs-intro h1{font-size:clamp(29px,3vw,40px);line-height:1.1;letter-spacing:-.055em}
+.jobs-intro p{max-width:570px;line-height:1.7}
+.search-field,.select-field{border-color:rgba(255,255,255,.72);border-radius:12px;box-shadow:0 2px 6px rgba(13,41,91,.06)}
+.job-card{padding:21px;border-radius:18px}
+.job-title-row h3{font-size:20px;letter-spacing:-.04em;color:#172d4c}
+.job-meta{color:#71829a;line-height:1.6}
+.job-desc{color:#455973;line-height:1.75}
+.hiring{letter-spacing:.04em;font-size:10px;padding:6px 9px}
+.save-btn{border-color:#dce6f5;border-radius:11px;padding:9px 13px}
+.network-grid{gap:15px}
+.person-card{padding:22px 17px;border-radius:18px;transition:transform .18s,box-shadow .18s}
+.person-card:hover{transform:translateY(-3px);box-shadow:0 13px 28px rgba(25,51,88,.08)}
+.person-card h3{font-size:16px;letter-spacing:-.025em}
+.person-card button{border-radius:11px;padding:9px 14px}
+.insight-list,.saved-list{gap:15px}
+.insight-item,.saved-item{padding:19px 20px;border:1px solid #e3eaf5;border-radius:17px;box-shadow:0 6px 20px rgba(25,51,88,.035)}
+.insight-item h3,.saved-item h3{font-size:16px;letter-spacing:-.025em;color:#1a3150}
+.insight-item p,.saved-item p{line-height:1.75;color:#62758e}
+.workflow-form{border-radius:18px;padding:22px;box-shadow:0 10px 28px rgba(25,51,88,.06)}
+.workflow-form input,.workflow-form textarea,.workflow-form select{border-radius:11px}
+footer{padding-top:32px;color:#8390a4}
+.footer-links{gap:18px}
+.mobile-bottom-nav{box-shadow:0 -8px 28px rgba(19,42,78,.08);border-top:1px solid #e4eaf4;background:rgba(255,255,255,.97);backdrop-filter:blur(14px)}
+.mobile-bottom-nav .nav-btn.active{color:#245bea}
+.toast{background:#142a4a;border:1px solid rgba(255,255,255,.1);border-radius:13px}
+@media(max-width:1050px){.layout{grid-template-columns:210px minmax(0,1fr);gap:18px}.rightcol{display:none}}
+@media(max-width:760px){.topbar{height:64px;padding-left:15px;padding-right:15px;gap:13px}.brand{font-size:22px}.brandmark{width:33px;height:33px}.searchbox{padding:9px 11px}.layout{display:block;margin-top:16px;padding:0 13px 92px}.leftcol{position:fixed;top:70px;left:12px;right:12px;z-index:30;display:none;max-height:calc(100vh - 150px);overflow:auto}.leftcol.mobile-open{display:block}.page-heading{min-height:0;padding:22px 20px;margin-bottom:15px;border-radius:18px}.page-heading:after{right:-80px;top:-80px}.page-heading h1{font-size:30px}.page-heading p{font-size:13px}.composer{padding:14px}.post{padding:16px}.jobs-intro{padding:21px}.jobs-intro h1{font-size:29px}.job-card{padding:17px}.network-grid{gap:11px}.person-card{padding:17px 11px}.insight-item,.saved-item{padding:16px}.mobile-bottom-nav{padding-bottom:env(safe-area-inset-bottom)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+
 </style>
 </head>
 <body>
