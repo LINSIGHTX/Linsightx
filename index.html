@@ -177,7 +177,26 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .insight-item,.saved-item{padding:17px 18px}
 .insight-item h3,.saved-item h3{margin:0 0 7px;color:#173052;font-size:15px;letter-spacing:-.025em}
 .insight-item p,.saved-item p{margin:0;color:#5c718c;font-size:13px;line-height:1.75}
-.workflow-form{max-width:560px;margin:0 auto 16px;padding:15px;border:1px solid #dce7f6;border-radius:15px;background:linear-gradient(145deg,#fff 0%,#fbfdff 70%,#f0f7ff 100%);box-shadow:0 7px 20px rgba(26,67,128,.06)}
+.workflow-page{min-width:0}
+.workflow-layout{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);align-items:center;gap:16px;min-height:420px;padding:8px 0}
+.workflow-promo{min-width:0;padding:8px 0 8px 2px}
+.workflow-brand{display:flex;align-items:center;gap:9px;margin-bottom:30px;color:#173a77;font-size:20px;font-weight:950;letter-spacing:-.06em}
+.workflow-brand-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#245bea,#10aaa5);color:#fff;font-size:19px;box-shadow:0 6px 14px rgba(36,91,234,.2)}
+.workflow-promo .eyebrow{font-size:9px}
+.workflow-promo h1{margin:10px 0 11px;color:#142c50;font-size:clamp(25px,2.4vw,34px);line-height:1.12;letter-spacing:-.06em}
+.workflow-promo>p{margin:0;color:#61748d;font-size:12px;line-height:1.8}
+.workflow-promo-note{display:flex;align-items:flex-start;gap:8px;margin-top:24px;padding-top:14px;border-top:1px solid #e2eaf5;color:#526b89;font-size:11px;line-height:1.6}
+.workflow-promo-note span{color:#0d9f9b}
+.workflow-form{width:100%;max-width:390px;margin:0;padding:12px;border:1px solid #dce7f6;border-radius:15px;background:linear-gradient(145deg,#fff 0%,#fbfdff 70%,#f0f7ff 100%);box-shadow:0 7px 20px rgba(26,67,128,.06)}
+.workflow-form-heading{margin-bottom:9px}
+.workflow-form-heading .form-help{margin-bottom:0}
+.workflow-form form{gap:8px 9px}
+.workflow-form label{font-size:10px;gap:3px}
+.workflow-form input,.workflow-form textarea,.workflow-form select{min-height:32px;padding:6px 8px;font-size:11px;border-radius:7px}
+.workflow-form textarea{min-height:54px}
+.workflow-form .form-row{padding-top:8px}
+.workflow-form form button[type=submit],.workflow-form .secondary-btn{padding:7px 9px;font-size:10px}
+
 .workflow-form h3{margin:0 0 3px;color:#162f53;font-size:15px;font-weight:850;letter-spacing:-.02em}
 .workflow-form .form-help{margin:0 0 10px;color:#6a7d96;font-size:11px;line-height:1.45}
 .workflow-form form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 11px}
@@ -190,7 +209,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .form-row{display:flex;justify-content:flex-end;gap:8px;margin-top:0;padding-top:9px;border-top:1px solid #e8eef7}
 .workflow-form form button[type=submit]{padding:8px 11px;border-radius:8px;font-size:11px}
 .secondary-btn{padding:8px 11px;border:1px solid #d8e3f1;border-radius:8px;background:#fff;color:#526782;font-size:11px;font-weight:850}
-@media(max-width:560px){.workflow-form{max-width:100%;padding:13px;border-radius:13px}.workflow-form form{grid-template-columns:minmax(0,1fr);gap:9px}.workflow-form label:has(textarea),.workflow-form .form-row{grid-column:auto}.workflow-form textarea{min-height:70px}}
+@media(max-width:800px){.workflow-layout{grid-template-columns:minmax(0,1fr);gap:12px;min-height:0;padding:0}.workflow-promo{padding:17px;border:1px solid #dfe9f8;border-radius:15px;background:linear-gradient(125deg,#fff,#f1f7ff)}.workflow-brand{margin-bottom:17px}.workflow-promo h1{font-size:28px}.workflow-promo-note{margin-top:14px}.workflow-form{max-width:100%;padding:14px}.workflow-form form{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 11px}.workflow-form label:has(textarea),.workflow-form .form-row{grid-column:1/-1}.workflow-form textarea{min-height:68px}}
+@media(max-width:560px){.workflow-form{padding:13px;border-radius:13px}.workflow-form form{grid-template-columns:minmax(0,1fr);gap:9px}.workflow-form label:has(textarea),.workflow-form .form-row{grid-column:auto}.workflow-form textarea{min-height:70px}}
 .toast{position:fixed;z-index:100;left:50%;bottom:24px;max-width:calc(100vw - 32px);padding:11px 16px;border-radius:12px;background:#142d52;color:#fff;font-size:12px;font-weight:750;box-shadow:0 14px 28px rgba(17,35,63,.2);opacity:0;transform:translate(-50%,20px);pointer-events:none;transition:opacity .18s ease,transform .18s ease}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
@@ -267,9 +287,10 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 <section class="page" id="page-saved"><div class="page-heading"><div><div class="eyebrow">Keep good things close</div><h1>Saved items.</h1><p>Your saved opportunities and useful posts.</p></div></div><div class="saved-list" id="savedList"><div class="saved-empty saved-item"><h3>No saved jobs yet</h3><p>Save a role from the Jobs page and it will appear here for easy access.</p><button type="button" class="jobs-header-row" data-page="jobs">Explore jobs</button></div></div></section>
 <section class="page" id="page-messages"><div class="page-heading"><div><div class="eyebrow">Keep the conversation going</div><h1>Messages.</h1><p>Professional conversations, all in one place.</p></div></div><div class="card post"><div class="post-head"><div class="mini-avatar" style="background:linear-gradient(135deg,#dbeafe,#bdd6ff);color:#1848b6">MS</div><div class="post-person"><strong>Marcus Stone</strong><span>@marcusstone · last active 8 min ago</span></div></div><div class="post-body"><div class="post-tag">New message</div><div>Wanted to reconnect about the product research brief. I think your perspective would be a strong fit for the team.</div></div></div></section>
 
-<section class="page" id="page-apply">
-  <div class="page-heading"><div><div class="eyebrow">TAKE THE NEXT STEP</div><h1>Apply for a Job</h1><p>Share your details and tell the hiring team why you are a great fit.</p></div></div>
-  <section id="applicationForm" class="workflow-form"><h3>Job application</h3><p class="form-help" id="applicationRole">Role: Your application</p>
+<section class="page workflow-page" id="page-apply">
+  <div class="workflow-layout">
+    <div class="workflow-promo"><div class="workflow-brand"><span class="workflow-brand-mark">S</span><span>SIGHTX</span></div><div class="eyebrow">TAKE THE NEXT STEP</div><h1>Make your next move.</h1><p>Share a few details and let your experience speak for itself. Your next opportunity could start here.</p><div class="workflow-promo-note"><span>✦</span> Your next chapter starts with one application.</div></div>
+    <section id="applicationForm" class="workflow-form"><div class="workflow-form-heading"><h3>Apply for a Job</h3><p class="form-help" id="applicationRole">Role: Your application</p></div><h3>Job application</h3><p class="form-help" id="applicationRole">Role: Your application</p>
     <form id="applicationFormFields">
       <label>Full name<input name="name" type="text" autocomplete="name" required></label>
       <label>Email address<input name="email" type="email" autocomplete="email" required></label>
@@ -277,11 +298,13 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
       <label>Cover message<textarea name="message" placeholder="Tell us a little about yourself and your experience." required></textarea></label>
       <div class="form-row"><button type="button" class="secondary-btn" data-close-form="applicationForm">Cancel</button><button type="submit">Submit Application</button></div>
     </form>
-  </section>
+    </section>
+  </div>
 </section>
-<section class="page" id="page-post-job">
-  <div class="page-heading"><div><div class="eyebrow">GROW YOUR TEAM</div><h1>Post a Job</h1><p>Share an opening with the SIGHTX community.</p></div></div>
-  <section id="jobPostingForm" class="workflow-form"><h3>Job details</h3><p class="form-help">Provide the key information candidates need.</p>
+<section class="page workflow-page" id="page-post-job">
+  <div class="workflow-layout">
+    <div class="workflow-promo"><div class="workflow-brand"><span class="workflow-brand-mark">S</span><span>SIGHTX</span></div><div class="eyebrow">GROW YOUR TEAM</div><h1>Meet your next great hire.</h1><p>Bring the right people closer to your team. Share your opening with a community ready to grow.</p><div class="workflow-promo-note"><span>✦</span> Great teams start with great connections.</div></div>
+    <section id="jobPostingForm" class="workflow-form"><div class="workflow-form-heading"><h3>Post a Job</h3><p class="form-help">Add the essentials to share your opening.</p></div>
     <form id="jobPostingFields">
       <label>Job title<input name="title" type="text" required></label>
       <label>Company<input name="company" type="text" required></label>
@@ -291,7 +314,8 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
       <label>Application email<input name="email" type="email" placeholder="hiring@company.com" required></label>
       <div class="form-row"><button type="button" class="secondary-btn" data-close-form="jobPostingForm">Cancel</button><button type="submit">Publish Job</button></div>
     </form>
-  </section>
+    </section>
+  </div>
 </section>
 </main>
 <aside class="rightcol"><section class="card right-panel"><div class="panel-title"><h3>Signals worth watching</h3><button class="text-link" data-page="intel" type="button">View all</button></div><div class="trending"><small>Market intelligence</small><strong>#RecruitmentOps</strong></div><div class="trending"><small>Product</small><strong>#CustomerInsights</strong></div><div class="trending"><small>Hiring</small><strong>#TalentGrowth</strong></div></section><section class="card right-panel"><div class="panel-title"><h3>Suggested people</h3><button class="text-link" type="button">See all</button></div><div class="trending"><small>Victoria Park</small><strong>Product lead</strong></div><div class="trending"><small>Daniel Yeo</small><strong>Partnerships</strong></div></section></aside>
