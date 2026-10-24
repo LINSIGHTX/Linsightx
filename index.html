@@ -473,7 +473,7 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 <script>
 const toastEl=document.getElementById('toast');let toastTimer;
 function toast(message){toastEl.textContent=message;toastEl.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.classList.remove('show'),2600)}
-function go(page){const target=document.getElementById('page-'+page);if(!target){toast('This feature is coming soon.');return}document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+page));document.querySelectorAll('.navitem').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===page));document.querySelectorAll('.toplink').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===page));document.querySelectorAll('.mobile-bottom-nav .nav-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===page));const left=document.getElementById('leftcol');if(left)left.classList.remove('mobile-open');try{history.replaceState(null,'','#'+page)}catch(e){}}function restorePageFromUrl(){const requested=(location.hash||'').slice(1);if(requested==='apply'||requested==='post-job'){if(typeof ensureWorkflowForms==='function')ensureWorkflowForms();if(document.getElementById('page-'+requested)){go(requested);return}}if(requested&&document.getElementById('page-'+requested)){go(requested)}else{go('home')}}window.addEventListener('DOMContentLoaded',restorePageFromUrl);window.addEventListener('hashchange',restorePageFromUrl);window.addEventListener('popstate',restorePageFromUrl);window.addEventListener('pageshow',function(){restorePageFromUrl()});
+function go(page){const target=document.getElementById('page-'+page);if(!target){toast('This feature is coming soon.');return}document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+page));document.querySelectorAll('.navitem').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===page));document.querySelectorAll('.toplink').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===page));document.querySelectorAll('.mobile-bottom-nav .nav-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===page));const left=document.getElementById('leftcol');if(left)left.classList.remove('mobile-open');try{history.replaceState(null,'','#'+page)}catch(e){}}function restorePageFromUrl(){const requested=(location.hash||'').slice(1);if(requested==='apply'||requested==='post-job'){if(typeof ensureWorkflowForms==='function')ensureWorkflowForms();if(document.getElementById('page-'+requested)){go(requested);return}}if(requested==='apply-now'){if(typeof ensureWorkflowForms==='function')ensureWorkflowForms();if(typeof window.__sightxEnsureSpecificApplicationPage==='function'){window.__sightxEnsureSpecificApplicationPage('Selected job');go('apply-now');return}}if(requested&&document.getElementById('page-'+requested)){go(requested)}else{go('home')}}window.addEventListener('DOMContentLoaded',restorePageFromUrl);window.addEventListener('hashchange',restorePageFromUrl);window.addEventListener('popstate',restorePageFromUrl);window.addEventListener('pageshow',function(){restorePageFromUrl()});
 document.addEventListener('click',e=>{const page=e.target.closest('[data-page]');if(page){e.preventDefault();go(page.dataset.page)}const msg=e.target.closest('[data-toast]');if(msg)toast(msg.dataset.toast);const close=e.target.closest('[data-close-form]');if(close){const box=document.getElementById(close.dataset.closeForm);if(box){box.hidden=true;if(box.id==='applicationForm'||box.id==='jobPostingForm')go('jobs')}}});
 document.getElementById('mobileMenu').addEventListener('click',()=>document.getElementById('leftcol').classList.toggle('mobile-open'));
 document.getElementById('leftCreate').addEventListener('click',()=>{go('home');document.getElementById('postInput').focus()});
@@ -619,45 +619,65 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
 <!-- Focused repair: route job actions directly to the existing in-page forms. -->
 
 
-<!-- SIGHTX reliable job form routing -->
+<!-- SIGHTX job form routing: separate general applications from Apply Now -->
 <script>
 (function(){
- function revealPage(id){
-  const target=document.getElementById(id);
-  if(!target)return false;
+ function revealPage(id,hash){
+  const target=document.getElementById(id);if(!target)return false;
   document.querySelectorAll('.page').forEach(function(page){page.classList.toggle('active',page===target);});
   document.querySelectorAll('.navitem,.toplink,.mobile-bottom-nav .nav-btn').forEach(function(btn){btn.classList.toggle('active',btn.dataset.page==='jobs');});
   const left=document.getElementById('leftcol');if(left)left.classList.remove('mobile-open');
-  try{history.replaceState(null,'','#'+(id==='page-apply'?'apply':id==='page-post-job'?'post-job':'jobs'))}catch(e){}
+  try{history.replaceState(null,'','#'+(hash||'jobs'))}catch(e){}
   requestAnimationFrame(function(){target.scrollIntoView({behavior:'auto',block:'start'});});
   return true;
+ }
+ function ensureSpecificApplicationPage(role){
+  let page=document.getElementById('page-apply-now');
+  if(!page){
+   page=document.createElement('section');page.id='page-apply-now';page.className='page';
+   page.innerHTML='<div class="page-heading"><div><div class="eyebrow">YOUR NEXT OPPORTUNITY</div><h1>Apply Now</h1><p>Complete this application for the specific role you selected.</p></div></div><section class="workflow-form"><div class="workflow-form-heading"><h3>Job-specific application</h3><p class="form-help" id="applyNowRoleLabel"></p></div><form id="applyNowFormFields"><input type="hidden" name="role"><label>Full name<input name="name" type="text" autocomplete="name" required></label><label>Email address<input name="email" type="email" autocomplete="email" required></label><label>Portfolio or LinkedIn URL<input name="profile" type="url" placeholder="https://..." required></label><label>Cover message<textarea name="message" placeholder="Tell the hiring team why you are a good fit for this role." required></textarea></label><div class="form-row"><button type="button" class="secondary-btn" data-close-form="applyNowFormFields">Cancel</button><button type="submit">Submit Application</button></div></form></section>';
+   const jobs=document.getElementById('page-jobs');if(jobs&&jobs.parentNode)jobs.parentNode.appendChild(page);else document.body.appendChild(page);
+  }
+  const name=role||'Selected job';
+  page.querySelector('#applyNowRoleLabel').textContent='Applying for: '+name;
+  page.querySelector('input[name="role"]').value=name;
+  return page;
  }
  document.addEventListener('click',function(event){
   const trigger=event.target.closest('#postJobCta,#jobsApplyCta,#page-jobs a.apply-btn,#page-jobs [data-open-form]');
   if(!trigger)return;
-  event.preventDefault();
-  event.stopPropagation();
-  event.stopImmediatePropagation();
-  if(trigger.id==='postJobCta'){revealPage('page-post-job');return;}
+  event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
+  if(trigger.id==='postJobCta'){revealPage('page-post-job','post-job');return;}
   const isGeneric=trigger.id==='jobsApplyCta';
   const card=trigger.closest('.job-card');
-  const role=isGeneric?'':((card&&card.querySelector('h3')&&card.querySelector('h3').textContent.trim())||'');
+  const role=card&&card.querySelector('h3')?card.querySelector('h3').textContent.trim():'';
+  if(!isGeneric){
+   const page=ensureSpecificApplicationPage(role);
+   revealPage(page.id,'apply-now');return;
+  }
   const select=document.getElementById('applicationJobSelect');
   const label=document.getElementById('applicationRole');
   const form=document.getElementById('applicationFormFields');
   if(select){
    select.replaceChildren();
    const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Choose a job';select.appendChild(placeholder);
-   document.querySelectorAll('#page-jobs .job-card h3').forEach(function(title){
-    const name=title.textContent.trim();const option=document.createElement('option');option.value=name;option.textContent=name;select.appendChild(option);
-   });
-   select.value=role&&Array.from(select.options).some(function(option){return option.value===role;})?role:'';
-   if(form)form.dataset.role=select.value;
-   if(label)label.textContent=select.value?'Role: '+select.value:'Choose a job to apply for';
+   document.querySelectorAll('#page-jobs .job-card h3').forEach(function(title){const name=title.textContent.trim();const option=document.createElement('option');option.value=name;option.textContent=name;select.appendChild(option);});
+   select.value='';
+   if(form)form.dataset.role='';
+   if(label)label.textContent='Choose a job to apply for';
    select.onchange=function(){if(form)form.dataset.role=select.value;if(label)label.textContent=select.value?'Role: '+select.value:'Choose a job to apply for';};
-  }else if(form){form.dataset.role=role;}
-  revealPage('page-apply');
+  }
+  revealPage('page-apply','apply');
  },true);
+ document.addEventListener('submit',function(event){
+  if(event.target.id!=='applyNowFormFields')return;
+  event.preventDefault();if(!event.target.reportValidity())return;
+  const name=event.target.elements.namedItem('name').value.trim();
+  const role=event.target.elements.namedItem('role').value;
+  if(typeof toast==='function')toast('Thanks, '+name+'. Your application for '+role+' is complete.');
+  event.target.reset();revealPage('page-jobs','jobs');
+ });
+ window.__sightxEnsureSpecificApplicationPage=ensureSpecificApplicationPage;
 })();
 </script>
 </body></html>
