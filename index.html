@@ -378,6 +378,24 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 
 /* Mobile: hide Insights from the bottom navigation */
 @media(max-width:800px){.mobile-bottom-nav .nav-btn[data-page="intel"]{display:none!important}}
+
+/* Invite friends and colleagues */
+.invite-panel{max-width:760px;margin:18px auto 0;padding:clamp(20px,4vw,34px);text-align:center}
+.invite-illustration{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 15px;border-radius:20px;background:#eef3ff;font-size:30px}
+.invite-panel h2{margin:0 0 9px;color:#172f52;font-size:clamp(21px,3vw,27px);letter-spacing:-.035em}
+.invite-panel>p{max-width:520px;margin:0 auto 23px;color:#697b94;font-size:14px;line-height:1.75}
+.invite-link-row{display:flex;gap:9px;max-width:590px;margin:0 auto 12px}
+.invite-link-row input,.invite-message-wrap textarea{width:100%;min-width:0;padding:12px 13px;border:1px solid #e0e7f2;border-radius:11px;background:#f8faff;color:#425571;font:inherit;font-size:12px}
+.invite-action,.invite-copy-message{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:11px 15px;border:1px solid #dfe6f1;border-radius:11px;background:#fff;color:#344967;text-decoration:none;font:inherit;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.invite-action:hover,.invite-copy-message:hover{background:#f1f5fc;border-color:#cbd8ed;transform:translateY(-1px)}
+.invite-action.primary{border-color:#245bea;background:#245bea;color:white}
+.invite-action.primary:hover{background:#1948bd;border-color:#1948bd}
+.invite-buttons{display:flex;justify-content:center;flex-wrap:wrap;gap:9px;margin-bottom:24px}
+.invite-message-wrap{max-width:590px;margin:0 auto;text-align:left;padding-top:20px;border-top:1px solid #edf1f7}
+.invite-message-wrap label{display:block;margin-bottom:8px;color:#344967;font-size:12px;font-weight:800}
+.invite-message-wrap textarea{display:block;min-height:82px;resize:vertical;line-height:1.6}
+.invite-copy-message{margin-top:9px;min-height:36px;padding:8px 12px}
+@media(max-width:520px){.invite-link-row{flex-direction:column}.invite-link-row .invite-action{width:100%}.invite-buttons{display:grid;grid-template-columns:minmax(0,1fr)}.invite-action,.invite-copy-message{white-space:normal}.invite-panel{padding:20px 15px}}
 </style>
 </head>
 <body>
@@ -392,6 +410,17 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 <section class="page" id="page-intel"><div class="page-heading"><div><div class="eyebrow">Signals worth watching</div><h1>Market intelligence.</h1><p>Ideas and trends to help you make your next move.</p></div></div><div class="insight-list"><article class="insight-item"><h3>AI recruiting keeps raising the bar</h3><p>Teams are pairing human judgment with automation to speed up shortlisting without losing context and candidate nuance.</p></article><article class="insight-item"><h3>Demand is shifting toward structured data roles</h3><p>Product and revenue teams are hiring operators who can connect analysis to action, not just report on trends.</p></article><article class="insight-item"><h3>Private-market networking is back</h3><p>Deal flow is increasingly driven by trusted introductions, warm referrals, and community-driven credibility.</p></article></div></section>
 <section class="page" id="page-saved"><div class="page-heading"><div><div class="eyebrow">Keep good things close</div><h1>Saved items.</h1><p>Your saved opportunities and useful posts.</p></div></div><div class="saved-list" id="savedList"><div class="saved-empty saved-item"><h3>No saved jobs yet</h3><p>Save a role from the Jobs page and it will appear here for easy access.</p><button type="button" class="jobs-header-row" data-page="jobs">Explore jobs</button></div></div></section>
 <section class="page" id="page-about"><div class="page-heading"><div><div class="eyebrow">ABOUT SIGHTX</div><h1>Connecting people with opportunities.</h1><p>A professional space to discover jobs, build your network, and share useful insights.</p></div></div><div class="card" style="padding:28px;margin-top:18px"><h2 style="margin:0 0 10px;color:var(--ink)">Built for your next step</h2><p style="margin:0;color:var(--muted);line-height:1.8">SIGHTX brings professional discovery and career opportunities together in one place. Explore roles, keep track of opportunities that matter to you, and stay connected with the professional community.</p></div></section>
+<section class="page" id="page-invite">
+  <div class="page-heading"><div><div class="eyebrow">Grow your circle</div><h1>Invite your people.</h1><p>Bring friends, colleagues, and your professional network to SIGHTX.</p></div></div>
+  <div class="card invite-panel">
+   <div class="invite-illustration" aria-hidden="true">👋</div>
+   <h2>Good connections grow together.</h2>
+   <p>Invite people you know to discover opportunities, share insights, and grow their professional network on SIGHTX.</p>
+   <div class="invite-link-row"><input id="inviteLink" aria-label="Your SIGHTX invite link" readonly><button type="button" class="invite-action primary" data-invite-action="copy-link">Copy invite link</button></div>
+   <div class="invite-buttons"><button type="button" class="invite-action" data-invite-action="share">Share invite</button><a class="invite-action" id="inviteWhatsApp" target="_blank" rel="noopener noreferrer">Invite on WhatsApp</a><a class="invite-action" id="inviteEmail">Invite by email</a></div>
+   <div class="invite-message-wrap"><label for="inviteMessage">Suggested invitation message</label><textarea id="inviteMessage" readonly>Hey! I’m using SIGHTX to discover professional opportunities, share insights, and grow my network. Join me and let’s connect!</textarea><button type="button" class="invite-copy-message" data-invite-action="copy-message">Copy message</button></div>
+  </div>
+ </section>
 <section class="page" id="page-messages"><div class="page-heading"><div><div class="eyebrow">Keep the conversation going</div><h1>Messages.</h1><p>Professional conversations, all in one place.</p></div></div><div class="card post"><div class="post-head"><div class="mini-avatar" style="background:linear-gradient(135deg,#dbeafe,#bdd6ff);color:#1848b6">MS</div><div class="post-person"><strong>Marcus Stone</strong><span>@marcusstone · last active 8 min ago</span></div></div><div class="post-body"><div class="post-tag">New message</div><div>Wanted to reconnect about the product research brief. I think your perspective would be a strong fit for the team.</div></div></div></section>
 
 <section class="page workflow-page" id="page-apply">
@@ -435,7 +464,7 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
   <button class="nav-btn" type="button" data-page="jobs"><span aria-hidden="true">💼</span><span>Jobs</span></button>
   <button class="nav-btn" type="button" data-post-focus><span class="post-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/></svg></span><span>Post</span></button>
   <button class="nav-btn" type="button" data-page="intel"><span aria-hidden="true">📊</span><span>Insights</span></button>
-  <button class="nav-btn" type="button" data-page="support"><span aria-hidden="true">❔</span><span>Support</span></button>
+  <button class="nav-btn" type="button" data-page="invite"><span aria-hidden="true">👥</span><span>Invite</span></button>
 </nav>
 <div id="toast" class="toast" aria-live="polite"></div>
 <script>
@@ -543,6 +572,37 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
 
 
 
+
+<script>
+(function(){
+ const base=window.location.href.split('#')[0];
+ const link=document.getElementById('inviteLink');
+ const message=document.getElementById('inviteMessage');
+ const wa=document.getElementById('inviteWhatsApp');
+ const email=document.getElementById('inviteEmail');
+ if(link)link.value=base;
+ const invitation=(message?.value||'Join me on SIGHTX!')+' '+base;
+ if(wa)wa.href='https://wa.me/?text='+encodeURIComponent(invitation);
+ if(email){email.href='mailto:?subject='+encodeURIComponent('Join me on SIGHTX')+'&body='+encodeURIComponent(invitation);}
+ async function copyText(value){
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(value);return true;}}
+  catch(e){}
+  const area=document.createElement('textarea');area.value=value;area.style.position='fixed';area.style.opacity='0';document.body.appendChild(area);area.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}area.remove();
+  if(!ok)window.prompt('Copy this text:',value);return ok;
+ }
+ document.addEventListener('click',async function(e){
+  const btn=e.target.closest('[data-invite-action]');if(!btn)return;
+  const action=btn.dataset.inviteAction;
+  if(action==='copy-link'){const ok=await copyText(base);if(typeof toast==='function')toast(ok?'Invite link copied!':'Copy the invite link from the field above.');}
+  if(action==='copy-message'){const ok=await copyText(invitation);if(typeof toast==='function')toast(ok?'Invitation message copied!':'Copy the invitation message from the text box.');}
+  if(action==='share'){
+   try{if(navigator.share){await navigator.share({title:'Join me on SIGHTX',text:message?.value||'Join me on SIGHTX!',url:base});}
+    else{const ok=await copyText(invitation);if(typeof toast==='function')toast(ok?'Invite message and link copied!':'Use the WhatsApp or email invite options below.');}}
+   catch(err){if(err?.name!=='AbortError'&&typeof toast==='function')toast('Could not open sharing right now.');}
+  }
+ });
+})();
+</script>
 </body></html>
 
 
