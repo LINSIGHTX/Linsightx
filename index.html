@@ -177,16 +177,20 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .insight-item,.saved-item{padding:17px 18px}
 .insight-item h3,.saved-item h3{margin:0 0 7px;color:#173052;font-size:15px;letter-spacing:-.025em}
 .insight-item p,.saved-item p{margin:0;color:#5c718c;font-size:13px;line-height:1.75}
-.workflow-form{padding:21px;margin:0 0 15px}
-.workflow-form h3{margin:0 0 5px;color:#162f53;font-size:17px}
-.workflow-form .form-help{margin:0 0 15px;color:var(--muted);font-size:12px}
-.workflow-form form{display:grid;gap:13px}
-.workflow-form label{display:grid;gap:6px;color:#425773;font-size:12px;font-weight:800}
-.workflow-form input,.workflow-form textarea,.workflow-form select{width:100%;min-height:42px;padding:10px 12px;border:1px solid #d7e2f1;border-radius:10px;background:#f8fbff;color:var(--ink);font-size:13px}
-.workflow-form textarea{min-height:110px;resize:vertical}
-.workflow-form input:focus,.workflow-form textarea:focus,.workflow-form select:focus{outline:0;border-color:#6795ff;box-shadow:0 0 0 4px rgba(36,91,234,.09)}
-.form-row{display:flex;justify-content:flex-end;gap:10px;margin-top:4px}
-.secondary-btn{padding:10px 14px;border:1px solid #d8e3f1;border-radius:10px;background:#f5f8fd;color:#526782;font-size:12px;font-weight:850}
+.workflow-form{max-width:680px;margin:0 auto 18px;padding:20px;border:1px solid #dce7f6;border-radius:18px;background:linear-gradient(145deg,#fff 0%,#fbfdff 70%,#f0f7ff 100%);box-shadow:0 10px 28px rgba(26,67,128,.08)}
+.workflow-form h3{margin:0 0 4px;color:#162f53;font-size:17px;font-weight:850;letter-spacing:-.025em}
+.workflow-form .form-help{margin:0 0 14px;color:#6a7d96;font-size:12px;line-height:1.55}
+.workflow-form form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 14px}
+.workflow-form label{display:grid;align-content:start;gap:5px;min-width:0;color:#425773;font-size:12px;font-weight:800}
+.workflow-form input,.workflow-form textarea,.workflow-form select{width:100%;min-width:0;min-height:39px;padding:9px 11px;border:1px solid #d6e2f2;border-radius:9px;background:#fff;color:var(--ink);font-size:13px;transition:border-color .16s ease,box-shadow .16s ease}
+.workflow-form textarea{min-height:82px;resize:vertical}
+.workflow-form input::placeholder,.workflow-form textarea::placeholder{color:#9aa8ba}
+.workflow-form input:focus,.workflow-form textarea:focus,.workflow-form select:focus{outline:0;border-color:#6795ff;box-shadow:0 0 0 3px rgba(36,91,234,.09)}
+.workflow-form label:has(textarea),.workflow-form .form-row{grid-column:1/-1}
+.form-row{display:flex;justify-content:flex-end;gap:9px;margin-top:2px;padding-top:12px;border-top:1px solid #e8eef7}
+.workflow-form form button[type=submit]{padding:9px 13px;border-radius:9px;font-size:12px}
+.secondary-btn{padding:9px 13px;border:1px solid #d8e3f1;border-radius:9px;background:#fff;color:#526782;font-size:12px;font-weight:850}
+@media(max-width:560px){.workflow-form{padding:16px;border-radius:15px}.workflow-form form{grid-template-columns:minmax(0,1fr);gap:11px}.workflow-form label:has(textarea),.workflow-form .form-row{grid-column:auto}.workflow-form textarea{min-height:90px}}
 .toast{position:fixed;z-index:100;left:50%;bottom:24px;max-width:calc(100vw - 32px);padding:11px 16px;border-radius:12px;background:#142d52;color:#fff;font-size:12px;font-weight:750;box-shadow:0 14px 28px rgba(17,35,63,.2);opacity:0;transform:translate(-50%,20px);pointer-events:none;transition:opacity .18s ease,transform .18s ease}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
