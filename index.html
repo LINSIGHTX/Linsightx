@@ -692,6 +692,33 @@ document.addEventListener('click',e=>{const save=e.target.closest('.save-btn');i
 <style id="force-compact-salary-badge">#page-jobs .job-card .job-meta .job-salary-tag{display:inline-flex!important;align-items:center!important;min-height:0!important;height:24px!important;padding:2px 8px!important;line-height:1!important;font-size:10px!important;box-sizing:border-box!important;vertical-align:middle!important;}</style>
 
 <style id="salary-badge-width-height-only">#page-jobs .job-card .job-meta .job-salary-tag{width:auto!important;min-width:116px!important;height:24px!important;min-height:0!important;padding:2px 14px!important;line-height:1!important;box-sizing:border-box!important;white-space:nowrap!important;justify-content:center!important;}</style>
+
+<style id="equal-job-badges-one-row">
+#page-jobs .job-card .job-meta {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+#page-jobs .job-card .job-meta .job-type-tag,
+#page-jobs .job-card .job-meta .job-experience-tag,
+#page-jobs .job-card .job-meta .job-salary-tag {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  max-height: 28px !important;
+  padding: 0 6px !important;
+  margin: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  font-size: 10px !important;
+}
+</style>
 </body></html>
 
 <style>
