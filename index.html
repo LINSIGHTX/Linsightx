@@ -445,7 +445,7 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
     <form id="applicationFormFields">
       <label>Job you are applying for<select id="applicationJobSelect" name="role" required><option value="">Choose a job</option></select></label><label>Full name<input name="name" type="text" autocomplete="name" required></label>
       <label>Email address<input name="email" type="email" autocomplete="email" required></label>
-      <label>Portfolio or LinkedIn URL<input name="profile" type="url" placeholder="https://..." required></label>
+      <label>Resume (PDF, DOC, or DOCX)<input name="resume" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required></label>
       <label>Cover message<textarea name="message" placeholder="Tell us a little about yourself and your experience." required></textarea></label>
       <div class="form-row"><button type="button" class="secondary-btn" data-close-form="applicationForm">Cancel</button><button type="submit">Submit Application</button></div>
     </form>
@@ -500,7 +500,7 @@ function ensureWorkflowForms(){
  let app=document.getElementById('page-apply');
  if(!app){
   app=document.createElement('section');app.id='page-apply';app.className='page';
-  app.innerHTML='<div class="page-heading"><div><div class="eyebrow">TAKE THE NEXT STEP</div><h1>Apply for a Job</h1><p>Share your details and tell the hiring team why you are a great fit.</p></div></div><section id="applicationForm" class="workflow-form"><h3>Job application</h3><p class="form-help" id="applicationRole">Role: Your application</p><form id="applicationFormFields"><label>Full name<input name="name" type="text" autocomplete="name" required></label><label>Email address<input name="email" type="email" autocomplete="email" required></label><label>Portfolio or LinkedIn URL<input name="profile" type="url" placeholder="https://..." required></label><label>Cover message<textarea name="message" placeholder="Tell us a little about yourself and your experience." required></textarea></label><div class="form-row"><button type="button" class="secondary-btn" data-close-form="applicationForm">Cancel</button><button type="submit">Submit Application</button></div></form></section>';
+  app.innerHTML='<div class="page-heading"><div><div class="eyebrow">TAKE THE NEXT STEP</div><h1>Apply for a Job</h1><p>Share your details and tell the hiring team why you are a great fit.</p></div></div><section id="applicationForm" class="workflow-form"><h3>Job application</h3><p class="form-help" id="applicationRole">Role: Your application</p><form id="applicationFormFields"><label>Full name<input name="name" type="text" autocomplete="name" required></label><label>Email address<input name="email" type="email" autocomplete="email" required></label><label>Resume (PDF, DOC, or DOCX)<input name="resume" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required></label><label>Cover message<textarea name="message" placeholder="Tell us a little about yourself and your experience." required></textarea></label><div class="form-row"><button type="button" class="secondary-btn" data-close-form="applicationForm">Cancel</button><button type="submit">Submit Application</button></div></form></section>';
   document.querySelector('.maincol').appendChild(app);
  }
  let job=document.getElementById('page-post-job');
