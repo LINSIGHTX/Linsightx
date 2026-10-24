@@ -50,7 +50,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .toplink{display:flex;align-items:center;gap:7px;padding:9px 10px;border:0;border-radius:10px;background:transparent;color:#526681;font-size:12px;font-weight:750}
 .toplink:hover,.toplink.active{background:#edf3ff;color:var(--blue-dark)}
 .toplink .ico{display:grid;place-items:center;width:23px;height:23px;border-radius:8px;background:#eaf1ff;color:var(--blue);font-size:10px;font-weight:900}
-.layout{display:grid;grid-template-columns:224px minmax(0,1fr) 264px;align-items:start;gap:24px;max-width:1380px;margin:27px auto 0;padding:0 24px 48px}
+.layout{display:grid;grid-template-columns:minmax(0,7fr) minmax(260px,3fr);align-items:start;gap:24px;max-width:1380px;margin:27px auto 0;padding:0 24px 48px}.leftcol{display:none}
 .leftcol,.rightcol{position:sticky;top:94px;min-width:0}
 .maincol{min-width:0}
 .page{display:none;min-width:0}
@@ -221,8 +221,8 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 .mobile-menu{display:none}
 .mobile-bottom-nav{display:none}
 @media(max-width:1120px){
- .layout{grid-template-columns:205px minmax(0,1fr);gap:18px}
- .rightcol{display:none}
+ .layout{grid-template-columns:minmax(0,7fr) minmax(220px,3fr);gap:18px}
+ .rightcol{display:block}
  .topbar{padding:0 18px;gap:17px}
  .toplinks .toplink span:not(.ico){display:none}
  .toplink{padding:8px}
