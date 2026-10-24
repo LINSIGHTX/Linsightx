@@ -353,8 +353,13 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 
 /* Premium social interaction bar */
 .post-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid #edf0f5}
-.post-actions button{display:inline-flex;align-items:center;justify-content:center;gap:7px;flex:1;min-width:0;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:#f7f9fc;color:#56657b;font-size:12px;font-weight:750;letter-spacing:.01em;transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease,box-shadow .18s ease}
+.post-actions button{display:inline-flex;align-items:center;justify-content:center;gap:0;flex:1;min-width:0;width:42px;height:40px;padding:0;border:1px solid transparent;border-radius:11px;background:#f7f9fc;color:#56657b;font-size:0;font-weight:750;letter-spacing:0;transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease,box-shadow .18s ease}
 .post-actions button:hover{background:#eef3fb;border-color:#e2e9f4;color:#233c62;transform:translateY(-1px)}
+.post-actions button:before{display:inline-flex;align-items:center;justify-content:center;font-size:18px;line-height:1;font-weight:500}
+.post-actions button[data-action="like"]:before{content:"♡";font-size:22px}
+.post-actions button[data-action="like"].is-liked:before{content:"♥"}
+.post-actions button[data-action="comment"]:before{content:"▱";font-size:23px}
+.post-actions button[data-action="share"]:before{content:"↗";font-size:21px}
 .post-actions button:active{transform:translateY(0)}
 .post-actions button.is-liked{background:#fff1f2;border-color:#ffd9dd;color:#dc2626;box-shadow:inset 0 0 0 1px rgba(220,38,38,.025)}
 .post-actions button.is-liked:hover{background:#ffe7ea;border-color:#ffc7ce;color:#c81e1e}
@@ -742,9 +747,9 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
   const like=buttons.find(b=>b.dataset.action==='like'||b.textContent.trim().startsWith('Like'));
   const comment=buttons.find(b=>b.dataset.action==='comment'||b.textContent.trim().startsWith('Comment'));
   const share=buttons.find(b=>b.dataset.action==='share'||b.textContent.trim().startsWith('Share'));
-  if(like){like.dataset.action='like';like.classList.toggle('is-liked',!!data.liked);like.setAttribute('aria-pressed',data.liked?'true':'false');like.textContent=(data.liked?'♥ Liked':'♡ Like')+(data.liked?' · 1':'');}
-  if(comment){comment.dataset.action='comment';comment.textContent='Comment'+(data.comments.length?' · '+data.comments.length:'');}
-  if(share){share.dataset.action='share';share.textContent='↗ Share';}
+  if(like){like.dataset.action='like';like.classList.toggle('is-liked',!!data.liked);like.setAttribute('aria-pressed',data.liked?'true':'false');like.textContent=data.liked?'Liked':'Like';like.setAttribute('aria-label',data.liked?'Unlike post':'Like post');like.title=data.liked?'Unlike post':'Like post';}
+  if(comment){comment.dataset.action='comment';comment.textContent='Comment'+(data.comments.length?' · '+data.comments.length:'');comment.setAttribute('aria-label',data.comments.length?'Comments, '+data.comments.length:'Comment on post');comment.title=data.comments.length?'Comments ('+data.comments.length+')':'Comment';}
+  if(share){share.dataset.action='share';share.textContent='Share';share.setAttribute('aria-label','Share post');share.title='Share post';}
   let box=post.querySelector('.post-comments');
   if(!box){
    box=document.createElement('section');box.className='post-comments';box.hidden=true;
