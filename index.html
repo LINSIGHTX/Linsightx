@@ -188,6 +188,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .insight-item p,.saved-item p{margin:0;color:#5c718c;font-size:13px;line-height:1.75}
 .workflow-page{min-width:0}
 .workflow-layout{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);align-items:center;gap:16px;min-height:420px;padding:8px 0}
+/* Apply Now: keep the application form on the left and the promo banner on the right on laptop/desktop. */
+.workflow-layout.apply-now-layout{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}
+.workflow-layout.apply-now-layout>.workflow-form{max-width:390px;justify-self:stretch}
+.workflow-layout.apply-now-layout>.workflow-promo{align-self:center}
 .workflow-promo{min-width:0;padding:8px 0 8px 2px}
 .workflow-brand{display:flex;align-items:center;gap:9px;margin-bottom:30px;color:#173a77;font-size:20px;font-weight:950;letter-spacing:-.06em}
 .workflow-brand-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#245bea,#10aaa5);color:#fff;font-size:19px;box-shadow:0 6px 14px rgba(36,91,234,.2)}
@@ -635,7 +639,7 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
   let page=document.getElementById('page-apply-now');
   if(!page){
    page=document.createElement('section');page.id='page-apply-now';page.className='page';
-   page.innerHTML='<div class="page-heading"><div><div class="eyebrow">YOUR NEXT OPPORTUNITY</div><h1>Apply Now</h1><p>Complete this application for the specific role you selected.</p></div></div><section class="workflow-form"><div class="workflow-form-heading"><h3>Job-specific application</h3><p class="form-help" id="applyNowRoleLabel"></p></div><form id="applyNowFormFields"><input type="hidden" name="role"><label>Full name<input name="name" type="text" autocomplete="name" required></label><label>Email address<input name="email" type="email" autocomplete="email" required></label><label>Portfolio or LinkedIn URL<input name="profile" type="url" placeholder="https://..." required></label><label>Cover message<textarea name="message" placeholder="Tell the hiring team why you are a good fit for this role." required></textarea></label><div class="form-row"><button type="button" class="secondary-btn" data-close-form="applyNowFormFields">Cancel</button><button type="submit">Submit Application</button></div></form></section>';
+   page.innerHTML='<div class="workflow-layout apply-now-layout"><section class="workflow-form"><div class="workflow-form-heading"><h3>Apply Now</h3><p class="form-help" id="applyNowRoleLabel"></p></div><form id="applyNowFormFields"><input type="hidden" name="role"><label>Full name<input name="name" type="text" autocomplete="name" required></label><label>Email address<input name="email" type="email" autocomplete="email" required></label><label>Portfolio or LinkedIn URL<input name="profile" type="url" placeholder="https://..." required></label><label>Cover message<textarea name="message" placeholder="Tell the hiring team why you are a good fit for this role." required></textarea></label><div class="form-row"><button type="button" class="secondary-btn" data-close-form="applyNowFormFields">Cancel</button><button type="submit">Submit Application</button></div></form></section><div class="workflow-promo"><div class="workflow-brand"><span class="workflow-brand-mark">S</span><span>SIGHTX</span></div><div class="eyebrow">YOUR NEXT OPPORTUNITY</div><h1>Make your next move.</h1><p>Apply directly for the role you selected. Share your experience, portfolio, and a short note to help the hiring team get to know you.</p><div class="workflow-promo-note"><span>✦</span> Your next chapter starts with one application.</div></div></div>';
    const jobs=document.getElementById('page-jobs');if(jobs&&jobs.parentNode)jobs.parentNode.appendChild(page);else document.body.appendChild(page);
   }
   const name=role||'Selected job';
