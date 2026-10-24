@@ -453,13 +453,25 @@ function ensureWorkflowForms(){
   document.querySelector('.maincol').appendChild(job);
  }
 }
+function showWorkflowPage(page){
+ ensureWorkflowForms();
+ const target=document.getElementById('page-'+page);
+ if(!target)return;
+ document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p===target));
+ document.querySelectorAll('.navitem').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===page));
+ document.querySelectorAll('.toplink').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===page));
+ document.querySelectorAll('.mobile-bottom-nav .nav-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===page));
+ const left=document.getElementById('leftcol');if(left)left.classList.remove('mobile-open');
+ try{history.replaceState(null,'','#'+page)}catch(e){}
+ requestAnimationFrame(()=>{target.scrollIntoView({behavior:'smooth',block:'start'});});
+}
 function openApplicationForm(role){
  ensureWorkflowForms();
  document.getElementById('applicationRole').textContent='Role: '+role;
  document.getElementById('applicationFormFields').dataset.role=role;
- go('apply');
+ showWorkflowPage('apply');
 }
-document.getElementById('postJobCta').addEventListener('click',()=>{ensureWorkflowForms();go('post-job');});
+document.getElementById('postJobCta').addEventListener('click',()=>showWorkflowPage('post-job'));
 document.getElementById('jobsApplyCta').addEventListener('click',()=>{const firstJob=[...document.querySelectorAll('#page-jobs .job-card')].find(job=>getComputedStyle(job).display!=='none');const role=firstJob?.querySelector('h3')?.textContent||'Open position';openApplicationForm(role);});
 document.addEventListener('click',e=>{const trigger=e.target.closest('[data-open-form]');if(trigger){e.preventDefault();const role=(trigger.closest('.job-card')||document).querySelector('h3')?.textContent||'Open position';openApplicationForm(role);}});
 document.addEventListener('submit',e=>{
