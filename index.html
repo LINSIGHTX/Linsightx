@@ -350,6 +350,22 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 .search-results-empty{padding:18px 12px;text-align:center;color:#657891;font-size:12px}
 @media(max-width:520px){.search-results{left:auto;right:-44px;width:min(430px,calc(100vw - 24px));max-height:60vh}.searchbox{min-width:0}}
 
+
+/* Social interactions */
+.post-actions button{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:72px;transition:background .18s,color .18s}
+.post-actions button.is-liked{background:#e8f0ff;color:#245bea}
+.post-actions button:focus-visible,.comment-form button:focus-visible,.comment-form input:focus-visible{outline:2px solid #245bea;outline-offset:2px}
+.post-comments{margin-top:12px;padding:12px;border:1px solid #e7edf6;border-radius:12px;background:#f8faff}
+.post-comments[hidden]{display:none}
+.post-comments-list{display:grid;gap:9px;margin-bottom:12px}
+.post-comment{padding:9px 10px;border-radius:10px;background:#fff;color:#31445e;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
+.post-comment strong{display:block;margin-bottom:3px;color:#142b4d;font-size:11px}
+.post-comments-empty{color:#73839a;font-size:12px}
+.comment-form{display:flex;gap:8px}
+.comment-form input{flex:1;min-width:0;padding:10px 11px;border:1px solid #dce5f2;border-radius:9px;background:#fff;color:#142b4d;font:inherit;font-size:12px}
+.comment-form button{padding:9px 12px;border:0;border-radius:9px;background:#245bea;color:#fff;font-size:11px;font-weight:800}
+@media(max-width:520px){.post-actions{gap:3px}.post-actions button{min-width:0;flex:1;padding:8px 5px;font-size:10px}.comment-form button{padding-inline:10px}}
+
 </style>
 </head>
 <body>
@@ -684,6 +700,81 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
   if(event.key==='ArrowDown'&&!panel.hidden){event.preventDefault();panel.querySelector('.search-result')?.focus();}
  });
  document.addEventListener('click',event=>{if(!event.target.closest('.searchbox'))hide();});
+})();
+</script>
+
+
+
+<script>
+/* SIGHTX social interactions: likes, comments, and share with browser-local persistence. */
+(function(){
+ const feed=document.getElementById('feedList');
+ if(!feed)return;
+ const storageKey='sightx-social-interactions-v1';
+ let state={};
+ try{state=JSON.parse(localStorage.getItem(storageKey)||'{}')||{};}catch(_){state={};}
+ function save(){try{localStorage.setItem(storageKey,JSON.stringify(state));}catch(_){toast('Your browser could not save this interaction.');}}
+ function postKey(post){
+  if(post.dataset.socialId)return post.dataset.socialId;
+  const author=post.querySelector('.post-person strong')?.textContent||'Community member';
+  const body=post.querySelector('.post-body')?.textContent||'';
+  let hash=2166136261;const raw=author+'|'+body;
+  for(let i=0;i<raw.length;i++){hash^=raw.charCodeAt(i);hash=Math.imul(hash,16777619);}
+  post.dataset.socialId='post-'+(hash>>>0).toString(36);
+  return post.dataset.socialId;
+ }
+ function ensureState(post){const key=postKey(post);if(!state[key]||typeof state[key]!=='object')state[key]={liked:false,comments:[]};if(!Array.isArray(state[key].comments))state[key].comments=[];return state[key];}
+ function renderComments(post){
+  const box=post.querySelector('.post-comments');if(!box)return;
+  const data=ensureState(post),list=box.querySelector('.post-comments-list');list.replaceChildren();
+  if(!data.comments.length){const empty=document.createElement('div');empty.className='post-comments-empty';empty.textContent='No comments yet. Start the conversation.';list.appendChild(empty);}
+  data.comments.forEach(comment=>{const item=document.createElement('div');item.className='post-comment';const author=document.createElement('strong');author.textContent=comment.author||'You';const body=document.createElement('div');body.textContent=comment.text;item.append(author,body);list.appendChild(item);});
+ }
+ function syncPost(post){
+  const data=ensureState(post),actions=post.querySelector('.post-actions');if(!actions)return;
+  const buttons=Array.from(actions.querySelectorAll('button'));
+  const like=buttons.find(b=>b.dataset.action==='like'||b.textContent.trim().startsWith('Like'));
+  const comment=buttons.find(b=>b.dataset.action==='comment'||b.textContent.trim().startsWith('Comment'));
+  const share=buttons.find(b=>b.dataset.action==='share'||b.textContent.trim().startsWith('Share'));
+  if(like){like.dataset.action='like';like.classList.toggle('is-liked',!!data.liked);like.setAttribute('aria-pressed',data.liked?'true':'false');like.textContent=(data.liked?'♥ Liked':'♡ Like')+(data.liked?' · 1':'');}
+  if(comment){comment.dataset.action='comment';comment.textContent='Comment'+(data.comments.length?' · '+data.comments.length:'');}
+  if(share){share.dataset.action='share';share.textContent='↗ Share';}
+  let box=post.querySelector('.post-comments');
+  if(!box){
+   box=document.createElement('section');box.className='post-comments';box.hidden=true;
+   const list=document.createElement('div');list.className='post-comments-list';
+   const form=document.createElement('form');form.className='comment-form';
+   const input=document.createElement('input');input.type='text';input.name='comment';input.maxLength=500;input.placeholder='Write a thoughtful comment…';input.setAttribute('aria-label','Write a comment');input.required=true;
+   const submit=document.createElement('button');submit.type='submit';submit.textContent='Post';
+   form.append(input,submit);box.append(list,form);actions.insertAdjacentElement('afterend',box);
+   form.addEventListener('submit',event=>{
+    event.preventDefault();const value=input.value.trim();if(!value)return;
+    const current=ensureState(post);current.comments.push({author:'You',text:value,createdAt:Date.now()});save();input.value='';renderComments(post);syncPost(post);box.hidden=false;input.focus();
+   });
+  }
+  renderComments(post);
+ }
+ function init(){feed.querySelectorAll('.post').forEach(syncPost);}
+ feed.addEventListener('click',async event=>{
+  const button=event.target.closest('.post-actions button');if(!button)return;
+  const post=button.closest('.post');if(!post)return;
+  const action=button.dataset.action;const data=ensureState(post);
+  if(action==='like'){data.liked=!data.liked;save();syncPost(post);toast(data.liked?'You liked this post.':'Like removed.');return;}
+  if(action==='comment'){const box=post.querySelector('.post-comments');box.hidden=!box.hidden;if(!box.hidden)box.querySelector('input')?.focus();return;}
+  if(action==='share'){
+   const author=post.querySelector('.post-person strong')?.textContent||'SIGHTX community';
+   const body=(post.querySelector('.post-body')?.textContent||'').trim();
+   const shareData={title:author+' on SIGHTX',text:author+' on SIGHTX: '+body,url:window.location.href.split('#')[0]};
+   try{
+    if(navigator.share){await navigator.share(shareData);toast('Post shared.');}
+    else if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(shareData.text+' '+shareData.url);toast('Post text and link copied to clipboard.');}
+    else{const area=document.createElement('textarea');area.value=shareData.text+' '+shareData.url;area.style.position='fixed';area.style.opacity='0';document.body.appendChild(area);area.select();const copied=document.execCommand('copy');area.remove();if(copied)toast('Post text and link copied to clipboard.');else window.prompt('Copy this post and link:',shareData.text+' '+shareData.url);}
+   }catch(error){if(error&&error.name!=='AbortError')toast('Could not share this post right now.');}
+  }
+ });
+ const observer=new MutationObserver(records=>{for(const record of records)record.addedNodes.forEach(node=>{if(node.nodeType!==1)return;if(node.matches?.('.post'))syncPost(node);node.querySelectorAll?.('.post').forEach(syncPost);});});
+ observer.observe(feed,{childList:true,subtree:true});
+ init();
 })();
 </script>
 
