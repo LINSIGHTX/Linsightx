@@ -719,6 +719,40 @@ document.addEventListener('click',e=>{const save=e.target.closest('.save-btn');i
   font-size: 10px !important;
 }
 </style>
+
+<style id="fix-job-badge-row-alignment">
+#page-jobs .job-card .job-meta {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  overflow-x: auto !important;
+  box-sizing: border-box !important;
+}
+#page-jobs .job-card .job-meta .job-type-tag,
+#page-jobs .job-card .job-meta .job-experience-tag,
+#page-jobs .job-card .job-meta .job-salary-tag {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  max-height: 28px !important;
+  padding: 0 9px !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  font-size: 10px !important;
+}
+</style>
 </body></html>
 
 <style>
