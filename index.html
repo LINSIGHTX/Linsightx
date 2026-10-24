@@ -633,24 +633,7 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
 
 
 
-<script>
-/* Keep job actions inside the main SIGHTX navigation; do not open legacy form pages. */
-(function(){
- document.addEventListener('click',function(event){
-  const apply=event.target.closest('#jobsApplyCta');
-  const post=event.target.closest('#postJobCta');
-  const cardApply=event.target.closest('#page-jobs [data-open-form], #page-jobs a.apply-btn');
-  if(!apply&&!post&&!cardApply)return;
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  if(post){if(typeof showWorkflowPage==='function')showWorkflowPage('post-job');return;}
-  if(apply){if(typeof openApplicationForm==='function'){const firstJob=[...document.querySelectorAll('#page-jobs .job-card')].find(job=>getComputedStyle(job).display!=='none');const role=firstJob?.querySelector('h3')?.textContent||'Open position';openApplicationForm(role);}return;}
-  const card=cardApply.closest('.job-card');
-  const role=card?.querySelector('h3')?.textContent||'Open position';
-  if(typeof openApplicationForm==='function')openApplicationForm(role);
- },true);
-})();
-</script>
+<!-- Removed conflicting capture-phase job-button override; the original in-page handlers manage these buttons. -->
 
 <script>
 /* Add More/Less controls to each job description. */
