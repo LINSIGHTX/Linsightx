@@ -528,10 +528,7 @@ function openApplicationForm(role){
  if(roleLabel)roleLabel.textContent=(select&&select.value)?'Role: '+select.value:'Choose a job to apply for';
  showWorkflowPage('apply');
 }
-document.getElementById('postJobCta').addEventListener('click',()=>showWorkflowPage('post-job'));
-document.getElementById('jobsApplyCta').addEventListener('click',e=>{e.preventDefault();openApplicationForm('');});
-document.addEventListener('click',e=>{const applyLink=e.target.closest('a.apply-btn');if(!applyLink)return;e.preventDefault();const job=applyLink.closest('.job-card');const role=job?.querySelector('h3')?.textContent||new URL(applyLink.href,location.href).searchParams.get('role')||'Open position';openApplicationForm(role);});
-document.addEventListener('click',e=>{const trigger=e.target.closest('[data-open-form]');if(trigger){e.preventDefault();const role=(trigger.closest('.job-card')||document).querySelector('h3')?.textContent||'Open position';openApplicationForm(role);}});
+/* Job form buttons are handled by the single capture-phase router at the end of the document. */
 document.addEventListener('submit',e=>{
  if(e.target.id==='applicationFormFields'){
   e.preventDefault();if(!e.target.reportValidity())return;
@@ -622,6 +619,47 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
 <!-- Focused repair: route job actions directly to the existing in-page forms. -->
 
 
+<!-- SIGHTX reliable job form routing -->
+<script>
+(function(){
+ function revealPage(id){
+  const target=document.getElementById(id);
+  if(!target)return false;
+  document.querySelectorAll('.page').forEach(function(page){page.classList.toggle('active',page===target);});
+  document.querySelectorAll('.navitem,.toplink,.mobile-bottom-nav .nav-btn').forEach(function(btn){btn.classList.toggle('active',btn.dataset.page==='jobs');});
+  const left=document.getElementById('leftcol');if(left)left.classList.remove('mobile-open');
+  try{history.replaceState(null,'','#jobs')}catch(e){}
+  requestAnimationFrame(function(){target.scrollIntoView({behavior:'auto',block:'start'});});
+  return true;
+ }
+ document.addEventListener('click',function(event){
+  const trigger=event.target.closest('#postJobCta,#jobsApplyCta,#page-jobs a.apply-btn,#page-jobs [data-open-form]');
+  if(!trigger)return;
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation();
+  if(trigger.id==='postJobCta'){revealPage('page-post-job');return;}
+  const isGeneric=trigger.id==='jobsApplyCta';
+  const card=trigger.closest('.job-card');
+  const role=isGeneric?'':((card&&card.querySelector('h3')&&card.querySelector('h3').textContent.trim())||'');
+  const select=document.getElementById('applicationJobSelect');
+  const label=document.getElementById('applicationRole');
+  const form=document.getElementById('applicationFormFields');
+  if(select){
+   select.replaceChildren();
+   const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Choose a job';select.appendChild(placeholder);
+   document.querySelectorAll('#page-jobs .job-card h3').forEach(function(title){
+    const name=title.textContent.trim();const option=document.createElement('option');option.value=name;option.textContent=name;select.appendChild(option);
+   });
+   select.value=role&&Array.from(select.options).some(function(option){return option.value===role;})?role:'';
+   if(form)form.dataset.role=select.value;
+   if(label)label.textContent=select.value?'Role: '+select.value:'Choose a job to apply for';
+   select.onchange=function(){if(form)form.dataset.role=select.value;if(label)label.textContent=select.value?'Role: '+select.value:'Choose a job to apply for';};
+  }else if(form){form.dataset.role=role;}
+  revealPage('page-apply');
+ },true);
+})();
+</script>
 </body></html>
 
 
