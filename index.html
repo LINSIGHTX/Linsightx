@@ -1320,3 +1320,195 @@ document.addEventListener('click',e=>{const save=e.target.closest('.save-btn');i
 }
 </style>
 
+
+
+<style id="sightx-high-contrast-visual-refresh">
+/* Stronger visual hierarchy: crisp whites, confident blue, and a signature teal accent. */
+:root {
+  --bg: #f2f6fc !important;
+  --ink: #102746 !important;
+  --muted: #5f718b !important;
+  --line: #d8e3f2 !important;
+  --blue: #1d5fe9 !important;
+  --blue-soft: #e8f0ff !important;
+  --aqua: #0faeaa !important;
+  --shadow: 0 10px 28px rgba(16, 45, 91, .08) !important;
+}
+body {
+  background: linear-gradient(180deg, #f7faff 0, #edf3fb 520px, #f3f6fb 100%) !important;
+  color: #102746 !important;
+}
+.topbar {
+  background: rgba(255,255,255,.98) !important;
+  border-bottom: 1px solid #d7e3f4 !important;
+  box-shadow: 0 5px 22px rgba(15,43,87,.09) !important;
+}
+.brand { color: #102746 !important; }
+.brandmark {
+  background: linear-gradient(135deg,#1557dc 0%,#3478f6 58%,#13aaa5 100%) !important;
+  box-shadow: 0 6px 15px rgba(29,95,233,.28) !important;
+}
+.searchbox {
+  background: #f2f6fc !important;
+  border-color: #d8e4f4 !important;
+}
+.searchbox:focus-within {
+  background: #fff !important;
+  border-color: #6c9cff !important;
+  box-shadow: 0 0 0 4px rgba(29,95,233,.12) !important;
+}
+.layout { align-items: start !important; }
+.card, .workflow-form, .insight-item, .saved-item {
+  background-color: #fff !important;
+  border-color: #dbe5f2 !important;
+  box-shadow: 0 7px 22px rgba(17,48,96,.065) !important;
+}
+.page-heading {
+  border: 1px solid #d5e4fb !important;
+  background: linear-gradient(115deg,#fff 0%,#f4f8ff 62%,#e2efff 100%) !important;
+  box-shadow: 0 10px 26px rgba(29,75,150,.09) !important;
+}
+.page-heading .eyebrow, .eyebrow { color: #1d5fe9 !important; }
+.page-heading h1 { color: #102746 !important; }
+.page-heading h1 span { color: #1d5fe9 !important; }
+.page-heading p { color: #536983 !important; }
+.side-nav { border-color: #dbe5f2 !important; }
+.navitem { color: #425875 !important; }
+.navitem .nav-ico {
+  background: #eaf1ff !important;
+  color: #1d5fe9 !important;
+}
+.navitem.active {
+  background: linear-gradient(100deg,#dce9ff,#eef5ff) !important;
+  color: #174fc9 !important;
+  box-shadow: inset 4px 0 #1d5fe9 !important;
+}
+.navitem:hover { background: #edf4ff !important; color: #174fc9 !important; }
+.profile-cover {
+  background: linear-gradient(115deg,#1557dc 0%,#367cf4 48%,#10aaa5 100%) !important;
+}
+.profile-cover:after { border-color: rgba(255,255,255,.55) !important; }
+.avatar, .mini-avatar {
+  box-shadow: 0 3px 10px rgba(24,65,130,.09);
+}
+.small-cta, .person-card button, .jobs-header-row button {
+  background: #e8f0ff !important;
+  color: #174fc9 !important;
+  border: 1px solid #c9dbff !important;
+}
+.small-cta:hover, .person-card button:hover, .jobs-header-row button:hover {
+  background: #dbe8ff !important;
+}
+#page-home .page-heading {
+  min-height: 188px !important;
+  border-radius: 22px !important;
+  background: linear-gradient(115deg,#123b83 0%,#1d5fe9 54%,#0c9e9c 100%) !important;
+  border-color: transparent !important;
+  box-shadow: 0 14px 30px rgba(29,95,233,.22) !important;
+}
+#page-home .page-heading .eyebrow { color: #bfe8ff !important; }
+#page-home .page-heading h1,
+#page-home .page-heading h1 span { color: #fff !important; }
+#page-home .page-heading p { color: #e3efff !important; }
+#page-home .page-heading:after {
+  width: 260px !important;
+  height: 260px !important;
+  right: -35px !important;
+  top: -95px !important;
+  background: radial-gradient(circle at 35% 35%,rgba(255,255,255,.24),rgba(99,231,219,.14) 45%,transparent 72%) !important;
+}
+.composer { border-top: 3px solid #2b6df0 !important; }
+.compose-input {
+  background: #f7faff !important;
+  border-color: #d4e1f3 !important;
+}
+.compose-input:focus {
+  border-color: #5790ff !important;
+  box-shadow: 0 0 0 4px rgba(29,95,233,.12) !important;
+}
+.chip { background: #e0f8f3 !important; color: #087d76 !important; }
+.publish, .apply-btn, .workflow-form button {
+  background: linear-gradient(110deg,#1d5fe9 0%,#315fe0 62%,#087fba 100%) !important;
+  box-shadow: 0 7px 16px rgba(29,95,233,.23) !important;
+}
+.publish:hover, .apply-btn:hover { filter: brightness(1.07); }
+.feed-tabs {
+  background: #e6eefb !important;
+  border-color: #d7e3f5 !important;
+}
+.feed-tabs button { color: #506682 !important; }
+.feed-tabs button.active {
+  color: #174fc9 !important;
+  background: #fff !important;
+  box-shadow: 0 3px 10px rgba(20,64,133,.12) !important;
+}
+.post {
+  border-left: 3px solid transparent !important;
+  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease !important;
+}
+.post:hover {
+  border-left-color: #2c6cf0 !important;
+  box-shadow: 0 12px 28px rgba(17,48,96,.11) !important;
+  transform: translateY(-1px);
+}
+.post-person strong { color: #102746 !important; }
+.post-person span { color: #6c7e96 !important; }
+.post-body { color: #293f5b !important; }
+.post-tag { background: #e0f8f0 !important; color: #087b5a !important; }
+.post-actions { border-top-color: #e5ecf6 !important; }
+.post-actions button { color: #4d6481 !important; }
+.post-actions button:hover { background: #eaf1ff !important; color: #174fc9 !important; }
+.right-panel { border-color: #dbe5f2 !important; }
+.panel-title h3 { color: #102746 !important; }
+.text-link { color: #1d5fe9 !important; }
+.trending strong { color: #243d5b !important; }
+.jobs-intro {
+  background: linear-gradient(115deg,#123b83 0%,#1d5fe9 54%,#0c9e9c 100%) !important;
+  box-shadow: 0 14px 30px rgba(29,95,233,.2) !important;
+}
+.jobs-intro .eyebrow { color: #bfe8ff !important; }
+.jobs-intro h1 { color: #fff !important; }
+.jobs-intro p { color: #e3efff !important; }
+.search-field, .select-field {
+  border-color: #d6e4f8 !important;
+  box-shadow: 0 3px 9px rgba(12,42,89,.08) !important;
+}
+.job-card {
+  background: #fff !important;
+  border-color: #dbe5f2 !important;
+  box-shadow: 0 7px 20px rgba(17,48,96,.07) !important;
+}
+.job-card:hover {
+  border-color: #a8c5fb !important;
+  box-shadow: 0 13px 28px rgba(29,95,233,.13) !important;
+}
+.job-title-row h3 { color: #102746 !important; }
+.job-desc { color: #405873 !important; }
+.job-footer { border-top-color: #e3ebf6 !important; }
+.save-btn { color: #1d5fe9 !important; border-color: #cbdaf0 !important; }
+.hiring { background: #ddf8ed !important; color: #087b5a !important; }
+.workflow-form input, .workflow-form textarea, .workflow-form select {
+  border-color: #d3e0f2 !important;
+  background: #f8fbff !important;
+}
+.workflow-form input:focus, .workflow-form textarea:focus, .workflow-form select:focus {
+  border-color: #5790ff !important;
+  box-shadow: 0 0 0 3px rgba(29,95,233,.12) !important;
+}
+.mobile-bottom-nav {
+  border-top-color: #dbe5f2 !important;
+  box-shadow: 0 -8px 24px rgba(16,45,91,.1) !important;
+}
+.mobile-bottom-nav .nav-btn.active {
+  color: #174fc9 !important;
+  background: #e8f0ff !important;
+}
+:focus-visible { outline-color: #3478f6 !important; }
+@media(max-width:760px) {
+  #page-home .page-heading { min-height: 165px !important; padding: 24px 21px !important; }
+  .post:hover { transform: none; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .post { transition: none !important; }
+}
+</style>
