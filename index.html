@@ -621,28 +621,7 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
 </script>
 <!-- Focused repair: route job actions directly to the existing in-page forms. -->
 
-<!-- Job form routing: keep Post a Job separate and Apply Now role-specific. -->
-<script>
-(function(){
- if(window.__sightxJobFormRepairInstalled)return;
- window.__sightxJobFormRepairInstalled=true;
- document.addEventListener('click',function(event){
-  const el=event.target.closest('#postJobCta,#jobsApplyCta,#page-jobs .apply-btn,#page-jobs [data-open-form]');
-  if(!el)return;
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  if(el.id==='postJobCta'){
-   ensureWorkflowForms();
-   const target=document.getElementById('page-post-job');
-   if(target){document.querySelectorAll('.page').forEach(function(page){page.classList.toggle('active',page===target);});target.scrollIntoView({behavior:'auto',block:'start'});}
-   return;
-  }
-  const card=el.closest('.job-card');
-  const role=el.id==='jobsApplyCta'?'':(card&&card.querySelector('h3')?card.querySelector('h3').textContent.trim():'');
-  openApplicationForm(role);
- },true);
-})();
-</script>
+
 </body></html>
 
 
