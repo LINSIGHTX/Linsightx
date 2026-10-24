@@ -114,7 +114,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .jobs-intro .eyebrow{color:#bfe8ff}
 .jobs-intro h1{max-width:620px;margin:6px 0 0;color:#fff;font-size:clamp(25px,2.5vw,32px);line-height:1.12;letter-spacing:-.05em}
 .jobs-intro p{max-width:520px;margin:7px 0 0;color:#e5efff;font-size:12px;line-height:1.55}
-.jobs-tools{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
+.jobs-tools{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:9px;margin-top:12px;max-width:620px}
 .search-field,.select-field{height:39px;border:1px solid rgba(255,255,255,.65);border-radius:11px;background:#fff;color:#172b49;box-shadow:0 4px 12px rgba(10,36,90,.1)}
 .search-field{flex:1;min-width:160px;padding:0 13px}
 .select-field{min-width:135px;padding:0 12px}
@@ -213,8 +213,8 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 @media(max-width:440px){
  .brand>span:last-child{display:none}
  .searchbox{gap:7px}
- .jobs-tools{display:grid;grid-template-columns:minmax(0,1fr)}
- .search-field,.select-field{width:100%}
+ .jobs-tools{grid-template-columns:minmax(0,1fr) 132px;gap:7px}
+ .search-field,.select-field{width:100%;min-width:0;padding-left:9px;padding-right:9px}
  .jobs-cta-row{gap:8px;padding:8px}
  .jobs-cta{padding:9px 7px;font-size:11px}
  .job-location{flex-wrap:wrap}
