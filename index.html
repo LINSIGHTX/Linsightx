@@ -351,20 +351,26 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 @media(max-width:520px){.search-results{left:auto;right:-44px;width:min(430px,calc(100vw - 24px));max-height:60vh}.searchbox{min-width:0}}
 
 
-/* Social interactions */
-.post-actions button{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:72px;transition:background .18s,color .18s}
-.post-actions button.is-liked{background:#fff0f0;color:#d71920}
+/* Premium social interaction bar */
+.post-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid #edf0f5}
+.post-actions button{display:inline-flex;align-items:center;justify-content:center;gap:7px;flex:1;min-width:0;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:#f7f9fc;color:#56657b;font-size:12px;font-weight:750;letter-spacing:.01em;transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease,box-shadow .18s ease}
+.post-actions button:hover{background:#eef3fb;border-color:#e2e9f4;color:#233c62;transform:translateY(-1px)}
+.post-actions button:active{transform:translateY(0)}
+.post-actions button.is-liked{background:#fff1f2;border-color:#ffd9dd;color:#dc2626;box-shadow:inset 0 0 0 1px rgba(220,38,38,.025)}
+.post-actions button.is-liked:hover{background:#ffe7ea;border-color:#ffc7ce;color:#c81e1e}
 .post-actions button:focus-visible,.comment-form button:focus-visible,.comment-form input:focus-visible{outline:2px solid #245bea;outline-offset:2px}
-.post-comments{margin-top:12px;padding:12px;border:1px solid #e7edf6;border-radius:12px;background:#f8faff}
+.post-comments{margin-top:12px;padding:14px;border:1px solid #e7edf6;border-radius:14px;background:linear-gradient(180deg,#fbfcff,#f7f9fd)}
 .post-comments[hidden]{display:none}
 .post-comments-list{display:grid;gap:9px;margin-bottom:12px}
-.post-comment{padding:9px 10px;border-radius:10px;background:#fff;color:#31445e;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
+.post-comment{padding:10px 12px;border:1px solid #edf1f7;border-radius:11px;background:#fff;color:#31445e;font-size:12px;line-height:1.6;overflow-wrap:anywhere}
 .post-comment strong{display:block;margin-bottom:3px;color:#142b4d;font-size:11px}
-.post-comments-empty{color:#73839a;font-size:12px}
+.post-comments-empty{padding:4px 0;color:#73839a;font-size:12px}
 .comment-form{display:flex;gap:8px}
-.comment-form input{flex:1;min-width:0;padding:10px 11px;border:1px solid #dce5f2;border-radius:9px;background:#fff;color:#142b4d;font:inherit;font-size:12px}
-.comment-form button{padding:9px 12px;border:0;border-radius:9px;background:#245bea;color:#fff;font-size:11px;font-weight:800}
-@media(max-width:520px){.post-actions{gap:3px}.post-actions button{min-width:0;flex:1;padding:8px 5px;font-size:10px}.comment-form button{padding-inline:10px}}
+.comment-form input{flex:1;min-width:0;padding:11px 13px;border:1px solid #dce5f2;border-radius:10px;background:#fff;color:#142b4d;font:inherit;font-size:12px;transition:border-color .18s ease,box-shadow .18s ease}
+.comment-form input:focus{border-color:#9db8fb;box-shadow:0 0 0 3px rgba(36,91,234,.08);outline:none}
+.comment-form button{padding:10px 15px;border:0;border-radius:10px;background:linear-gradient(135deg,#245bea,#1948bd);color:#fff;font-size:11px;font-weight:800;box-shadow:0 5px 12px rgba(36,91,234,.18);transition:transform .18s ease,box-shadow .18s ease}
+.comment-form button:hover{transform:translateY(-1px);box-shadow:0 7px 15px rgba(36,91,234,.24)}
+@media(max-width:520px){.post-actions{gap:6px}.post-actions button{gap:5px;padding:10px 5px;font-size:10px;border-radius:9px}.comment-form button{padding-inline:12px}}
 
 </style>
 </head>
