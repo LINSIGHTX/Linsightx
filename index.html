@@ -192,9 +192,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .workflow-layout.apply-now-layout{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr)}
 .workflow-layout.apply-now-layout>.workflow-promo{grid-column:1;grid-row:1;align-self:center}
 .workflow-layout.apply-now-layout>.workflow-form{grid-column:2;grid-row:1;width:100%;max-width:460px;justify-self:stretch}
-/* Keep the same content in a clean vertical stack on mobile/tablet. */
+/* Mobile Apply Now layout: show the banner first, then the form, with matching full-width cards. */
 @media(max-width:800px){
- .workflow-layout.apply-now-layout>.workflow-promo,.workflow-layout.apply-now-layout>.workflow-form{grid-column:1;grid-row:auto}
+ .workflow-layout.apply-now-layout{display:grid;grid-template-columns:minmax(0,1fr);align-items:stretch;gap:12px;min-height:0;padding:0}
+ .workflow-layout.apply-now-layout>.workflow-promo{grid-column:1;grid-row:1;width:100%;min-width:0;margin:0}
+ .workflow-layout.apply-now-layout>.workflow-form{grid-column:1;grid-row:2;width:100%;max-width:none;min-width:0;margin:0;justify-self:stretch}
+ .workflow-layout.apply-now-layout .workflow-form form{width:100%;min-width:0}
+ .workflow-layout.apply-now-layout .workflow-form input,.workflow-layout.apply-now-layout .workflow-form textarea{width:100%;min-width:0}
 }
 .workflow-promo{min-width:0;padding:8px 0 8px 2px}
 .workflow-brand{display:flex;align-items:center;gap:9px;margin-bottom:30px;color:#173a77;font-size:20px;font-weight:950;letter-spacing:-.06em}
