@@ -396,6 +396,9 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 .invite-message-wrap textarea{display:block;min-height:82px;resize:vertical;line-height:1.6}
 .invite-copy-message{margin-top:9px;min-height:36px;padding:8px 12px}
 @media(max-width:520px){.invite-link-row{flex-direction:column}.invite-link-row .invite-action{width:100%}.invite-buttons{display:grid;grid-template-columns:minmax(0,1fr)}.invite-action,.invite-copy-message{white-space:normal}.invite-panel{padding:20px 15px}}
+
+/* Mobile navigation pages: hide the desktop right sidebar so it never drops below page content */
+@media(max-width:800px){.layout>.rightcol{display:none!important}}
 </style>
 </head>
 <body>
