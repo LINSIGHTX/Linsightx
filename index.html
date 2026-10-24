@@ -234,6 +234,98 @@ footer{color:#73839b!important}
  }
 }
 
+
+/* Refined sizing pass: normalise oversized typography, spacing and cards */
+body{font-size:14px!important;line-height:1.55!important}
+.topbar{height:66px!important;gap:20px!important}
+.brand{font-size:22px!important;letter-spacing:-1px!important}
+.brandmark{width:32px!important;height:32px!important;border-radius:10px!important}
+.searchbox{padding:9px 13px!important;border-radius:10px!important}
+.layout{max-width:1320px!important;grid-template-columns:220px minmax(0,1fr) 260px!important;gap:20px!important;margin-top:22px!important;padding-left:20px!important;padding-right:20px!important}
+.page-heading{min-height:118px!important;padding:22px 24px!important;margin-bottom:16px!important;border-radius:16px!important}
+.page-heading:after{width:175px!important;height:175px!important;right:-38px!important;top:-70px!important}
+.eyebrow{font-size:10px!important;letter-spacing:.14em!important}
+.page-heading h1{font-size:clamp(25px,2.7vw,34px)!important;letter-spacing:-.05em!important;line-height:1.12!important;margin-top:6px!important}
+.page-heading p{font-size:13px!important;line-height:1.55!important;margin-top:7px!important}
+.card,.workflow-form{border-radius:15px!important}
+.side-nav{padding:8px!important}
+.navitem{min-height:40px!important;padding:9px 10px!important;font-size:13px!important}
+.side-nav .nav-ico{width:26px!important;height:26px!important;flex-basis:26px!important;font-size:14px!important}
+.profile-cover{height:54px!important}
+.profile-info{padding:0 14px 14px!important}
+.avatar{width:46px!important;height:46px!important;border-radius:13px!important;font-size:17px!important}
+.profile-info h3{font-size:17px!important;margin-top:8px!important}
+.profile-info p{font-size:12px!important;margin-top:5px!important}
+.small-cta{margin-top:12px!important;padding:8px 10px!important}
+.composer,.post,.job-card,.right-panel{padding:15px!important;margin-bottom:12px!important}
+.compose-input{min-height:70px!important;padding:10px 12px!important;font-size:13px!important;border-radius:11px!important}
+.composer-actions{padding-top:10px!important;margin-top:10px!important}
+.publish,.apply-btn,.save-btn,.small-cta{font-size:12px!important;padding:8px 12px!important;border-radius:9px!important}
+.feed-tabs{margin:11px 0!important;padding:4px!important;border-radius:10px!important}
+.feed-tabs button{padding:8px 10px!important;font-size:12px!important;border-radius:8px!important}
+.post-head{gap:9px!important}
+.mini-avatar{width:34px!important;height:34px!important;flex-basis:34px!important;font-size:12px!important}
+.post-person strong{font-size:12px!important}
+.post-person span{font-size:11px!important}
+.post-body{margin-top:10px!important;font-size:13px!important;line-height:1.65!important}
+.post-tag{font-size:10px!important;margin-bottom:7px!important}
+.post-actions{padding-top:8px!important;margin-top:10px!important}
+.post-actions button{font-size:12px!important;padding:6px 8px!important}
+.right-panel{padding:14px!important}
+.panel-title h3{font-size:13px!important}
+.trending{padding:8px 0!important}
+.trending strong{font-size:12px!important}
+.trending small{font-size:11px!important}
+.jobs-intro{padding:22px!important;border-radius:17px!important;margin-bottom:12px!important}
+.jobs-intro h1{font-size:clamp(24px,2.6vw,32px)!important;letter-spacing:-.045em!important}
+.jobs-intro p{font-size:13px!important;line-height:1.6!important}
+.jobs-tools{margin:12px 0!important}
+.search-field,.select-field{height:40px!important;font-size:12px!important}
+.jobs-header-row{margin:17px 0 10px!important}
+.jobs-header-row h2{font-size:15px!important}
+.job-title-row h3{font-size:16px!important}
+.job-desc{font-size:13px!important;line-height:1.6!important;margin-top:9px!important}
+.job-meta{font-size:11px!important;margin-top:6px!important}
+.job-footer{margin-top:11px!important;padding-top:10px!important}
+.hiring{font-size:10px!important;padding:4px 7px!important}
+.network-grid{gap:11px!important}
+.person-card{padding:14px!important}
+.person-card h3{font-size:14px!important}
+.person-card p{font-size:12px!important}
+.insight-list,.saved-list{gap:10px!important}
+.insight-item,.saved-item{padding:13px 14px!important}
+.insight-item h3,.saved-item h3{font-size:14px!important}
+.insight-item p,.saved-item p{font-size:13px!important;line-height:1.6!important}
+footer{padding:20px 16px!important}
+@media(max-width:1100px){
+ .layout{grid-template-columns:205px minmax(0,1fr)!important;gap:16px!important}
+ .rightcol{display:none!important}
+}
+@media(max-width:760px){
+ .topbar{height:60px!important;padding:0 11px!important;gap:10px!important}
+ .brand{font-size:19px!important;gap:7px!important}
+ .brandmark{width:29px!important;height:29px!important;font-size:15px!important}
+ .mobile-menu{width:35px!important;height:35px!important;font-size:20px!important;border-radius:9px!important}
+ .searchbox{padding:8px 10px!important;gap:7px!important}
+ .searchbox input{font-size:12px!important}
+ .layout{display:block!important;padding:0 12px 80px!important;margin-top:14px!important}
+ .page-heading{min-height:0!important;padding:18px 17px!important;margin-bottom:13px!important;border-radius:14px!important}
+ .page-heading:after{width:130px!important;height:130px!important;right:-35px!important;top:-52px!important}
+ .page-heading h1{font-size:25px!important;letter-spacing:-.045em!important;line-height:1.15!important}
+ .page-heading p{font-size:12px!important;margin-top:6px!important}
+ .eyebrow{font-size:9px!important;letter-spacing:.12em!important}
+ .composer,.post,.job-card,.right-panel{padding:13px!important;border-radius:13px!important}
+ .compose-input{min-height:64px!important;font-size:13px!important}
+ .jobs-intro{padding:18px!important;border-radius:15px!important}
+ .jobs-intro h1{font-size:24px!important;line-height:1.15!important}
+ .jobs-intro p{font-size:12px!important}
+ .mobile-bottom-nav{padding:7px 9px calc(7px + env(safe-area-inset-bottom))!important}
+ .mobile-bottom-nav .nav-btn{font-size:10px!important}
+ .mobile-bottom-nav .nav-btn span:first-child{font-size:17px!important}
+ .network-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .person-card{padding:12px!important}
+}
+
 </style>
 </head>
 <body>
