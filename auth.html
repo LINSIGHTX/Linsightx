@@ -148,6 +148,15 @@
   async function startMfaSetup(){
     const button=$('startMfaSetup');button.disabled=true;
     try{
+      // A page reload can leave an unverified factor behind. Remove stale
+      // unfinished factors before creating a new one, to avoid duplicates.
+      const {data:factorData,error:factorError}=await client.auth.mfa.listFactors();
+      if(factorError)throw factorError;
+      const unfinished=(factorData.totp||[]).filter(f=>f.status!=='verified');
+      for(const factor of unfinished){
+        const {error}=await client.auth.mfa.unenroll({factorId:factor.id});
+        if(error)throw error;
+      }
       const {data,error}=await client.auth.mfa.enroll({factorType:'totp',friendlyName:'SIGHTX authenticator'});
       if(error)throw error;
       mfaPendingFactorId=data.id;
@@ -159,7 +168,7 @@
       $('mfaCode').focus();
     }catch(error){
       mfaMessage('Could not start setup: '+friendlyError(error),'error');
-    }finally{button.disabled=false;}
+    }finally{button.disabled=!!mfaPendingFactorId;}
   }
   async function verifyMfaSetup(event){
     event.preventDefault();
