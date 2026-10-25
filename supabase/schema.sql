@@ -92,56 +92,6 @@ create table if not exists public.sightx_job_reports (
 );
 
 
--- Prevent employers from approving themselves or publishing jobs without admin review.
-create or replace function private.sightx_guard_job_moderation_fields()
-returns trigger
-language plpgsql
-set search_path = ''
-as $sightx$
-declare
-  caller_is_admin boolean;
-  caller_owns_job boolean;
-begin
-  caller_is_admin := private.sightx_is_admin();
-  select exists (
-    select 1 from public.sightx_employers e
-    where e.id = old.employer_id and e.owner_id = auth.uid()
-  ) into caller_owns_job;
-
-  if caller_is_admin then
-    return new;
-  end if;
-
-  if not caller_owns_job then
-    raise exception 'Not authorized to edit this job';
-  end if;
-
-  if new.employer_id is distinct from old.employer_id
-     or new.reviewed_by is distinct from old.reviewed_by
-     or new.reviewed_at is distinct from old.reviewed_at then
-    raise exception 'Only SIGHTX administrators can change job moderation fields';
-  end if;
-
-  if old.status = 'pending_review' and new.status <> 'pending_review' then
-    raise exception 'Jobs must be reviewed by SIGHTX before publication';
-  end if;
-
-  if old.status = 'published' and new.status not in ('published','closed') then
-    raise exception 'Employers may only close their own published jobs';
-  end if;
-
-  if old.status = 'closed' and new.status <> 'closed' then
-    raise exception 'Closed jobs require administrator review to reopen';
-  end if;
-
-  return new;
-end;
-$sightx$;
-
-drop trigger if exists sightx_jobs_guard_moderation_fields on public.sightx_job_listings;
-create trigger sightx_jobs_guard_moderation_fields
-before update on public.sightx_job_listings
-for each row execute procedure private.sightx_guard_job_moderation_fields();
 
 create index if not exists sightx_jobs_status_created_idx on public.sightx_job_listings(status, created_at desc);
 create index if not exists sightx_jobs_employer_idx on public.sightx_job_listings(employer_id);
@@ -149,30 +99,7 @@ create index if not exists sightx_applications_job_idx on public.sightx_applicat
 create index if not exists sightx_applications_applicant_idx on public.sightx_applications(applicant_id, created_at desc);
 create index if not exists sightx_job_reports_status_idx on public.sightx_job_reports(status, created_at desc);
 
-create or replace function private.sightx_set_updated_at()
-returns trigger
-language plpgsql
-set search_path = ''
-as $sightx$
-begin
-  new.updated_at = now();
-  return new;
-end;
-$sightx$;
-
-drop trigger if exists sightx_profiles_set_updated_at on public.sightx_profiles;
-create trigger sightx_profiles_set_updated_at before update on public.sightx_profiles
-for each row execute procedure private.sightx_set_updated_at();
-drop trigger if exists sightx_employers_set_updated_at on public.sightx_employers;
-create trigger sightx_employers_set_updated_at before update on public.sightx_employers
-for each row execute procedure private.sightx_set_updated_at();
-drop trigger if exists sightx_jobs_set_updated_at on public.sightx_job_listings;
-create trigger sightx_jobs_set_updated_at before update on public.sightx_job_listings
-for each row execute procedure private.sightx_set_updated_at();
-drop trigger if exists sightx_applications_set_updated_at on public.sightx_applications;
-create trigger sightx_applications_set_updated_at before update on public.sightx_applications
-for each row execute procedure private.sightx_set_updated_at();
-
+-- All new SIGHTX tables use RLS; tables with no matching policy are deny-by-default.
 alter table public.sightx_profiles enable row level security;
 alter table public.sightx_admin_users enable row level security;
 alter table public.sightx_employers enable row level security;
@@ -180,197 +107,113 @@ alter table public.sightx_job_listings enable row level security;
 alter table public.sightx_applications enable row level security;
 alter table public.sightx_job_reports enable row level security;
 
+-- Admin authorization must be a trusted app_metadata.role='admin' claim managed by a privileged server/admin action.
+-- Never use user_metadata for roles, and never expose service-role credentials in the browser.
 
--- SECURITY DEFINER avoids recursive row-level-security evaluation when checking admin membership.
-create or replace function private.sightx_is_admin()
-returns boolean
-language sql
-stable
-set search_path = ''
-as $sightx$
-  select coalesce((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false);
-$sightx$;
-revoke all on function private.sightx_is_admin() from public;
-grant execute on function private.sightx_is_admin() to authenticated;
-
--- No client-facing policies are created for sightx_admin_users; it is a private audit/roster table.
+grant select, insert, update on public.sightx_profiles to authenticated;
+grant select on public.sightx_job_listings to anon, authenticated;
+grant insert, update on public.sightx_job_listings to authenticated;
+grant select, insert, update on public.sightx_employers to authenticated;
+grant select, insert, update on public.sightx_applications to authenticated;
+grant select, insert, update on public.sightx_job_reports to authenticated;
+revoke all on public.sightx_admin_users from anon, authenticated;
 
 drop policy if exists "users can create own profile" on public.sightx_profiles;
 create policy "users can create own profile" on public.sightx_profiles
 for insert to authenticated with check (id = auth.uid());
 drop policy if exists "users can read own profile" on public.sightx_profiles;
 create policy "users can read own profile" on public.sightx_profiles
-for select to authenticated using (id = auth.uid());
+for select to authenticated using (id = auth.uid() or coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false));
 drop policy if exists "users can update own profile" on public.sightx_profiles;
 create policy "users can update own profile" on public.sightx_profiles
-for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
+for update to authenticated using (id = auth.uid() or coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)) with check (id = auth.uid() or coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false));
 
 drop policy if exists "users can view own employer application" on public.sightx_employers;
 create policy "users can view own employer application" on public.sightx_employers
-for select to authenticated
-using (owner_id = auth.uid() or private.sightx_is_admin());
+for select to authenticated using (owner_id = auth.uid() or coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false));
 drop policy if exists "users can submit employer application" on public.sightx_employers;
 create policy "users can submit employer application" on public.sightx_employers
-for insert to authenticated
-with check (owner_id = auth.uid() and verification_status = 'pending' and reviewed_by is null and reviewed_at is null);
+for insert to authenticated with check (
+  owner_id = auth.uid() and verification_status = 'pending'
+  and reviewed_by is null and reviewed_at is null
+);
 drop policy if exists "employers can update own unreviewed details" on public.sightx_employers;
 create policy "employers can update own unreviewed details" on public.sightx_employers
-for update to authenticated
-using (owner_id = auth.uid() and verification_status in ('pending','rejected'))
-with check (owner_id = auth.uid() and verification_status in ('pending','rejected') and reviewed_by is null and reviewed_at is null);
+for update to authenticated using (
+  owner_id = auth.uid() and verification_status in ('pending','rejected')
+) with check (
+  owner_id = auth.uid() and verification_status in ('pending','rejected')
+  and reviewed_by is null and reviewed_at is null
+);
 drop policy if exists "admins can manage employer verification" on public.sightx_employers;
 create policy "admins can manage employer verification" on public.sightx_employers
-for all to authenticated
-using (private.sightx_is_admin())
-with check (private.sightx_is_admin());
+for all to authenticated using (coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)) with check (coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false));
 
+drop policy if exists "SIGHTX public read published jobs" on public.sightx_job_listings;
 drop policy if exists "public can view approved published jobs" on public.sightx_job_listings;
 create policy "public can view approved published jobs" on public.sightx_job_listings
-for select to anon, authenticated
-using (
-  status = 'published'
-  and exists (
+for select to anon, authenticated using (
+  status = 'published' and exists (
     select 1 from public.sightx_employers e
     where e.id = sightx_job_listings.employer_id and e.verification_status = 'verified'
   )
 );
 drop policy if exists "employer can view own jobs" on public.sightx_job_listings;
 create policy "employer can view own jobs" on public.sightx_job_listings
-for select to authenticated
-using (
-  exists (select 1 from public.sightx_employers e where e.id = sightx_job_listings.employer_id and e.owner_id = auth.uid())
-  or private.sightx_is_admin()
+for select to authenticated using (
+  exists (select 1 from public.sightx_employers e
+    where e.id = sightx_job_listings.employer_id and e.owner_id = auth.uid())
+  or coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
 );
 drop policy if exists "verified employers can submit jobs for review" on public.sightx_job_listings;
 create policy "verified employers can submit jobs for review" on public.sightx_job_listings
-for insert to authenticated
-with check (
-  status = 'pending_review'
-  and reviewed_by is null and reviewed_at is null
-  and exists (
-    select 1 from public.sightx_employers e
-    where e.id = sightx_job_listings.employer_id and e.owner_id = auth.uid() and e.verification_status = 'verified'
-  )
-);
-drop policy if exists "employers can edit own pending or published jobs" on public.sightx_job_listings;
-create policy "employers can edit own pending or published jobs" on public.sightx_job_listings
-for update to authenticated
-using (
-  exists (select 1 from public.sightx_employers e where e.id = sightx_job_listings.employer_id and e.owner_id = auth.uid())
-  and status in ('pending_review','published','closed')
-)
-with check (
-  exists (select 1 from public.sightx_employers e where e.id = sightx_job_listings.employer_id and e.owner_id = auth.uid())
-  and status in ('pending_review','published','closed')
+for insert to authenticated with check (
+  status = 'pending_review' and reviewed_by is null and reviewed_at is null
+  and exists (select 1 from public.sightx_employers e
+    where e.id = sightx_job_listings.employer_id and e.owner_id = auth.uid()
+      and e.verification_status = 'verified')
 );
 drop policy if exists "admins can moderate jobs" on public.sightx_job_listings;
 create policy "admins can moderate jobs" on public.sightx_job_listings
-for all to authenticated
-using (private.sightx_is_admin())
-with check (private.sightx_is_admin());
+for all to authenticated using (coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)) with check (coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false));
 
 drop policy if exists "applicants can submit own applications" on public.sightx_applications;
 create policy "applicants can submit own applications" on public.sightx_applications
-for insert to authenticated
-with check (
-  applicant_id = auth.uid()
-  and status = 'new'
-  and employer_notes is null
+for insert to authenticated with check (
+  applicant_id = auth.uid() and status = 'new' and employer_notes is null
   and exists (
     select 1 from public.sightx_job_listings j
     join public.sightx_employers e on e.id = j.employer_id
-    where j.id = sightx_applications.job_id and j.status = 'published' and e.verification_status = 'verified'
+    where j.id = sightx_applications.job_id and j.status = 'published'
+      and e.verification_status = 'verified'
   )
 );
 drop policy if exists "applicants and job owners can read applications" on public.sightx_applications;
 create policy "applicants and job owners can read applications" on public.sightx_applications
-for select to authenticated
-using (
+for select to authenticated using (
   applicant_id = auth.uid()
   or exists (
     select 1 from public.sightx_job_listings j
     join public.sightx_employers e on e.id = j.employer_id
     where j.id = sightx_applications.job_id and e.owner_id = auth.uid()
   )
-  or private.sightx_is_admin()
+  or coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
 );
-drop policy if exists "job owners can update application status" on public.sightx_applications;
-create policy "job owners can update application status" on public.sightx_applications
-for update to authenticated
-using (
-  exists (
-    select 1 from public.sightx_job_listings j
-    join public.sightx_employers e on e.id = j.employer_id
-    where j.id = sightx_applications.job_id and e.owner_id = auth.uid()
-  )
-  or private.sightx_is_admin()
-)
-with check (
-  exists (
-    select 1 from public.sightx_job_listings j
-    join public.sightx_employers e on e.id = j.employer_id
-    where j.id = sightx_applications.job_id and e.owner_id = auth.uid()
-  )
-  or private.sightx_is_admin()
-);
-
-
--- Employers can update only application status and their private notes, not applicant-submitted identity/details.
-create or replace function private.sightx_guard_application_updates()
-returns trigger
-language plpgsql
-set search_path = ''
-as $sightx$
-begin
-  if private.sightx_is_admin() then
-    return new;
-  end if;
-
-  if new.job_id is distinct from old.job_id
-     or new.applicant_id is distinct from old.applicant_id
-     or new.full_name is distinct from old.full_name
-     or new.email is distinct from old.email
-     or new.resume_path is distinct from old.resume_path
-     or new.cover_message is distinct from old.cover_message then
-    raise exception 'Applicant-submitted fields cannot be changed';
-  end if;
-
-  if not exists (
-    select 1 from public.sightx_job_listings j
-    join public.sightx_employers e on e.id = j.employer_id
-    where j.id = old.job_id and e.owner_id = auth.uid()
-  ) then
-    raise exception 'Not authorized to update this application';
-  end if;
-
-  return new;
-end;
-$sightx$;
-
-drop trigger if exists sightx_applications_guard_updates on public.sightx_applications;
-create trigger sightx_applications_guard_updates
-before update on public.sightx_applications
-for each row execute procedure private.sightx_guard_application_updates();
+drop policy if exists "admins can update applications" on public.sightx_applications;
+create policy "admins can update applications" on public.sightx_applications
+for update to authenticated using (coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)) with check (coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false));
 
 drop policy if exists "authenticated users can report jobs" on public.sightx_job_reports;
 create policy "authenticated users can report jobs" on public.sightx_job_reports
-for insert to authenticated
-with check (reporter_id = auth.uid() and status = 'open' and reviewed_by is null and reviewed_at is null);
+for insert to authenticated with check (
+  reporter_id = auth.uid() and status = 'open' and reviewed_by is null and reviewed_at is null
+);
 drop policy if exists "reporters and admins can view reports" on public.sightx_job_reports;
 create policy "reporters and admins can view reports" on public.sightx_job_reports
-for select to authenticated
-using (reporter_id = auth.uid() or private.sightx_is_admin());
+for select to authenticated using (reporter_id = auth.uid() or coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false));
 drop policy if exists "admins can manage reports" on public.sightx_job_reports;
 create policy "admins can manage reports" on public.sightx_job_reports
-for update to authenticated
-using (private.sightx_is_admin())
-with check (private.sightx_is_admin());
+for update to authenticated using (coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)) with check (coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false));
 
--- Note: configure a private Supabase Storage bucket and its access policies before enabling resume uploads.
--- Do not put the Supabase service_role key in browser code or commit it to GitHub.
-
-
--- Keep internal trigger functions inaccessible via the public Data API.
-revoke all on function private.sightx_set_updated_at() from public, anon, authenticated;
-revoke all on function private.sightx_guard_job_moderation_fields() from public, anon, authenticated;
-revoke all on function private.sightx_guard_application_updates() from public, anon, authenticated;
+-- Employer edits to submitted jobs and application status transitions are intentionally restricted to admins
+-- until trusted server-side moderation actions are implemented.
