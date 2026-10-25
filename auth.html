@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#edf5ff">
+<title>SIGHTX Account & Hiring Portal</title>
+<style>
+:root{color-scheme:light;--bg:#f3f7fd;--card:#fff;--ink:#152b49;--muted:#62758f;--line:#dfe8f5;--blue:#245bea;--blue2:#1748c8;--green:#087b5b;--amber:#8a5a00;--red:#b42318;--shadow:0 14px 40px rgba(24,50,91,.08)}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#f8fbff,#edf3fc);color:var(--ink);font:15px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}button{cursor:pointer}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px max(20px,calc((100vw - 1180px)/2));background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.brand{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:900;letter-spacing:-1px}.mark{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#245bea,#0d9f9b);color:#fff}.toplinks{display:flex;align-items:center;gap:12px}.toplinks a{font-size:13px;font-weight:750;color:#526782}.wrap{max-width:1180px;margin:30px auto;padding:0 20px 60px}.hero{padding:30px;border:1px solid #dce8fa;border-radius:22px;background:linear-gradient(120deg,#fff,#eef5ff);box-shadow:var(--shadow);margin-bottom:22px}.eyebrow{font-size:10px;letter-spacing:.16em;font-weight:900;color:var(--blue);text-transform:uppercase}.hero h1{font-size:clamp(29px,4vw,42px);line-height:1.08;letter-spacing:-.055em;margin:9px 0}.hero p{max-width:720px;color:var(--muted);margin:0}.grid{display:grid;grid-template-columns:minmax(280px,.85fr) minmax(0,1.4fr);gap:20px;align-items:start}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow);min-width:0}.card h2,.card h3{margin:0 0 8px;letter-spacing:-.025em}.sub{color:var(--muted);font-size:13px;margin:0 0 18px}.tabs{display:flex;gap:7px;padding:4px;border-radius:12px;background:#f1f5fb;margin:14px 0}.tabs button{flex:1;border:0;border-radius:9px;background:transparent;padding:9px;font-size:13px;font-weight:800;color:#5c6e87}.tabs button.active{background:#fff;color:var(--blue2);box-shadow:0 2px 8px #142c4a12}.form{display:grid;gap:12px}.field{display:grid;gap:6px}.field label{font-size:12px;font-weight:800;color:#3d526f}.field input,.field textarea,.field select{width:100%;min-width:0;padding:11px 12px;border:1px solid #d8e2f0;border-radius:10px;background:#fbfdff;color:var(--ink);outline:0}.field textarea{min-height:95px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:#8db0ff;box-shadow:0 0 0 3px #245bea18}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid #d8e2f0;border-radius:10px;background:#fff;color:#344967;padding:10px 14px;font-weight:800;font-size:13px}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.primary:hover{background:var(--blue2)}.btn.danger{border-color:#f0c9c6;color:var(--red);background:#fff8f7}.btn.good{border-color:#b8e5d3;color:var(--green);background:#f2fcf7}.btn:disabled{opacity:.5;cursor:not-allowed}.notice{padding:11px 13px;border-radius:11px;background:#eff6ff;border:1px solid #d7e7ff;color:#31517e;font-size:13px;margin:10px 0}.notice.error{background:#fff4f2;border-color:#f4d0ca;color:#9b241c}.notice.success{background:#effbf5;border-color:#cceedd;color:#126b4d}.hidden{display:none!important}.section{margin-top:22px}.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}.section-head p{margin:3px 0 0;color:var(--muted);font-size:13px}.list{display:grid;gap:10px}.item{border:1px solid var(--line);border-radius:13px;padding:14px;background:#fff}.item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.item h3{font-size:16px;margin:0 0 4px}.meta{color:var(--muted);font-size:12px}.badge{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:10px;letter-spacing:.03em;font-weight:900;background:#edf3ff;color:#3159a4;text-transform:uppercase;white-space:nowrap}.badge.verified,.badge.published,.badge.hired{background:#e5f8ef;color:#087b5b}.badge.pending,.badge.pending_review,.badge.under_review,.badge.new{background:#fff4db;color:#8a5a00}.badge.rejected,.badge.suspended{background:#fff0ee;color:#b42318}.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.muted{color:var(--muted)}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.status-line{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0}.empty{padding:22px;border:1px dashed #cfdbec;border-radius:13px;color:var(--muted);font-size:13px;text-align:center}.footnote{font-size:11px;color:#7c8da4;margin-top:14px;line-height:1.6}.divider{height:1px;background:#edf1f7;margin:18px 0}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.top{position:static}.hero{padding:23px}.wrap{margin-top:18px}.two{grid-template-columns:1fr}}@media(max-width:480px){.top{padding:12px 15px}.toplinks{gap:9px}.toplinks a{font-size:11px}.brand{font-size:19px}.wrap{padding:0 13px 40px}.card{padding:17px}.hero{padding:20px}.item-head{flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html"><span class="mark">S</span><span>SIGHTX</span></a>
+  <nav class="toplinks" aria-label="Site navigation"><a href="index.html">Home</a><a href="index.html#jobs">Find jobs</a><a href="#account">Account</a></nav>
+</header>
+<main class="wrap">
+  <section class="hero"><div class="eyebrow">Your next opportunity starts here</div><h1>One account. A safer hiring community.</h1><p>Sign in to apply for jobs, submit your employer for strict verification, or manage SIGHTX hiring reviews if you are an authorized administrator.</p></section>
+  <section id="authArea" class="grid">
+    <article class="card" id="authCard">
+      <h2 id="authHeading">Welcome to SIGHTX</h2><p class="sub">Use your email to create an account or sign in.</p>
+      <div class="tabs"><button type="button" id="showLogin" class="active">Sign in</button><button type="button" id="showSignup">Create account</button></div>
+      <div id="authNotice" class="notice hidden" role="status"></div>
+      <form id="loginForm" class="form">
+        <div class="field"><label for="loginEmail">Email address</label><input id="loginEmail" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" minlength="8" required></div>
+        <button class="btn primary" type="submit">Sign in</button>
+        <button class="btn" type="button" id="resetPassword">Forgot password?</button>
+      </form>
+      <form id="signupForm" class="form hidden">
+        <div class="field"><label for="signupName">Full name</label><input id="signupName" type="text" autocomplete="name" maxlength="120" required></div>
+        <div class="field"><label for="signupEmail">Email address</label><input id="signupEmail" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="signupPassword">Create password</label><input id="signupPassword" type="password" autocomplete="new-password" minlength="10" required><small class="muted">Use at least 10 characters. Never reuse a password from another site.</small></div>
+        <button class="btn primary" type="submit">Create account</button>
+        <p class="footnote">Email confirmation may be required before you can sign in. We never use a self-selected browser role to grant administrator access.</p>
+      </form>
+    </article>
+    <article class="card"><h2>How SIGHTX protects hiring</h2><p class="sub">Strict verification is built into the database rules.</p>
+      <div class="item"><h3>1. Employer review</h3><p class="meta">Companies submit their details and stay pending until an authorized SIGHTX administrator verifies them.</p></div>
+      <div class="item" style="margin-top:10px"><h3>2. Job moderation</h3><p class="meta">New vacancies are private until an administrator publishes them after review.</p></div>
+      <div class="item" style="margin-top:10px"><h3>3. Safer applications</h3><p class="meta">Applicants can only apply to published vacancies. Resume uploads will be enabled after private file storage is configured.</p></div>
+      <p class="footnote">A verification badge means SIGHTX reviewed available evidence; it is not a guarantee that every future message or job offer is safe.</p>
+    </article>
+  </section>
+  <section id="dashboard" class="hidden">
+    <article class="card"><div class="section-head"><div><div class="eyebrow">Signed in</div><h2 id="welcomeTitle">Your SIGHTX account</h2><p id="welcomeMeta" class="muted"></p></div><button class="btn" id="signOut" type="button">Sign out</button></div><div id="dashboardNotice" class="notice hidden" role="status"></div></article>
+    <section id="employerArea" class="section grid">
+      <article class="card"><h2>Employer verification</h2><p class="sub">Submit company information for manual review. Your first job cannot be published until verification is approved.</p>
+        <div id="employerStatus"></div>
+        <form id="employerForm" class="form">
+          <div class="field"><label for="companyName">Registered company / organization name</label><input id="companyName" name="company_name" maxlength="180" required></div>
+          <div class="field"><label for="companyWebsite">Company website</label><input id="companyWebsite" name="company_website" type="url" placeholder="https://company.example"></div>
+          <div class="field"><label for="companyEmail">Company email</label><input id="companyEmail" name="company_email" type="email" required></div>
+          <div class="field"><label for="businessPhone">Business phone</label><input id="businessPhone" name="business_phone" type="tel" maxlength="40"></div>
+          <div class="field"><label for="businessAddress">Business address</label><input id="businessAddress" name="business_address" maxlength="240"></div>
+          <div class="field"><label for="registrationDetails">Company registration details (where applicable)</label><input id="registrationDetails" name="registration_details" maxlength="240" placeholder="Registration number / business registry"></div>
+          <div class="field"><label for="evidenceNotes">Evidence or context for reviewer</label><textarea id="evidenceNotes" name="evidence_notes" maxlength="1500" placeholder="Describe your role at the company and where its business records can be checked. Do not paste passwords or sensitive personal documents here."></textarea></div>
+          <button class="btn primary" type="submit" id="submitEmployer">Submit for verification</button>
+        </form>
+      </article>
+      <article class="card"><h2>Post a job</h2><p class="sub">Only verified employers can submit jobs. Every new listing starts in review.</p><div id="postJobLock" class="notice">Complete employer verification first. Your employer status will appear here.</div>
+        <form id="jobForm" class="form hidden">
+          <div class="field"><label for="jobTitle">Job title</label><input id="jobTitle" maxlength="180" required></div>
+          <div class="two"><div class="field"><label for="jobLocation">Location</label><input id="jobLocation" maxlength="180" placeholder="Bengaluru / Remote" required></div><div class="field"><label for="jobType">Employment type</label><select id="jobType"><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option></select></div></div>
+          <div class="two"><div class="field"><label for="jobExperience">Experience</label><input id="jobExperience" maxlength="100" placeholder="0–2 years"></div><div class="field"><label for="jobSalary">Salary range</label><input id="jobSalary" maxlength="100" placeholder="₹8–12 LPA"></div></div>
+          <div class="field"><label for="jobDescription">Job description</label><textarea id="jobDescription" maxlength="10000" required placeholder="Responsibilities, requirements, and what you offer."></textarea></div>
+          <div class="field"><label for="applicationEmail">Recruitment contact email</label><input id="applicationEmail" type="email" required></div>
+          <button class="btn primary" type="submit">Submit job for review</button>
+        </form>
+        <div class="divider"></div><h3>Your job listings</h3><div id="myJobs" class="list"><div class="empty">Sign in to load your listings.</div></div>
+      </article>
+    </section>
+    <section class="section card"><div class="section-head"><div><h2>Open opportunities</h2><p>Only administrator-published jobs are shown here.</p></div><button class="btn" id="refreshJobs" type="button">Refresh</button></div><div id="publicJobs" class="list"><div class="empty">Loading published jobs…</div></div></section>
+    <section class="section card"><h2>My applications</h2><p class="sub">Your application history and current status.</p><div id="myApplications" class="list"><div class="empty">Sign in to load your applications.</div></div></section>
+    <section id="adminArea" class="section hidden">
+      <article class="card"><div class="eyebrow">Restricted tools</div><h2>SIGHTX Admin Review</h2><p class="sub">Visible only when your authenticated account carries a trusted <code>app_metadata.role = admin</code> claim.</p><div class="notice">Verify company identity and recruiter authorization before approval. Publish jobs only after the employer is verified.</div></article>
+      <section class="section card"><div class="section-head"><div><h2>Employer verification queue</h2><p>Review business evidence and recruiter association.</p></div><button class="btn" type="button" id="refreshAdmin">Refresh queues</button></div><div id="adminEmployers" class="list"></div></section>
+      <section class="section card"><h2>Job moderation queue</h2><div id="adminJobs" class="list"></div></section>
+      <section class="section card"><h2>Application status management</h2><div id="adminApplications" class="list"></div></section>
+      <section class="section card"><h2>Reported jobs</h2><div id="adminReports" class="list"></div></section>
+    </section>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script>
+(function(){
+  'use strict';
+  const SUPABASE_URL='https://ycfnsufdxztkmtyuceqy.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY='sb_publishable_EbJZKeEdRR6l_UsRucmpnA_yzWHmVXJ';
+  const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  const $=id=>document.getElementById(id);
+  let session=null,user=null,employer=null;
+  const admin=()=>!!(user&&user.app_metadata&&user.app_metadata.role==='admin');
+  const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const notice=(id,message,type='')=>{const el=$(id);el.textContent=message;el.className='notice'+(type?' '+type:'');el.classList.remove('hidden');};
+  const clearNotice=id=>{const el=$(id);el.textContent='';el.className='notice hidden';};
+  const statusBadge=status=>'<span class="badge '+escapeHtml(String(status||'').toLowerCase())+'">'+escapeHtml(String(status||'pending').replaceAll('_',' '))+'</span>';
+  const friendlyError=error=>{const m=error&&error.message?error.message:'Something went wrong. Please try again.';return m.length>260?m.slice(0,260)+'…':m;};
+  function showAuth(mode){$('authArea').classList.remove('hidden');$('dashboard').classList.add('hidden');const signup=mode==='signup';$('loginForm').classList.toggle('hidden',signup);$('signupForm').classList.toggle('hidden',!signup);$('showLogin').classList.toggle('active',!signup);$('showSignup').classList.toggle('active',signup);$('authHeading').textContent=signup?'Create your SIGHTX account':'Welcome to SIGHTX';}
+  function showDashboard(){ $('authArea').classList.add('hidden');$('dashboard').classList.remove('hidden'); }
+  async function loadProfile(){const name=(user.user_metadata&&user.user_metadata.full_name)||user.email||'SIGHTX member';const {error}=await client.from('sightx_profiles').upsert({id:user.id,full_name:name},{onConflict:'id'});if(error)throw error;}
+  async function loadEmployer(){
+    const {data,error}=await client.from('sightx_employers').select('*').eq('owner_id',user.id).maybeSingle();
+    if(error)throw error;employer=data;
+    const status=$('employerStatus'),form=$('employerForm'),post=$('jobForm'),lock=$('postJobLock');
+    if(!employer){status.innerHTML='<div class="notice">No employer application submitted yet.</div>';form.classList.remove('hidden');form.reset();post.classList.add('hidden');lock.classList.remove('hidden');lock.textContent='Complete employer verification first. Your employer status will appear here.';return;}
+    status.innerHTML='<div class="status-line"><strong>Status:</strong> '+statusBadge(employer.verification_status)+'</div>'+(employer.review_notes?'<p class="meta">Reviewer note: '+escapeHtml(employer.review_notes)+'</p>':'')+'<p class="meta">Submitted '+escapeHtml(new Date(employer.created_at).toLocaleDateString())+'.</p>';
+    ['companyName','companyWebsite','companyEmail','businessPhone','businessAddress','registrationDetails','evidenceNotes'].forEach((id,i)=>$(id).value=[employer.company_name,employer.company_website,employer.company_email,employer.business_phone,employer.business_address,employer.registration_details,employer.evidence_notes][i]||'');
+    const canEdit=['pending','rejected'].includes(employer.verification_status);
+    form.classList.toggle('hidden',!canEdit);
+    $('submitEmployer').textContent=employer.verification_status==='rejected'?'Update and resubmit':'Submit for verification';
+    const verified=employer.verification_status==='verified';
+    post.classList.toggle('hidden',!verified);lock.classList.toggle('hidden',verified);
+    if(verified)lock.textContent='Your employer is verified. New job listings still require SIGHTX admin approval.';
+  }
+  async function loadMyJobs(){
+    const box=$('myJobs');
+    if(!employer){box.innerHTML='<div class="empty">Submit an employer verification request to begin.</div>';return;}
+    const {data,error}=await client.from('sightx_job_listings').select('*').eq('employer_id',employer.id).order('created_at',{ascending:false});
+    if(error){box.innerHTML='<div class="notice error">'+escapeHtml(friendlyError(error))+'</div>';return;}
+    box.innerHTML=data.length?data.map(j=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(j.title)+'</h3><div class="meta">'+escapeHtml(j.location)+' · '+escapeHtml(j.employment_type)+'</div></div>'+statusBadge(j.status)+'</div><p class="meta">'+escapeHtml(j.description.slice(0,180))+(j.description.length>180?'…':'')+'</p></article>').join(''):'<div class="empty">No jobs submitted yet.</div>';
+  }
+  async function loadPublicJobs(){
+    const box=$('publicJobs');const {data,error}=await client.from('sightx_job_listings').select('id,title,location,employment_type,description,salary_text,experience_text,created_at').eq('status','published').order('created_at',{ascending:false});
+    if(error){box.innerHTML='<div class="notice error">'+escapeHtml(friendlyError(error))+'</div>';return;}
+    box.innerHTML=data.length?data.map(j=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(j.title)+'</h3><div class="meta">'+escapeHtml(j.location)+' · '+escapeHtml(j.employment_type)+(j.experience_text?' · '+escapeHtml(j.experience_text):'')+'</div></div><span class="badge published">SIGHTX reviewed</span></div>'+(j.salary_text?'<p class="meta">'+escapeHtml(j.salary_text)+'</p>':'')+'<p>'+escapeHtml(j.description)+'</p><div class="actions"><button class="btn primary" data-apply="'+escapeHtml(j.id)+'" type="button">Apply</button><button class="btn" data-report="'+escapeHtml(j.id)+'" type="button">Report job</button></div></article>').join(''):'<div class="empty">No approved jobs are published yet. Please check back soon.</div>';
+  }
+  async function loadMyApplications(){
+    const box=$('myApplications');const {data,error}=await client.from('sightx_applications').select('*').eq('applicant_id',user.id).order('created_at',{ascending:false});
+    if(error){box.innerHTML='<div class="notice error">'+escapeHtml(friendlyError(error))+'</div>';return;}
+    box.innerHTML=data.length?data.map(a=>'<article class="item"><div class="item-head"><div><h3>Application</h3><div class="meta">Submitted '+escapeHtml(new Date(a.created_at).toLocaleDateString())+'</div></div>'+statusBadge(a.status)+'</div><p class="meta">Job reference: '+escapeHtml(a.job_id)+'</p></article>').join(''):'<div class="empty">You have not applied for any jobs yet.</div>';
+  }
+  async function loadAdmin(){
+    if(!admin())return;
+    $('adminArea').classList.remove('hidden');
+    const [er,jr,ar,rr]=await Promise.all([
+      client.from('sightx_employers').select('*').order('created_at',{ascending:false}),
+      client.from('sightx_job_listings').select('*').order('created_at',{ascending:false}),
+      client.from('sightx_applications').select('*').order('created_at',{ascending:false}),
+      client.from('sightx_job_reports').select('*').order('created_at',{ascending:false})
+    ]);
+    $('adminEmployers').innerHTML=er.error?'<div class="notice error">'+escapeHtml(friendlyError(er.error))+'</div>':(er.data.length?er.data.map(e=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(e.company_name)+'</h3><div class="meta">'+escapeHtml(e.company_email)+' · Owner '+escapeHtml(e.owner_id)+'</div></div>'+statusBadge(e.verification_status)+'</div><p class="meta">Website: '+escapeHtml(e.company_website||'Not provided')+' · Business registry: '+escapeHtml(e.registration_details||'Not provided')+'</p><p>'+escapeHtml(e.evidence_notes||'No additional evidence notes.')+'</p><div class="actions"><button class="btn good" data-employer-status="verified" data-id="'+escapeHtml(e.id)+'">Approve verification</button><button class="btn" data-employer-status="rejected" data-id="'+escapeHtml(e.id)+'">Reject</button><button class="btn danger" data-employer-status="suspended" data-id="'+escapeHtml(e.id)+'">Suspend</button></div></article>').join(''):'<div class="empty">No employer applications to review.</div>');
+    $('adminJobs').innerHTML=jr.error?'<div class="notice error">'+escapeHtml(friendlyError(jr.error))+'</div>':(jr.data.length?jr.data.map(j=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(j.title)+'</h3><div class="meta">'+escapeHtml(j.location)+' · Employer '+escapeHtml(j.employer_id)+'</div></div>'+statusBadge(j.status)+'</div><p>'+escapeHtml(j.description.slice(0,240))+'</p><div class="actions"><button class="btn good" data-job-status="published" data-id="'+escapeHtml(j.id)+'">Publish</button><button class="btn" data-job-status="rejected" data-id="'+escapeHtml(j.id)+'">Reject</button><button class="btn danger" data-job-status="suspended" data-id="'+escapeHtml(j.id)+'">Suspend</button><button class="btn" data-job-status="closed" data-id="'+escapeHtml(j.id)+'">Close</button></div></article>').join(''):'<div class="empty">No job listings yet.</div>');
+    $('adminApplications').innerHTML=ar.error?'<div class="notice error">'+escapeHtml(friendlyError(ar.error))+'</div>':(ar.data.length?ar.data.map(a=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(a.full_name)+' · '+escapeHtml(a.email)+'</h3><div class="meta">Job '+escapeHtml(a.job_id)+' · Applicant '+escapeHtml(a.applicant_id)+'</div></div>'+statusBadge(a.status)+'</div><p>'+escapeHtml(a.cover_message)+'</p><div class="actions">'+['under_review','shortlisted','interview','hired','rejected'].map(st=>'<button class="btn" data-application-status="'+st+'" data-id="'+escapeHtml(a.id)+'">'+st.replaceAll('_',' ')+'</button>').join('')+'</div></article>').join(''):'<div class="empty">No applications yet.</div>');
+    $('adminReports').innerHTML=rr.error?'<div class="notice error">'+escapeHtml(friendlyError(rr.error))+'</div>':(rr.data.length?rr.data.map(r=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(r.reason)+'</h3><div class="meta">Job '+escapeHtml(r.job_id)+' · '+escapeHtml(new Date(r.created_at).toLocaleString())+'</div></div>'+statusBadge(r.status)+'</div><p>'+escapeHtml(r.details||'No additional details.')+'</p><div class="actions">'+['reviewing','resolved','dismissed'].map(st=>'<button class="btn" data-report-status="'+st+'" data-id="'+escapeHtml(r.id)+'">'+st+'</button>').join('')+'</div></article>').join(''):'<div class="empty">No job reports.</div>');
+  }
+  async function loadDashboard(){
+    if(!user)return;
+    showDashboard();clearNotice('dashboardNotice');
+    $('welcomeTitle').textContent='Welcome, '+((user.user_metadata&&user.user_metadata.full_name)||user.email||'SIGHTX member');
+    $('welcomeMeta').textContent=user.email+(admin()?' · SIGHTX administrator':'');
+    $('adminArea').classList.toggle('hidden',!admin());
+    try{await loadProfile();await loadEmployer();await Promise.all([loadMyJobs(),loadPublicJobs(),loadMyApplications()]);if(admin())await loadAdmin();}
+    catch(error){notice('dashboardNotice','Account connected, but some dashboard data could not load: '+friendlyError(error),'error');}
+  }
+  $('showLogin').addEventListener('click',()=>{clearNotice('authNotice');showAuth('login')});
+  $('showSignup').addEventListener('click',()=>{clearNotice('authNotice');showAuth('signup')});
+  $('loginForm').addEventListener('submit',async e=>{e.preventDefault();clearNotice('authNotice');const button=e.submitter;button.disabled=true;try{const {data,error}=await client.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});if(error)throw error;session=data.session;user=data.user;await loadDashboard();}catch(err){notice('authNotice',friendlyError(err),'error')}finally{button.disabled=false;}});
+  $('signupForm').addEventListener('submit',async e=>{e.preventDefault();clearNotice('authNotice');const button=e.submitter;button.disabled=true;try{const {data,error}=await client.auth.signUp({email:$('signupEmail').value.trim(),password:$('signupPassword').value,options:{data:{full_name:$('signupName').value.trim()},emailRedirectTo:window.location.href.split('?')[0]}});if(error)throw error;if(data.session){session=data.session;user=data.user;await loadDashboard();}else{notice('authNotice','Account created. Check your email to confirm your address, then return here and sign in.','success');$('signupForm').reset();}}catch(err){notice('authNotice',friendlyError(err),'error')}finally{button.disabled=false;}});
+  $('resetPassword').addEventListener('click',async()=>{const email=$('loginEmail').value.trim();if(!email){notice('authNotice','Enter your email address first.');return;}try{const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:window.location.href.split('?')[0]});if(error)throw error;notice('authNotice','If that address has an account, a password-reset email will be sent.','success');}catch(err){notice('authNotice',friendlyError(err),'error')}});
+  $('signOut').addEventListener('click',async()=>{await client.auth.signOut();session=null;user=null;employer=null;showAuth('login');notice('authNotice','You have signed out.','success');});
+  $('employerForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('submitEmployer');btn.disabled=true;clearNotice('dashboardNotice');const values={owner_id:user.id,company_name:$('companyName').value.trim(),company_website:$('companyWebsite').value.trim()||null,company_email:$('companyEmail').value.trim(),business_phone:$('businessPhone').value.trim()||null,business_address:$('businessAddress').value.trim()||null,registration_details:$('registrationDetails').value.trim()||null,evidence_notes:$('evidenceNotes').value.trim()||null,verification_status:employer?employer.verification_status:'pending',reviewed_by:null,reviewed_at:null};try{let result;if(employer){result=await client.from('sightx_employers').update(values).eq('id',employer.id).select().single();}else{result=await client.from('sightx_employers').insert(values).select().single();}if(result.error)throw result.error;notice('dashboardNotice','Employer information saved. Your status remains pending until SIGHTX reviews the evidence.','success');await loadEmployer();await loadMyJobs();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}finally{btn.disabled=false;}});
+  $('jobForm').addEventListener('submit',async e=>{e.preventDefault();if(!employer||employer.verification_status!=='verified'){notice('dashboardNotice','Only verified employers can submit jobs.','error');return;}const btn=e.submitter;btn.disabled=true;try{const {error}=await client.from('sightx_job_listings').insert({employer_id:employer.id,title:$('jobTitle').value.trim(),location:$('jobLocation').value.trim(),employment_type:$('jobType').value,description:$('jobDescription').value.trim(),experience_text:$('jobExperience').value.trim()||null,salary_text:$('jobSalary').value.trim()||null,application_email:$('applicationEmail').value.trim(),status:'pending_review'});if(error)throw error;$('jobForm').reset();notice('dashboardNotice','Job submitted for SIGHTX review. It will not appear publicly until approved.','success');await loadMyJobs();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}finally{btn.disabled=false;}});
+  $('refreshJobs').addEventListener('click',loadPublicJobs);$('refreshAdmin').addEventListener('click',loadAdmin);
+  document.addEventListener('click',async e=>{
+    const apply=e.target.closest('[data-apply]');if(apply){if(!user){showAuth('login');notice('authNotice','Sign in or create an account to apply.');window.scrollTo({top:0,behavior:'smooth'});return;}const jobId=apply.dataset.apply;const cover=window.prompt('Write a short cover message for this application (required):');if(!cover||!cover.trim())return;try{const name=(user.user_metadata&&user.user_metadata.full_name)||user.email;const {error}=await client.from('sightx_applications').insert({job_id:jobId,applicant_id:user.id,full_name:name,email:user.email,cover_message:cover.trim(),status:'new'});if(error)throw error;notice('dashboardNotice','Application submitted successfully.','success');await loadMyApplications();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}return;}
+    const report=e.target.closest('[data-report]');if(report){if(!user){showAuth('login');notice('authNotice','Sign in to report a job.');window.scrollTo({top:0,behavior:'smooth'});return;}const reason=window.prompt('Why are you reporting this job? (e.g. suspicious employer, payment request, misleading details)');if(!reason||!reason.trim())return;const details=window.prompt('Additional details (optional):')||'';try{const {error}=await client.from('sightx_job_reports').insert({job_id:report.dataset.report,reporter_id:user.id,reason:reason.trim(),details:details.trim()||null,status:'open'});if(error)throw error;notice('dashboardNotice','Thank you. Your report has been sent for review.','success');}catch(err){notice('dashboardNotice',friendlyError(err),'error')}return;}
+    const employerAction=e.target.closest('[data-employer-status]');if(employerAction&&admin()){const id=employerAction.dataset.id,status=employerAction.dataset.employerStatus;let notes=null;if(status==='rejected')notes=window.prompt('Reason for rejection (visible to employer):')||'Please provide additional verification evidence.';try{const {error}=await client.from('sightx_employers').update({verification_status:status,reviewed_by:user.id,reviewed_at:new Date().toISOString(),review_notes:notes}).eq('id',id);if(error)throw error;notice('dashboardNotice','Employer status updated.','success');await loadAdmin();await loadEmployer();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}return;}
+    const jobAction=e.target.closest('[data-job-status]');if(jobAction&&admin()){const id=jobAction.dataset.id,status=jobAction.dataset.jobStatus;if(status==='published'&&!window.confirm('Confirm that the employer has been verified and this job has passed review?'))return;try{const {error}=await client.from('sightx_job_listings').update({status,reviewed_by:user.id,reviewed_at:new Date().toISOString()}).eq('id',id);if(error)throw error;notice('dashboardNotice','Job status updated.','success');await loadAdmin();await loadPublicJobs();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}return;}
+    const appAction=e.target.closest('[data-application-status]');if(appAction&&admin()){try{const {error}=await client.from('sightx_applications').update({status:appAction.dataset.applicationStatus}).eq('id',appAction.dataset.id);if(error)throw error;notice('dashboardNotice','Application status updated.','success');await loadAdmin();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}return;}
+    const reportAction=e.target.closest('[data-report-status]');if(reportAction&&admin()){try{const {error}=await client.from('sightx_job_reports').update({status:reportAction.dataset.reportStatus,reviewed_by:user.id,reviewed_at:new Date().toISOString()}).eq('id',reportAction.dataset.id);if(error)throw error;notice('dashboardNotice','Report status updated.','success');await loadAdmin();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}return;}
+  });
+  client.auth.onAuthStateChange((_event,newSession)=>{session=newSession;user=newSession&&newSession.user?newSession.user:null;if(user)loadDashboard().catch(err=>notice('dashboardNotice',friendlyError(err),'error'));else showAuth('login');});
+  (async()=>{const {data,error}=await client.auth.getSession();if(error){notice('authNotice',friendlyError(error),'error');return;}session=data.session;user=session&&session.user?session.user:null;if(user)await loadDashboard();else showAuth('login');})();
+})();
+</script>
+</body>
+</html>
