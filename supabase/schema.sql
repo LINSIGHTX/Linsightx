@@ -99,7 +99,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $sightx$
 declare
   caller_is_admin boolean;
   caller_owns_job boolean;
@@ -138,7 +138,7 @@ begin
 
   return new;
 end;
-$;
+$sightx$;
 
 drop trigger if exists sightx_jobs_guard_moderation_fields on public.sightx_job_listings;
 create trigger sightx_jobs_guard_moderation_fields
@@ -156,14 +156,14 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $$
+as $sightx$
 begin
   insert into public.sightx_profiles (id, full_name)
   values (new.id, coalesce(new.raw_user_meta_data ->> 'full_name', ''))
   on conflict (id) do nothing;
   return new;
 end;
-$$;
+$sightx$;
 
 drop trigger if exists on_sightx_auth_user_created on auth.users;
 create trigger on_sightx_auth_user_created
@@ -174,12 +174,12 @@ create or replace function private.sightx_set_updated_at()
 returns trigger
 language plpgsql
 set search_path = ''
-as $$
+as $sightx$
 begin
   new.updated_at = now();
   return new;
 end;
-$$;
+$sightx$;
 
 drop trigger if exists sightx_profiles_set_updated_at on public.sightx_profiles;
 create trigger sightx_profiles_set_updated_at before update on public.sightx_profiles
@@ -209,9 +209,9 @@ language sql
 stable
 security definer
 set search_path = ''
-as $
+as $sightx$
   select exists (select 1 from public.sightx_admin_users where user_id = auth.uid());
-$;
+$sightx$;
 revoke all on function private.sightx_is_admin() from public;
 grant execute on function private.sightx_is_admin() to authenticated;
 
@@ -344,7 +344,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $sightx$
 begin
   if private.sightx_is_admin() then
     return new;
@@ -369,7 +369,7 @@ begin
 
   return new;
 end;
-$;
+$sightx$;
 
 drop trigger if exists sightx_applications_guard_updates on public.sightx_applications;
 create trigger sightx_applications_guard_updates
