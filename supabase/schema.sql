@@ -5,7 +5,7 @@
 
 create extension if not exists pgcrypto;
 
--- Keep privileged helper functions outside the exposed public API schema.
+-- Reserve a non-exposed schema for future internal helpers; no privileged API functions are deployed there.
 create schema if not exists private;
 revoke all on schema private from public, anon, authenticated;
 grant usage on schema private to authenticated;
@@ -93,11 +93,6 @@ create table if not exists public.sightx_job_reports (
 
 
 
-create index if not exists sightx_jobs_status_created_idx on public.sightx_job_listings(status, created_at desc);
-create index if not exists sightx_jobs_employer_idx on public.sightx_job_listings(employer_id);
-create index if not exists sightx_applications_job_idx on public.sightx_applications(job_id, created_at desc);
-create index if not exists sightx_applications_applicant_idx on public.sightx_applications(applicant_id, created_at desc);
-create index if not exists sightx_job_reports_status_idx on public.sightx_job_reports(status, created_at desc);
 
 -- All new SIGHTX tables use RLS; tables with no matching policy are deny-by-default.
 alter table public.sightx_profiles enable row level security;
