@@ -693,6 +693,77 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
  window.__sightxEnsureSpecificApplicationPage=ensureSpecificApplicationPage;
 })();
 </script>
+
+
+<!-- SIGHTX launch-ready MVP: persist locally-created jobs and application records in this browser. -->
+<script>
+(function(){
+ 'use strict';
+ const JOBS_KEY='sightx-community-jobs-v1';
+ const APPLICATIONS_KEY='sightx-application-records-v1';
+ const $=id=>document.getElementById(id);
+ function read(key){try{const value=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(value)?value:[]}catch(_){return[]}}
+ function write(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch(_){if(typeof toast==='function')toast('This browser could not save the information. Check available storage and try again.');return false}}
+ function notice(form,text){if(!form||form.querySelector('.mvp-storage-note'))return;const p=document.createElement('p');p.className='mvp-storage-note';p.textContent=text;p.style.cssText='font-size:12px;line-height:1.5;color:#61738d;background:#f4f7fc;border:1px solid #e0e8f3;border-radius:10px;padding:10px 12px;margin:0 0 14px';form.insertBefore(p,form.firstChild)}
+ function safe(value){return String(value||'').trim()}
+ function renderCommunityJobs(){
+  const container=document.querySelector('#page-jobs .job-cards');
+  const template=container&&container.querySelector('.job-card');
+  if(!container||!template)return;
+  container.querySelectorAll('[data-community-job="true"]').forEach(el=>el.remove());
+  read(JOBS_KEY).forEach(job=>{
+   const card=template.cloneNode(true);
+   card.dataset.communityJob='true';card.dataset.type=job.type;card.dataset.search=[job.title,job.company,job.location,job.summary,job.experience].join(' ').toLowerCase();
+   const title=card.querySelector('.job-title-row h3');if(title)title.textContent=job.title;
+   const company=card.querySelector('.job-company');if(company)company.textContent=job.company;
+   const location=card.querySelector('.job-location-text');if(location)location.textContent=job.location;
+   const tags=card.querySelectorAll('.job-meta span');if(tags[0])tags[0].textContent=job.type;if(tags[1])tags[1].textContent=job.experience;if(tags[2])tags[2].textContent=job.salary;
+   const desc=card.querySelector('.job-desc');if(desc)desc.textContent=job.summary;
+   const hiring=card.querySelector('.hiring');if(hiring)hiring.textContent='NEW';
+   const apply=card.querySelector('.apply-btn');if(apply){apply.href='#apply-now';apply.setAttribute('aria-label','Apply for '+job.title)}
+   const save=card.querySelector('.save-btn');if(save){save.addEventListener('click',()=>{const saved=read('sightx-saved-jobs-v1');if(!saved.some(item=>item.title===job.title&&item.company===job.company)){saved.push({title:job.title,company:job.company,type:job.type,location:job.location});try{localStorage.setItem('sightx-saved-jobs-v1',JSON.stringify(saved));if(typeof renderSavedJobs==='function')renderSavedJobs();if(typeof toast==='function')toast('Job saved in this browser.')}catch(_){if(typeof toast==='function')toast('Could not save this job.')}}else if(typeof toast==='function')toast('This job is already saved.')})}
+   container.appendChild(card);
+  });
+  if(typeof filterJobs==='function')filterJobs();
+ }
+ function addRecord(key,record){const records=read(key);records.push(record);return write(key,records)}
+ document.addEventListener('submit',function(event){
+  const form=event.target;
+  if(!form||!['jobPostingFields','applicationFormFields','applyNowFormFields'].includes(form.id))return;
+  event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
+  if(!form.reportValidity())return;
+  const fields=form.elements;
+  if(form.id==='jobPostingFields'){
+   const job={id:'job-'+Date.now(),title:safe(fields.namedItem('title').value),company:safe(fields.namedItem('company').value),location:safe(fields.namedItem('location').value),type:safe(fields.namedItem('type').value)||'Full-time',experience:safe(fields.namedItem('experience')?.value)||'Not specified',salary:safe(fields.namedItem('salary')?.value)||'Not specified',summary:safe(fields.namedItem('summary').value),email:safe(fields.namedItem('email').value),createdAt:new Date().toISOString()};
+   if(!write(JOBS_KEY,[...read(JOBS_KEY),job]))return;
+   form.reset();renderCommunityJobs();
+   if(typeof toast==='function')toast('Job added to the listings in this browser. It is not published to a shared server.');
+   if(typeof go==='function')go('jobs');else{const page=$('page-jobs');if(page){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p===page));}}
+   return;
+  }
+  const name=safe(fields.namedItem('name')?.value);
+  const email=safe(fields.namedItem('email')?.value);
+  const role=safe(fields.namedItem('role')?.value)||safe(form.dataset.role)||safe($('applicationRole')?.textContent.replace(/^Role:\s*/,'').replace(/^Applying for:\s*/,''))||'General application';
+  const file=fields.namedItem('resume')?.files?.[0];
+  const mobile=safe(fields.namedItem('mobile')?.value);
+  const message=safe(fields.namedItem('message')?.value);
+  const record={id:'application-'+Date.now(),name,email,mobile,role,message,resumeFileName:file?file.name:'',createdAt:new Date().toISOString(),status:'Received in this browser only'};
+  if(!addRecord(APPLICATIONS_KEY,record))return;
+  form.reset();
+  if(typeof toast==='function')toast('Application saved in this browser only. Your resume file was not uploaded to a hiring team.');
+  if(typeof go==='function')go('jobs');else{const page=$('page-jobs');if(page){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p===page));}}
+ },true);
+ function init(){
+  notice($('jobPostingFields'),'Prototype notice: jobs are saved only in this browser and are not visible to other visitors.');
+  notice($('applicationFormFields'),'Privacy note: this demo saves application details locally in this browser. Resume files are selected but not uploaded.');
+  const specific=$('applyNowFormFields');if(specific)notice(specific,'Privacy note: this demo saves application details locally in this browser. Resume files are selected but not uploaded.');
+  renderCommunityJobs();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+ window.sightxRefreshCommunityJobs=renderCommunityJobs;
+})();
+</script>
+
 </body></html>
 
 
