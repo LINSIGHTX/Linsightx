@@ -152,7 +152,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .job-card .job-location{width:100%;gap:8px}
 .job-type-tag,.job-experience-tag,.job-salary-tag{display:inline-flex;align-items:center;justify-content:center;min-height:27px;padding:5px 8px;border:1px solid #e0e8f3;border-radius:8px;background:#f7faff;color:#526782;font-size:10px;font-weight:800;line-height:1.15;white-space:nowrap}
 .job-location .job-type-tag{flex-shrink:0;margin-left:auto}
-.job-meta{display:flex;flex-flow:row nowrap;align-items:center;gap:5px;margin:0 0 13px;min-width:0;overflow-x:auto;scrollbar-width:thin;padding-bottom:2px}.job-meta>span{flex:0 0 auto;padding:5px 6px;font-size:9px}
+.job-meta{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) minmax(0,1fr);align-items:center;gap:4px;margin:0 0 13px;min-width:0;width:100%}.job-meta>span{min-width:0;max-width:100%;padding:5px 4px;font-size:9px;white-space:nowrap}.job-meta .job-type-tag{justify-self:start}.job-meta .job-experience-tag{justify-self:center}.job-meta .job-salary-tag{justify-self:end}
 .job-meta .job-experience-tag{border-color:#d8b4fe;background:#f3e8ff;color:#6d28d9}
 .job-meta .job-type-tag{border-color:#b8ceff;background:#eaf1ff;color:#245bea}
 .job-meta .job-salary-tag{border-color:#b8e8cb;background:#e3f8eb;color:#116b43}
