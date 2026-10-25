@@ -44,6 +44,18 @@
       <p class="footnote">A verification badge means SIGHTX reviewed available evidence; it is not a guarantee that every future message or job offer is safe.</p>
     </article>
   </section>
+  <section id="mfaLoginChallenge" class="hidden">
+    <article class="card" style="max-width:560px;margin:0 auto">
+      <h2>Verify it's you</h2>
+      <p class="sub">This account has an authenticator enrolled. Open your authenticator app and enter its current six-digit code to continue.</p>
+      <div id="mfaLoginNotice" class="notice" role="status">Authenticator verification is required to continue.</div>
+      <form id="mfaLoginForm" class="form">
+        <div class="field"><label for="mfaLoginCode">Six-digit authenticator code</label><input id="mfaLoginCode" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" minlength="6" required></div>
+        <button class="btn primary" id="verifyLoginMfa" type="submit">Verify and continue</button>
+        <button class="btn" id="cancelLoginMfa" type="button">Sign out</button>
+      </form>
+    </article>
+  </section>
   <section id="dashboard" class="hidden">
     <article class="card"><div class="section-head"><div><div class="eyebrow">Signed in</div><h2 id="welcomeTitle">Your SIGHTX account</h2><p id="welcomeMeta" class="muted"></p></div><button class="btn" id="signOut" type="button">Sign out</button></div><div id="dashboardNotice" class="notice hidden" role="status"></div></article>
     <section id="accountSecurity" class="section card">
@@ -109,7 +121,7 @@
   const SUPABASE_PUBLISHABLE_KEY='sb_publishable_EbJZKeEdRR6l_UsRucmpnA_yzWHmVXJ';
   const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
   const $=id=>document.getElementById(id);
-  let session=null,user=null,employer=null,mfaPendingFactorId=null;
+  let session=null,user=null,employer=null,mfaPendingFactorId=null,sessionRouting=0;
   const admin=()=>!!(user&&user.app_metadata&&user.app_metadata.role==='admin');
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const notice=(id,message,type='')=>{const el=$(id);el.textContent=message;el.className='notice'+(type?' '+type:'');el.classList.remove('hidden');};
@@ -119,6 +131,46 @@
   function showAuth(mode){$('authArea').classList.remove('hidden');$('dashboard').classList.add('hidden');const signup=mode==='signup';$('loginForm').classList.toggle('hidden',signup);$('signupForm').classList.toggle('hidden',!signup);$('showLogin').classList.toggle('active',!signup);$('showSignup').classList.toggle('active',signup);$('authHeading').textContent=signup?'Create your SIGHTX account':'Welcome to SIGHTX';}
   function showDashboard(){ $('authArea').classList.add('hidden');$('dashboard').classList.remove('hidden'); }
   function mfaMessage(message,type=''){notice('mfaNotice',message,type);}
+  function loginMfaMessage(message,type=''){notice('mfaLoginNotice',message,type);}
+  async function routeSession(nextSession){
+    const run=++sessionRouting;
+    session=nextSession||null;user=session&&session.user?session.user:null;
+    if(!user){$('mfaLoginChallenge').classList.add('hidden');showAuth('login');return;}
+    const {data,error}=await client.auth.mfa.getAuthenticatorAssuranceLevel();
+    if(run!==sessionRouting)return;
+    if(error)throw error;
+    if(data.currentLevel==='aal1'&&data.nextLevel==='aal2'){
+      $('authArea').classList.add('hidden');$('dashboard').classList.add('hidden');
+      $('mfaLoginChallenge').classList.remove('hidden');
+      $('mfaLoginCode').value='';
+      loginMfaMessage('Authenticator verification is required before you can access your SIGHTX account.');
+      $('mfaLoginCode').focus();
+      return;
+    }
+    $('mfaLoginChallenge').classList.add('hidden');
+    await loadDashboard();
+  }
+  async function verifyLoginMfa(event){
+    event.preventDefault();
+    const button=$('verifyLoginMfa'),code=$('mfaLoginCode').value.trim();
+    if(!/^[0-9]{6}$/.test(code)){loginMfaMessage('Enter the six-digit code from your authenticator app.','error');return;}
+    button.disabled=true;
+    try{
+      const {data:factorData,error:factorError}=await client.auth.mfa.listFactors();
+      if(factorError)throw factorError;
+      const factor=(factorData.totp||[]).find(f=>f.status==='verified');
+      if(!factor)throw new Error('No verified authenticator was found for this account. Contact SIGHTX support.');
+      const {data:challengeData,error:challengeError}=await client.auth.mfa.challenge({factorId:factor.id});
+      if(challengeError)throw challengeError;
+      const {error:verifyError}=await client.auth.mfa.verify({factorId:factor.id,challengeId:challengeData.id,code});
+      if(verifyError)throw verifyError;
+      $('mfaLoginCode').value='';
+      const {data,error}=await client.auth.getSession();if(error)throw error;
+      await routeSession(data.session);
+    }catch(error){
+      loginMfaMessage('Verification failed: '+friendlyError(error)+'. Check your device time and try the newest code.','error');
+    }finally{button.disabled=false;}
+  }
   async function refreshMfaStatus(){
     if(!user)return;
     $('mfaStatus').textContent='Checking';$('mfaStatus').className='badge pending';
@@ -252,13 +304,18 @@
     catch(error){notice('dashboardNotice','Account connected, but some dashboard data could not load: '+friendlyError(error),'error');}
   }
   $('startMfaSetup').addEventListener('click',startMfaSetup);
+  $('mfaLoginForm').addEventListener('submit',verifyLoginMfa);
+  $('cancelLoginMfa').addEventListener('click',async()=>{
+    ++sessionRouting;
+    try{await client.auth.signOut();}finally{session=null;user=null;employer=null;$('mfaLoginChallenge').classList.add('hidden');showAuth('login');}
+  });
   $('refreshMfa').addEventListener('click',refreshMfaStatus);
   $('mfaVerifyForm').addEventListener('submit',verifyMfaSetup);
   $('cancelMfaSetup').addEventListener('click',cancelMfaSetup);
   $('showLogin').addEventListener('click',()=>{clearNotice('authNotice');showAuth('login')});
   $('showSignup').addEventListener('click',()=>{clearNotice('authNotice');showAuth('signup')});
-  $('loginForm').addEventListener('submit',async e=>{e.preventDefault();clearNotice('authNotice');const button=e.submitter;button.disabled=true;try{const {data,error}=await client.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});if(error)throw error;session=data.session;user=data.user;await loadDashboard();}catch(err){notice('authNotice',friendlyError(err),'error')}finally{button.disabled=false;}});
-  $('signupForm').addEventListener('submit',async e=>{e.preventDefault();clearNotice('authNotice');const button=e.submitter;button.disabled=true;try{const {data,error}=await client.auth.signUp({email:$('signupEmail').value.trim(),password:$('signupPassword').value,options:{data:{full_name:$('signupName').value.trim()},emailRedirectTo:window.location.href.split('?')[0]}});if(error)throw error;if(data.session){session=data.session;user=data.user;await loadDashboard();}else{notice('authNotice','Account created. Check your email to confirm your address, then return here and sign in.','success');$('signupForm').reset();}}catch(err){notice('authNotice',friendlyError(err),'error')}finally{button.disabled=false;}});
+  $('loginForm').addEventListener('submit',async e=>{e.preventDefault();clearNotice('authNotice');const button=e.submitter;button.disabled=true;try{const {data,error}=await client.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});if(error)throw error;await routeSession(data.session);}catch(err){notice('authNotice',friendlyError(err),'error')}finally{button.disabled=false;}});
+  $('signupForm').addEventListener('submit',async e=>{e.preventDefault();clearNotice('authNotice');const button=e.submitter;button.disabled=true;try{const {data,error}=await client.auth.signUp({email:$('signupEmail').value.trim(),password:$('signupPassword').value,options:{data:{full_name:$('signupName').value.trim()},emailRedirectTo:window.location.href.split('?')[0]}});if(error)throw error;if(data.session){await routeSession(data.session);}else{notice('authNotice','Account created. Check your email to confirm your address, then return here and sign in.','success');$('signupForm').reset();}}catch(err){notice('authNotice',friendlyError(err),'error')}finally{button.disabled=false;}});
   $('resetPassword').addEventListener('click',async()=>{const email=$('loginEmail').value.trim();if(!email){notice('authNotice','Enter your email address first.');return;}try{const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:window.location.href.split('?')[0]});if(error)throw error;notice('authNotice','If that address has an account, a password-reset email will be sent.','success');}catch(err){notice('authNotice',friendlyError(err),'error')}});
   $('signOut').addEventListener('click',async()=>{await client.auth.signOut();session=null;user=null;employer=null;showAuth('login');notice('authNotice','You have signed out.','success');});
   $('employerForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('submitEmployer');btn.disabled=true;clearNotice('dashboardNotice');const values={owner_id:user.id,company_name:$('companyName').value.trim(),company_website:$('companyWebsite').value.trim()||null,company_email:$('companyEmail').value.trim(),business_phone:$('businessPhone').value.trim()||null,business_address:$('businessAddress').value.trim()||null,registration_details:$('registrationDetails').value.trim()||null,evidence_notes:$('evidenceNotes').value.trim()||null,verification_status:employer&&employer.verification_status!=='rejected'?employer.verification_status:'pending',reviewed_by:null,reviewed_at:null,review_notes:null};try{let result;if(employer){result=await client.from('sightx_employers').update(values).eq('id',employer.id).select().single();}else{result=await client.from('sightx_employers').insert(values).select().single();}if(result.error)throw result.error;notice('dashboardNotice','Employer information saved. Your status remains pending until SIGHTX reviews the evidence.','success');await loadEmployer();await loadMyJobs();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}finally{btn.disabled=false;}});
@@ -272,8 +329,8 @@
     const appAction=e.target.closest('[data-application-status]');if(appAction&&admin()){try{const {error}=await client.from('sightx_applications').update({status:appAction.dataset.applicationStatus}).eq('id',appAction.dataset.id);if(error)throw error;notice('dashboardNotice','Application status updated.','success');await loadAdmin();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}return;}
     const reportAction=e.target.closest('[data-report-status]');if(reportAction&&admin()){try{const {error}=await client.from('sightx_job_reports').update({status:reportAction.dataset.reportStatus,reviewed_by:user.id,reviewed_at:new Date().toISOString()}).eq('id',reportAction.dataset.id);if(error)throw error;notice('dashboardNotice','Report status updated.','success');await loadAdmin();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}return;}
   });
-  client.auth.onAuthStateChange((_event,newSession)=>{session=newSession;user=newSession&&newSession.user?newSession.user:null;if(user)loadDashboard().catch(err=>notice('dashboardNotice',friendlyError(err),'error'));else showAuth('login');});
-  (async()=>{const {data,error}=await client.auth.getSession();if(error){notice('authNotice',friendlyError(error),'error');return;}session=data.session;user=session&&session.user?session.user:null;if(user)await loadDashboard();else showAuth('login');})();
+  client.auth.onAuthStateChange((_event,newSession)=>{setTimeout(()=>routeSession(newSession).catch(err=>{if($('mfaLoginChallenge').classList.contains('hidden'))notice('authNotice',friendlyError(err),'error');else loginMfaMessage(friendlyError(err),'error');}),0);});
+  (async()=>{const {data,error}=await client.auth.getSession();if(error){notice('authNotice',friendlyError(error),'error');return;}await routeSession(data.session);})();
 })();
 </script>
 </body>
