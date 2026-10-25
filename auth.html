@@ -46,6 +46,24 @@
   </section>
   <section id="dashboard" class="hidden">
     <article class="card"><div class="section-head"><div><div class="eyebrow">Signed in</div><h2 id="welcomeTitle">Your SIGHTX account</h2><p id="welcomeMeta" class="muted"></p></div><button class="btn" id="signOut" type="button">Sign out</button></div><div id="dashboardNotice" class="notice hidden" role="status"></div></article>
+    <section id="accountSecurity" class="section card">
+      <h2>Account security</h2>
+      <p class="sub">Set up an authenticator app for an additional sign-in factor.</p>
+      <div class="status-line"><strong>Status:</strong> <span id="mfaStatus" class="badge pending">Checking</span></div>
+      <div id="mfaNotice" class="notice" role="status">Checking authenticator status…</div>
+      <div id="mfaActions" class="actions"><button class="btn primary" id="startMfaSetup" type="button">Set up authenticator</button><button class="btn" id="refreshMfa" type="button">Refresh status</button></div>
+      <div id="mfaEnrollment" class="hidden">
+        <p class="muted">Scan this QR code with an authenticator app, then enter the six-digit code shown by the app.</p>
+        <img id="mfaQr" alt="Authenticator setup QR code" style="display:block;max-width:220px;width:100%;height:auto;margin:12px auto;border:1px solid #dfe8f5;border-radius:10px;padding:8px;background:#fff">
+        <details><summary>Can't scan the QR code?</summary><p class="meta">Enter this setup key manually in your authenticator app:</p><code id="mfaSecret" style="overflow-wrap:anywhere"></code></details>
+        <form id="mfaVerifyForm" class="form" style="margin-top:14px">
+          <div class="field"><label for="mfaCode">Six-digit authenticator code</label><input id="mfaCode" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" minlength="6" required></div>
+          <button class="btn primary" id="verifyMfa" type="submit">Verify authenticator</button>
+          <button class="btn" id="cancelMfaSetup" type="button">Cancel setup</button>
+        </form>
+      </div>
+      <p class="footnote">Keep access to your authenticator app. This setup enrolls a factor, but it does not by itself prove that every login requires MFA. We'll test enforcement separately before treating MFA as fully enabled.</p>
+    </section>
     <section id="employerArea" class="section grid">
       <article class="card"><h2>Employer verification</h2><p class="sub">Submit company information for manual review. Your first job cannot be published until verification is approved.</p>
         <div id="employerStatus"></div>
@@ -91,7 +109,7 @@
   const SUPABASE_PUBLISHABLE_KEY='sb_publishable_EbJZKeEdRR6l_UsRucmpnA_yzWHmVXJ';
   const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
   const $=id=>document.getElementById(id);
-  let session=null,user=null,employer=null;
+  let session=null,user=null,employer=null,mfaPendingFactorId=null;
   const admin=()=>!!(user&&user.app_metadata&&user.app_metadata.role==='admin');
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const notice=(id,message,type='')=>{const el=$(id);el.textContent=message;el.className='notice'+(type?' '+type:'');el.classList.remove('hidden');};
@@ -100,6 +118,75 @@
   const friendlyError=error=>{const m=error&&error.message?error.message:'Something went wrong. Please try again.';return m.length>260?m.slice(0,260)+'…':m;};
   function showAuth(mode){$('authArea').classList.remove('hidden');$('dashboard').classList.add('hidden');const signup=mode==='signup';$('loginForm').classList.toggle('hidden',signup);$('signupForm').classList.toggle('hidden',!signup);$('showLogin').classList.toggle('active',!signup);$('showSignup').classList.toggle('active',signup);$('authHeading').textContent=signup?'Create your SIGHTX account':'Welcome to SIGHTX';}
   function showDashboard(){ $('authArea').classList.add('hidden');$('dashboard').classList.remove('hidden'); }
+  function mfaMessage(message,type=''){notice('mfaNotice',message,type);}
+  async function refreshMfaStatus(){
+    if(!user)return;
+    $('mfaStatus').textContent='Checking';$('mfaStatus').className='badge pending';
+    $('mfaEnrollment').classList.add('hidden');
+    try{
+      const {data,error}=await client.auth.mfa.listFactors();if(error)throw error;
+      const verified=(data.totp||[]).filter(f=>f.status==='verified');
+      const unverified=(data.totp||[]).filter(f=>f.status!=='verified');
+      if(verified.length){
+        $('mfaStatus').textContent='Authenticator enrolled';$('mfaStatus').className='badge verified';
+        $('startMfaSetup').disabled=true;
+        mfaMessage('An authenticator is enrolled on this account. Keep access to that app. Login enforcement must be checked separately.','success');
+      }else if(unverified.length){
+        $('mfaStatus').textContent='Setup incomplete';$('mfaStatus').className='badge pending';
+        $('startMfaSetup').disabled=false;$('startMfaSetup').textContent='Restart setup';
+        mfaMessage('An unfinished setup exists. You can restart setup to enroll a fresh authenticator.');
+      }else{
+        $('mfaStatus').textContent='Not configured';$('mfaStatus').className='badge pending';
+        $('startMfaSetup').disabled=false;$('startMfaSetup').textContent='Set up authenticator';
+        mfaMessage('No verified authenticator is enrolled on this account.');
+      }
+    }catch(error){
+      $('mfaStatus').textContent='Could not check';$('mfaStatus').className='badge pending';
+      mfaMessage('Could not check authenticator status: '+friendlyError(error),'error');
+    }
+  }
+  async function startMfaSetup(){
+    const button=$('startMfaSetup');button.disabled=true;
+    try{
+      const {data,error}=await client.auth.mfa.enroll({factorType:'totp',friendlyName:'SIGHTX authenticator'});
+      if(error)throw error;
+      mfaPendingFactorId=data.id;
+      $('mfaQr').src=data.totp.qr_code;
+      $('mfaSecret').textContent=data.totp.secret;
+      $('mfaCode').value='';$('mfaEnrollment').classList.remove('hidden');
+      $('mfaStatus').textContent='Setup pending';$('mfaStatus').className='badge pending';
+      mfaMessage('Scan the QR code, then enter the current six-digit code from your authenticator app.');
+      $('mfaCode').focus();
+    }catch(error){
+      mfaMessage('Could not start setup: '+friendlyError(error),'error');
+    }finally{button.disabled=false;}
+  }
+  async function verifyMfaSetup(event){
+    event.preventDefault();
+    const code=$('mfaCode').value.trim();
+    if(!mfaPendingFactorId){mfaMessage('Start authenticator setup first.','error');return;}
+    if(!/^[0-9]{6}$/.test(code)){mfaMessage('Enter the six-digit code from your authenticator app.','error');return;}
+    const button=$('verifyMfa');button.disabled=true;
+    try{
+      const {data:challengeData,error:challengeError}=await client.auth.mfa.challenge({factorId:mfaPendingFactorId});
+      if(challengeError)throw challengeError;
+      const {error:verifyError}=await client.auth.mfa.verify({factorId:mfaPendingFactorId,challengeId:challengeData.id,code});
+      if(verifyError)throw verifyError;
+      mfaPendingFactorId=null;$('mfaEnrollment').classList.add('hidden');$('mfaCode').value='';
+      await refreshMfaStatus();
+      mfaMessage('Authenticator verified successfully. Keep access to your authenticator app. We still need to test login enforcement separately.','success');
+    }catch(error){
+      mfaMessage('Could not verify that code: '+friendlyError(error)+'. Check your device time and try the newest code.','error');
+    }finally{button.disabled=false;}
+  }
+  async function cancelMfaSetup(){
+    $('mfaEnrollment').classList.add('hidden');$('mfaCode').value='';
+    if(mfaPendingFactorId){
+      try{const {error}=await client.auth.mfa.unenroll({factorId:mfaPendingFactorId});if(error)throw error;}
+      catch(error){mfaMessage('Could not clear the unfinished setup: '+friendlyError(error),'error');}
+    }
+    mfaPendingFactorId=null;await refreshMfaStatus();
+  }
   async function loadProfile(){const name=(user.user_metadata&&user.user_metadata.full_name)||user.email||'SIGHTX member';const {error}=await client.from('sightx_profiles').upsert({id:user.id,full_name:name},{onConflict:'id'});if(error)throw error;}
   async function loadEmployer(){
     const {data,error}=await client.from('sightx_employers').select('*').eq('owner_id',user.id).maybeSingle();
@@ -152,9 +239,13 @@
     $('welcomeTitle').textContent='Welcome, '+((user.user_metadata&&user.user_metadata.full_name)||user.email||'SIGHTX member');
     $('welcomeMeta').textContent=user.email+(admin()?' · SIGHTX administrator':'');
     $('adminArea').classList.toggle('hidden',!admin());
-    try{await loadProfile();await loadEmployer();await Promise.all([loadMyJobs(),loadPublicJobs(),loadMyApplications()]);if(admin())await loadAdmin();}
+    try{await loadProfile();await loadEmployer();await Promise.all([loadMyJobs(),loadPublicJobs(),loadMyApplications(),refreshMfaStatus()]);if(admin())await loadAdmin();}
     catch(error){notice('dashboardNotice','Account connected, but some dashboard data could not load: '+friendlyError(error),'error');}
   }
+  $('startMfaSetup').addEventListener('click',startMfaSetup);
+  $('refreshMfa').addEventListener('click',refreshMfaStatus);
+  $('mfaVerifyForm').addEventListener('submit',verifyMfaSetup);
+  $('cancelMfaSetup').addEventListener('click',cancelMfaSetup);
   $('showLogin').addEventListener('click',()=>{clearNotice('authNotice');showAuth('login')});
   $('showSignup').addEventListener('click',()=>{clearNotice('authNotice');showAuth('signup')});
   $('loginForm').addEventListener('submit',async e=>{e.preventDefault();clearNotice('authNotice');const button=e.submitter;button.disabled=true;try{const {data,error}=await client.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});if(error)throw error;session=data.session;user=data.user;await loadDashboard();}catch(err){notice('authNotice',friendlyError(err),'error')}finally{button.disabled=false;}});
