@@ -152,12 +152,7 @@ for all to authenticated using (coalesce((select auth.jwt() -> 'app_metadata' ->
 drop policy if exists "SIGHTX public read published jobs" on public.sightx_job_listings;
 drop policy if exists "public can view approved published jobs" on public.sightx_job_listings;
 create policy "public can view approved published jobs" on public.sightx_job_listings
-for select to anon, authenticated using (
-  status = 'published' and exists (
-    select 1 from public.sightx_employers e
-    where e.id = sightx_job_listings.employer_id and e.verification_status = 'verified'
-  )
-);
+for select to anon, authenticated using (status = 'published');
 drop policy if exists "employer can view own jobs" on public.sightx_job_listings;
 create policy "employer can view own jobs" on public.sightx_job_listings
 for select to authenticated using (
