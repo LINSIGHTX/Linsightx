@@ -22,8 +22,7 @@ create table if not exists public.sightx_admin_users (
   user_id uuid primary key references auth.users(id) on delete cascade,
   created_at timestamptz not null default now()
 );
--- Admins must be added manually by the project owner in SQL Editor.
--- Never let a browser/client insert its own row into admin_users.
+-- Keep a private roster for administrative audit. Actual admin authorization is a trusted app_metadata.role='admin' claim set only by a privileged server/admin action; never accept user_metadata for authorization.
 
 create table if not exists public.sightx_employers (
   id uuid primary key default gen_random_uuid(),
@@ -97,7 +96,6 @@ create table if not exists public.sightx_job_reports (
 create or replace function private.sightx_guard_job_moderation_fields()
 returns trigger
 language plpgsql
-security definer
 set search_path = ''
 as $sightx$
 declare
@@ -151,25 +149,6 @@ create index if not exists sightx_applications_job_idx on public.sightx_applicat
 create index if not exists sightx_applications_applicant_idx on public.sightx_applications(applicant_id, created_at desc);
 create index if not exists sightx_job_reports_status_idx on public.sightx_job_reports(status, created_at desc);
 
-create or replace function private.sightx_handle_new_user()
-returns trigger
-language plpgsql
-security definer
-set search_path = ''
-as $sightx$
-begin
-  insert into public.sightx_profiles (id, full_name)
-  values (new.id, coalesce(new.raw_user_meta_data ->> 'full_name', ''))
-  on conflict (id) do nothing;
-  return new;
-end;
-$sightx$;
-
-drop trigger if exists on_sightx_auth_user_created on auth.users;
-create trigger on_sightx_auth_user_created
-after insert on auth.users
-for each row execute procedure private.sightx_handle_new_user();
-
 create or replace function private.sightx_set_updated_at()
 returns trigger
 language plpgsql
@@ -207,20 +186,18 @@ create or replace function private.sightx_is_admin()
 returns boolean
 language sql
 stable
-security definer
 set search_path = ''
 as $sightx$
-  select exists (select 1 from public.sightx_admin_users where user_id = auth.uid());
+  select coalesce((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false);
 $sightx$;
 revoke all on function private.sightx_is_admin() from public;
 grant execute on function private.sightx_is_admin() to authenticated;
 
--- No client-facing insert/update/delete policy exists for admin_users.
-drop policy if exists "admins can read admin list" on public.sightx_admin_users;
-create policy "admins can read admin list" on public.sightx_admin_users
-for select to authenticated
-using (private.sightx_is_admin());
+-- No client-facing policies are created for sightx_admin_users; it is a private audit/roster table.
 
+drop policy if exists "users can create own profile" on public.sightx_profiles;
+create policy "users can create own profile" on public.sightx_profiles
+for insert to authenticated with check (id = auth.uid());
 drop policy if exists "users can read own profile" on public.sightx_profiles;
 create policy "users can read own profile" on public.sightx_profiles
 for select to authenticated using (id = auth.uid());
@@ -342,7 +319,6 @@ with check (
 create or replace function private.sightx_guard_application_updates()
 returns trigger
 language plpgsql
-security definer
 set search_path = ''
 as $sightx$
 begin
@@ -394,8 +370,7 @@ with check (private.sightx_is_admin());
 -- Do not put the Supabase service_role key in browser code or commit it to GitHub.
 
 
--- Keep trigger-only SECURITY DEFINER functions inaccessible through the public Data API.
-revoke all on function private.sightx_handle_new_user() from public, anon, authenticated;
+-- Keep internal trigger functions inaccessible via the public Data API.
 revoke all on function private.sightx_set_updated_at() from public, anon, authenticated;
 revoke all on function private.sightx_guard_job_moderation_fields() from public, anon, authenticated;
 revoke all on function private.sightx_guard_application_updates() from public, anon, authenticated;
