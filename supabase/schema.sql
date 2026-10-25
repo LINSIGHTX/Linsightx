@@ -279,7 +279,6 @@ using (
 with check (
   exists (select 1 from public.employers e where e.id = jobs.employer_id and e.owner_id = auth.uid())
   and status in ('pending_review','published','closed')
-  and reviewed_by is null and reviewed_at is null
 );
 drop policy if exists "admins can moderate jobs" on public.jobs;
 create policy "admins can moderate jobs" on public.jobs
@@ -331,6 +330,45 @@ with check (
   )
   or public.is_sightx_admin()
 );
+
+
+-- Employers can update only application status and their private notes, not applicant-submitted identity/details.
+create or replace function public.guard_application_updates()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $
+begin
+  if public.is_sightx_admin() then
+    return new;
+  end if;
+
+  if new.job_id is distinct from old.job_id
+     or new.applicant_id is distinct from old.applicant_id
+     or new.full_name is distinct from old.full_name
+     or new.email is distinct from old.email
+     or new.resume_path is distinct from old.resume_path
+     or new.cover_message is distinct from old.cover_message then
+    raise exception 'Applicant-submitted fields cannot be changed';
+  end if;
+
+  if not exists (
+    select 1 from public.jobs j
+    join public.employers e on e.id = j.employer_id
+    where j.id = old.job_id and e.owner_id = auth.uid()
+  ) then
+    raise exception 'Not authorized to update this application';
+  end if;
+
+  return new;
+end;
+$;
+
+drop trigger if exists applications_guard_updates on public.applications;
+create trigger applications_guard_updates
+before update on public.applications
+for each row execute procedure public.guard_application_updates();
 
 drop policy if exists "authenticated users can report jobs" on public.job_reports;
 create policy "authenticated users can report jobs" on public.job_reports
