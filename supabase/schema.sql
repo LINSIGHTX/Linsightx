@@ -254,14 +254,14 @@ using (
   status = 'published'
   and exists (
     select 1 from public.sightx_employers e
-    where e.id = jobs.employer_id and e.verification_status = 'verified'
+    where e.id = sightx_job_listings.employer_id and e.verification_status = 'verified'
   )
 );
 drop policy if exists "employer can view own jobs" on public.sightx_job_listings;
 create policy "employer can view own jobs" on public.sightx_job_listings
 for select to authenticated
 using (
-  exists (select 1 from public.sightx_employers e where e.id = jobs.employer_id and e.owner_id = auth.uid())
+  exists (select 1 from public.sightx_employers e where e.id = sightx_job_listings.employer_id and e.owner_id = auth.uid())
   or private.sightx_is_admin()
 );
 drop policy if exists "verified employers can submit jobs for review" on public.sightx_job_listings;
@@ -272,18 +272,18 @@ with check (
   and reviewed_by is null and reviewed_at is null
   and exists (
     select 1 from public.sightx_employers e
-    where e.id = jobs.employer_id and e.owner_id = auth.uid() and e.verification_status = 'verified'
+    where e.id = sightx_job_listings.employer_id and e.owner_id = auth.uid() and e.verification_status = 'verified'
   )
 );
 drop policy if exists "employers can edit own pending or published jobs" on public.sightx_job_listings;
 create policy "employers can edit own pending or published jobs" on public.sightx_job_listings
 for update to authenticated
 using (
-  exists (select 1 from public.sightx_employers e where e.id = jobs.employer_id and e.owner_id = auth.uid())
+  exists (select 1 from public.sightx_employers e where e.id = sightx_job_listings.employer_id and e.owner_id = auth.uid())
   and status in ('pending_review','published','closed')
 )
 with check (
-  exists (select 1 from public.sightx_employers e where e.id = jobs.employer_id and e.owner_id = auth.uid())
+  exists (select 1 from public.sightx_employers e where e.id = sightx_job_listings.employer_id and e.owner_id = auth.uid())
   and status in ('pending_review','published','closed')
 );
 drop policy if exists "admins can moderate jobs" on public.sightx_job_listings;
@@ -302,7 +302,7 @@ with check (
   and exists (
     select 1 from public.sightx_job_listings j
     join public.sightx_employers e on e.id = j.employer_id
-    where j.id = applications.job_id and j.status = 'published' and e.verification_status = 'verified'
+    where j.id = sightx_applications.job_id and j.status = 'published' and e.verification_status = 'verified'
   )
 );
 drop policy if exists "applicants and job owners can read applications" on public.sightx_applications;
@@ -313,7 +313,7 @@ using (
   or exists (
     select 1 from public.sightx_job_listings j
     join public.sightx_employers e on e.id = j.employer_id
-    where j.id = applications.job_id and e.owner_id = auth.uid()
+    where j.id = sightx_applications.job_id and e.owner_id = auth.uid()
   )
   or private.sightx_is_admin()
 );
@@ -324,7 +324,7 @@ using (
   exists (
     select 1 from public.sightx_job_listings j
     join public.sightx_employers e on e.id = j.employer_id
-    where j.id = applications.job_id and e.owner_id = auth.uid()
+    where j.id = sightx_applications.job_id and e.owner_id = auth.uid()
   )
   or private.sightx_is_admin()
 )
@@ -332,7 +332,7 @@ with check (
   exists (
     select 1 from public.sightx_job_listings j
     join public.sightx_employers e on e.id = j.employer_id
-    where j.id = applications.job_id and e.owner_id = auth.uid()
+    where j.id = sightx_applications.job_id and e.owner_id = auth.uid()
   )
   or private.sightx_is_admin()
 );
