@@ -86,6 +86,59 @@ create table if not exists public.job_reports (
   created_at timestamptz not null default now()
 );
 
+
+-- Prevent employers from approving themselves or publishing jobs without admin review.
+create or replace function public.guard_job_moderation_fields()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $
+declare
+  caller_is_admin boolean;
+  caller_owns_job boolean;
+begin
+  caller_is_admin := public.is_sightx_admin();
+  select exists (
+    select 1 from public.employers e
+    where e.id = old.employer_id and e.owner_id = auth.uid()
+  ) into caller_owns_job;
+
+  if caller_is_admin then
+    return new;
+  end if;
+
+  if not caller_owns_job then
+    raise exception 'Not authorized to edit this job';
+  end if;
+
+  if new.employer_id is distinct from old.employer_id
+     or new.reviewed_by is distinct from old.reviewed_by
+     or new.reviewed_at is distinct from old.reviewed_at then
+    raise exception 'Only SIGHTX administrators can change job moderation fields';
+  end if;
+
+  if old.status = 'pending_review' and new.status <> 'pending_review' then
+    raise exception 'Jobs must be reviewed by SIGHTX before publication';
+  end if;
+
+  if old.status = 'published' and new.status not in ('published','closed') then
+    raise exception 'Employers may only close their own published jobs';
+  end if;
+
+  if old.status = 'closed' and new.status <> 'closed' then
+    raise exception 'Closed jobs require administrator review to reopen';
+  end if;
+
+  return new;
+end;
+$;
+
+drop trigger if exists jobs_guard_moderation_fields on public.jobs;
+create trigger jobs_guard_moderation_fields
+before update on public.jobs
+for each row execute procedure public.guard_job_moderation_fields();
+
 create index if not exists jobs_status_created_idx on public.jobs(status, created_at desc);
 create index if not exists jobs_employer_idx on public.jobs(employer_id);
 create index if not exists applications_job_idx on public.applications(job_id, created_at desc);
@@ -142,11 +195,25 @@ alter table public.jobs enable row level security;
 alter table public.applications enable row level security;
 alter table public.job_reports enable row level security;
 
--- Helper policies use the private admin_users table. No client-facing insert policy exists for it.
+
+-- SECURITY DEFINER avoids recursive row-level-security evaluation when checking admin membership.
+create or replace function public.is_sightx_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (select 1 from public.admin_users where user_id = auth.uid());
+$;
+revoke all on function public.is_sightx_admin() from public;
+grant execute on function public.is_sightx_admin() to authenticated;
+
+-- No client-facing insert/update/delete policy exists for admin_users.
 drop policy if exists "admins can read admin list" on public.admin_users;
 create policy "admins can read admin list" on public.admin_users
 for select to authenticated
-using (exists (select 1 from public.admin_users a where a.user_id = auth.uid()));
+using (public.is_sightx_admin());
 
 drop policy if exists "users can read own profile" on public.profiles;
 create policy "users can read own profile" on public.profiles
@@ -158,7 +225,7 @@ for update to authenticated using (id = auth.uid()) with check (id = auth.uid())
 drop policy if exists "users can view own employer application" on public.employers;
 create policy "users can view own employer application" on public.employers
 for select to authenticated
-using (owner_id = auth.uid() or exists (select 1 from public.admin_users a where a.user_id = auth.uid()));
+using (owner_id = auth.uid() or public.is_sightx_admin());
 drop policy if exists "users can submit employer application" on public.employers;
 create policy "users can submit employer application" on public.employers
 for insert to authenticated
@@ -171,8 +238,8 @@ with check (owner_id = auth.uid() and verification_status in ('pending','rejecte
 drop policy if exists "admins can manage employer verification" on public.employers;
 create policy "admins can manage employer verification" on public.employers
 for all to authenticated
-using (exists (select 1 from public.admin_users a where a.user_id = auth.uid()))
-with check (exists (select 1 from public.admin_users a where a.user_id = auth.uid()));
+using (public.is_sightx_admin())
+with check (public.is_sightx_admin());
 
 drop policy if exists "public can view approved published jobs" on public.jobs;
 create policy "public can view approved published jobs" on public.jobs
@@ -189,7 +256,7 @@ create policy "employer can view own jobs" on public.jobs
 for select to authenticated
 using (
   exists (select 1 from public.employers e where e.id = jobs.employer_id and e.owner_id = auth.uid())
-  or exists (select 1 from public.admin_users a where a.user_id = auth.uid())
+  or public.is_sightx_admin()
 );
 drop policy if exists "verified employers can submit jobs for review" on public.jobs;
 create policy "verified employers can submit jobs for review" on public.jobs
@@ -217,8 +284,8 @@ with check (
 drop policy if exists "admins can moderate jobs" on public.jobs;
 create policy "admins can moderate jobs" on public.jobs
 for all to authenticated
-using (exists (select 1 from public.admin_users a where a.user_id = auth.uid()))
-with check (exists (select 1 from public.admin_users a where a.user_id = auth.uid()));
+using (public.is_sightx_admin())
+with check (public.is_sightx_admin());
 
 drop policy if exists "applicants can submit own applications" on public.applications;
 create policy "applicants can submit own applications" on public.applications
@@ -243,7 +310,7 @@ using (
     join public.employers e on e.id = j.employer_id
     where j.id = applications.job_id and e.owner_id = auth.uid()
   )
-  or exists (select 1 from public.admin_users a where a.user_id = auth.uid())
+  or public.is_sightx_admin()
 );
 drop policy if exists "job owners can update application status" on public.applications;
 create policy "job owners can update application status" on public.applications
@@ -254,7 +321,7 @@ using (
     join public.employers e on e.id = j.employer_id
     where j.id = applications.job_id and e.owner_id = auth.uid()
   )
-  or exists (select 1 from public.admin_users a where a.user_id = auth.uid())
+  or public.is_sightx_admin()
 )
 with check (
   exists (
@@ -262,7 +329,7 @@ with check (
     join public.employers e on e.id = j.employer_id
     where j.id = applications.job_id and e.owner_id = auth.uid()
   )
-  or exists (select 1 from public.admin_users a where a.user_id = auth.uid())
+  or public.is_sightx_admin()
 );
 
 drop policy if exists "authenticated users can report jobs" on public.job_reports;
@@ -272,12 +339,12 @@ with check (reporter_id = auth.uid() and status = 'open' and reviewed_by is null
 drop policy if exists "reporters and admins can view reports" on public.job_reports;
 create policy "reporters and admins can view reports" on public.job_reports
 for select to authenticated
-using (reporter_id = auth.uid() or exists (select 1 from public.admin_users a where a.user_id = auth.uid()));
+using (reporter_id = auth.uid() or public.is_sightx_admin());
 drop policy if exists "admins can manage reports" on public.job_reports;
 create policy "admins can manage reports" on public.job_reports
 for update to authenticated
-using (exists (select 1 from public.admin_users a where a.user_id = auth.uid()))
-with check (exists (select 1 from public.admin_users a where a.user_id = auth.uid()));
+using (public.is_sightx_admin())
+with check (public.is_sightx_admin());
 
 -- Note: configure a private Supabase Storage bucket and its access policies before enabling resume uploads.
 -- Do not put the Supabase service_role key in browser code or commit it to GitHub.
