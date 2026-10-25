@@ -766,6 +766,84 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
 })();
 </script>
 
+
+<style id="sightx-live-jobs-style">
+.job-cards .sightx-live-empty,.job-cards .sightx-live-error{grid-column:1/-1;padding:24px;border:1px solid #e0e8f3;border-radius:16px;background:#fff;color:#61738d}
+.sightx-application-status{margin:12px 0;padding:12px 14px;border-radius:12px;background:#eef5ff;color:#1748c8;font-size:14px}
+.sightx-application-status.error{background:#fff0ef;color:#a32118}.sightx-application-status.success{background:#e0f8ed;color:#087b5b}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script id="sightx-live-jobs-integration">
+(function(){
+ 'use strict';
+ const SUPABASE_URL='https://ycfnsufdxztkmtyuceqy.supabase.co';
+ const SUPABASE_PUBLISHABLE_KEY='sb_publishable_EbJZKeEdRR6l_UsRucmpnA_yzWHmVXJ';
+ const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ const root=document.querySelector('#page-jobs .job-cards');
+ let liveJobs=[],selectedJob=null,loading=true;
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ function showStatus(form,msg,type){let el=form.querySelector('.sightx-application-status');if(!el){el=document.createElement('div');el.className='sightx-application-status';form.prepend(el)}el.textContent=msg;el.className='sightx-application-status'+(type?' '+type:'');}
+ function typeLabel(v){return v==='full_time'?'Full-time':v==='part_time'?'Part-time':v==='contract'?'Contract':v==='internship'?'Internship':String(v||'Other').replace(/_/g,' ')}
+ function renderJobs(){
+  if(!root)return;
+  const query=(document.getElementById('jobSearch')?.value||'').trim().toLowerCase();
+  const type=document.getElementById('jobType')?.value||'all';
+  const filtered=liveJobs.filter(j=>(type==='all'||typeLabel(j.employment_type).toLowerCase()===type.toLowerCase())&&[j.title,j.location,j.description,j.salary_text,j.experience_text].join(' ').toLowerCase().includes(query));
+  if(loading){root.innerHTML='<div class="sightx-live-empty">Loading verified, published opportunities…</div>';return}
+  if(!filtered.length){root.innerHTML='<div class="sightx-live-empty">'+(liveJobs.length?'No published jobs match your search.':'There are no published jobs yet. Employers must be verified and their job listings approved before they appear here.')+'</div>';return}
+  root.innerHTML=filtered.map(j=>'<article class="card job-card" data-live-job-id="'+esc(j.id)+'" data-type="'+esc(typeLabel(j.employment_type))+'" data-search="'+esc([j.title,j.location,j.description].join(' ').toLowerCase())+'"><div class="job-title-row"><h3>'+esc(j.title)+'</h3><span class="hiring">HIRING</span></div><div class="job-company">SIGHTX verified employer</div><div class="job-location"><span class="job-location-text">'+esc(j.location)+'</span></div><div class="job-meta"><span class="job-type-tag">'+esc(typeLabel(j.employment_type))+'</span>'+(j.experience_text?'<span class="job-experience-tag">'+esc(j.experience_text)+'</span>':'')+(j.salary_text?'<span class="job-salary-tag">'+esc(j.salary_text)+'</span>':'')+'</div><div class="job-desc">'+esc(j.description)+'</div><div class="job-footer"><a class="apply-btn" data-live-apply="'+esc(j.id)+'" href="#jobs">Apply Now</a></div></article>').join('');
+ }
+ async function loadJobs(){
+  loading=true;renderJobs();
+  const {data,error}=await client.from('sightx_job_listings').select('id,title,location,employment_type,description,salary_text,experience_text,status,employer_id,sightx_employers!inner(verification_status)').eq('status','published').eq('sightx_employers.verification_status','verified').order('created_at',{ascending:false});
+  loading=false;
+  if(error){liveJobs=[];root.innerHTML='<div class="sightx-live-error">Published jobs could not be loaded right now. Please refresh and try again.</div>';console.error('SIGHTX live job loading failed:',error.message);return}
+  liveJobs=data||[];renderJobs();
+ }
+ document.getElementById('jobSearch')?.addEventListener('input',renderJobs);
+ document.getElementById('jobType')?.addEventListener('change',renderJobs);
+ window.addEventListener('click',function(e){
+  const btn=e.target.closest('[data-live-apply]');if(!btn)return;
+  const job=liveJobs.find(j=>j.id===btn.dataset.liveApply);if(!job)return;
+  selectedJob=job;
+  setTimeout(()=>{const role=document.querySelector('#applyNowFormFields [name="role"]');if(role)role.value=job.title;const label=document.getElementById('applyNowRoleLabel');if(label)label.textContent='Applying for: '+job.title;},0);
+ },true);
+ window.addEventListener('submit',async function(e){
+  const form=e.target;if(form.id!=='applyNowFormFields')return;
+  e.preventDefault();e.stopImmediatePropagation();
+  if(!selectedJob){showStatus(form,'Please choose a published job from the Jobs page before applying.','error');return}
+  if(!form.reportValidity())return;
+  const {data:{session},error:sessionError}=await client.auth.getSession();
+  if(sessionError||!session?.user){showStatus(form,'Please sign in to your SIGHTX account first, then return to this job to apply.','error');return}
+  const fields=form.elements;
+  const name=fields.namedItem('name').value.trim(),email=fields.namedItem('email').value.trim(),message=fields.namedItem('message').value.trim(),file=fields.namedItem('resume').files[0];
+  if(!name||!email||!message||!file){showStatus(form,'Please complete every field and attach your resume.','error');return}
+  const allowed={'application/pdf':'.pdf','application/msword':'.doc','application/vnd.openxmlformats-officedocument.wordprocessingml.document':'.docx'};
+  const ext=(file.name.split('.').pop()||'').toLowerCase();
+  if(file.size>5*1024*1024){showStatus(form,'Your resume must be 5 MB or smaller.','error');return}
+  if(!['pdf','doc','docx'].includes(ext)||!(file.type in allowed)){showStatus(form,'Please upload a PDF, DOC, or DOCX resume.','error');return}
+  const user=session.user,cleanName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(-100),path=user.id+'/'+selectedJob.id+'/'+crypto.randomUUID()+'-'+cleanName;
+  const submit=form.querySelector('button[type="submit"]');if(submit){submit.disabled=true;submit.textContent='Submitting…'}
+  showStatus(form,'Uploading your resume securely and submitting your application…');
+  try{
+   const {error:uploadError}=await client.storage.from('resumes').upload(path,file,{contentType:file.type,upsert:false});
+   if(uploadError)throw uploadError;
+   const {error:insertError}=await client.from('sightx_applications').insert({job_id:selectedJob.id,applicant_id:user.id,full_name:name,email,status:'new',resume_path:path,cover_message:message,employer_notes:null});
+   if(insertError)throw insertError;
+   showStatus(form,'Application submitted successfully. Your application is saved to SIGHTX.','success');
+   form.reset();selectedJob=null;
+   if(submit){submit.disabled=false;submit.textContent='Submit Application'}
+  }catch(err){
+   console.error('SIGHTX application submission failed:',err.message);
+   const messageText=err.code==='23505'?'You have already applied for this job with this account.':(err.message||'Submission failed. Please try again.');
+   showStatus(form,messageText,'error');
+   if(submit){submit.disabled=false;submit.textContent='Submit Application'}
+  }
+ },true);
+ loadJobs();
+})();
+</script>
+
 </body></html>
 
 
