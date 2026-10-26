@@ -135,7 +135,7 @@ jobs:
                     process.exit(1);
                   }
                 }
-                if (/grant\\s+all\\s+privileges|grant\\s+truncate/i.test(migration.sql)) {
+                if (/grant\s+all\s+privileges|grant\s+truncate/i.test(migration.sql)) {
                   console.error(`Security migration ${migration.name} must not grant broad or TRUNCATE privileges.`);
                   process.exit(1);
                 }
