@@ -19,6 +19,7 @@ using (
       join public.sightx_employers e on e.id = j.employer_id
       where a.resume_path = objects.name
         and e.owner_id = (select auth.uid())
+        and e.verification_status = 'verified'
     )
     or (
       coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
