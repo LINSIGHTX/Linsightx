@@ -558,7 +558,7 @@ function renderAccount(user){renderHomeForRole(user);
   client.auth.getSession().then(({data})=>syncAccount(data.session?.user||null)).catch(()=>renderAccount(null));
   client.auth.onAuthStateChange((_event,session)=>{syncAccount(session?.user||null);});
  }
- document.getElementById('openEmployerWorkspace')?.addEventListener('click',()=>{const choice=document.querySelector('[data-account-modal="employer"]');if(choice)choice.click();else window.location.href='auth.html?type=employer&embed=1';});
+ document.getElementById('openEmployerWorkspace')?.addEventListener('click',()=>{try{localStorage.setItem('sightx_active_account_view','employer');}catch(_){}window.location.href='auth.html?type=employer&v=20261027-role-pages';});
 window.addEventListener('sightx-auth-client-ready',bindAuth,{once:true});
  if(window.sightxSupabase)bindAuth();
  signOut.addEventListener('click',async()=>{
@@ -579,7 +579,7 @@ window.addEventListener('sightx-auth-client-ready',bindAuth,{once:true});
  document.addEventListener('keydown',event=>{if(event.key==='Escape'){close();triggers.find(t=>t.getAttribute('aria-expanded')==='true')?.focus();}});
  window.addEventListener('resize',close);window.addEventListener('scroll',close,true);
  function closeModal(){modal.hidden=true;frame.src='about:blank';document.body.style.overflow='';}
- accountButtons.forEach(button=>button.addEventListener('click',()=>{const type=button.dataset.accountModal;try{localStorage.setItem('sightx_active_account_view',type);}catch(_){}close();modal.hidden=false;document.body.style.overflow='hidden';frame.src='auth.html?type='+encodeURIComponent(type)+'&embed=1&v=20261026-jobs-menu';document.getElementById('accountModalTitle').textContent=type==='employer'?'Employer account':'Applicant / User account';modalClose.focus();}));
+ accountButtons.forEach(button=>button.addEventListener('click',()=>{const type=button.dataset.accountModal;try{localStorage.setItem('sightx_active_account_view',type);}catch(_){}close();window.location.href='auth.html?type='+encodeURIComponent(type)+'&v=20261027-role-pages';}));
  document.addEventListener('click',event=>{const jobsMenu=document.getElementById('jobsQuickMenu'),jobsTrigger=document.getElementById('jobsMenuTrigger');if(jobsMenu&&!jobsMenu.hidden&&!jobsMenu.contains(event.target)&&!jobsTrigger.contains(event.target)){jobsMenu.hidden=true;jobsTrigger.setAttribute('aria-expanded','false');}});
  document.addEventListener('keydown',event=>{if(event.key==='Escape'){const jobsMenu=document.getElementById('jobsQuickMenu'),jobsTrigger=document.getElementById('jobsMenuTrigger');if(jobsMenu&&!jobsMenu.hidden){jobsMenu.hidden=true;jobsTrigger.setAttribute('aria-expanded','false');jobsTrigger.focus();}}});
  modalClose.addEventListener('click',closeModal);modal.addEventListener('click',event=>{if(event.target===modal)closeModal();});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!modal.hidden)closeModal();});
