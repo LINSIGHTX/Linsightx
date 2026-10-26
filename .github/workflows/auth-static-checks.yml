@@ -102,7 +102,7 @@ jobs:
           console.log(`Homepage JavaScript syntax passed: ${homepageScripts.length} inline script(s).`);
 
           const standaloneApply = fs.readFileSync('apply-now.html', 'utf8');
-          const standaloneScripts = [...standaloneApply.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)]
+          const standaloneScripts = [...standaloneApply.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
             .map(m => m[1])
             .filter(s => s.trim());
           if (!standaloneScripts.length) throw new Error('No inline JavaScript found in apply-now.html');
