@@ -548,15 +548,11 @@ function openApplicationForm(role){
 document.addEventListener('submit',e=>{
  if(e.target.id==='applicationFormFields'){
   e.preventDefault();if(!e.target.reportValidity())return;
-  const name=e.target.elements.namedItem('name').value.trim();
-  toast('Thanks, '+name+'. Your application form is complete.');
-  e.target.reset();go('jobs');
+  toast('This homepage application form is a preview only; it does not submit or store your application. Open Account and apply to a published SIGHTX listing to submit securely.');
  }
  if(e.target.id==='jobPostingFields'){
   e.preventDefault();if(!e.target.reportValidity())return;
-  const f=e.target.elements;const title=f.namedItem('title').value.trim();const company=f.namedItem('company').value.trim();
-  toast('Job details completed for '+title+' at '+company+'.');
-  e.target.reset();go('jobs');
+  toast('This homepage job form is a preview only; it does not publish a vacancy. Open Account to sign in, complete employer verification, and submit a job for review.');
  }
 });
 const SAVED_JOBS_KEY='sightx-saved-jobs-v1';
@@ -822,23 +818,34 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
   const ext=(file.name.split('.').pop()||'').toLowerCase();
   if(file.size>5*1024*1024){showStatus(form,'Your resume must be 5 MB or smaller.','error');return}
   if(!['pdf','doc','docx'].includes(ext)||!(file.type in allowed)){showStatus(form,'Please upload a PDF, DOC, or DOCX resume.','error');return}
-  const user=session.user,cleanName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(-100),path=user.id+'/'+selectedJob.id+'/'+crypto.randomUUID()+'-'+cleanName;
-  const submit=form.querySelector('button[type="submit"]');if(submit){submit.disabled=true;submit.textContent='Submitting…'}
-  showStatus(form,'Uploading your resume securely and submitting your application…');
+  const user=session.user;
+  const submit=form.querySelector('button[type="submit"]');
+  if(submit){submit.disabled=true;submit.textContent='Submitting…'}
+  let uploadedPath=null;
   try{
+   // Check before upload so an ordinary duplicate submission does not create an orphaned file.
+   const {data:existing,error:existingError}=await client.from('sightx_applications').select('id').eq('job_id',selectedJob.id).eq('applicant_id',user.id).maybeSingle();
+   if(existingError)throw existingError;
+   if(existing){showStatus(form,'You have already applied for this job with this account. Check your SIGHTX account for the application status.','error');return}
+   const cleanName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(-100);
+   const path=user.id+'/'+selectedJob.id+'/'+crypto.randomUUID()+'-'+cleanName;
+   showStatus(form,'Uploading your resume securely and submitting your application…');
    const {error:uploadError}=await client.storage.from('resumes').upload(path,file,{contentType:file.type,upsert:false});
    if(uploadError)throw uploadError;
+   uploadedPath=path;
    const {error:insertError}=await client.from('sightx_applications').insert({job_id:selectedJob.id,applicant_id:user.id,full_name:name,email,status:'new',resume_path:path,cover_message:message,employer_notes:null});
    if(insertError)throw insertError;
+   uploadedPath=null;
    showStatus(form,'Application submitted successfully. Your application is saved to SIGHTX.','success');
    form.reset();selectedJob=null;
    if(submit){submit.disabled=false;submit.textContent='Submit Application'}
   }catch(err){
    console.error('SIGHTX application submission failed:',err.message);
-   const messageText=err.code==='23505'?'You have already applied for this job with this account.':(err.message||'Submission failed. Please try again.');
+   let messageText=err.code==='23505'?'You have already applied for this job with this account.':(err.message||'Submission failed. Please try again.');
+   if(uploadedPath)messageText+=' The resume upload remains in private storage because automatic deletion is not enabled; contact SIGHTX support if cleanup is needed.';
    showStatus(form,messageText,'error');
    if(submit){submit.disabled=false;submit.textContent='Submit Application'}
-  }
+  }finally{if(submit){submit.disabled=false;if(submit.textContent==='Submitting…')submit.textContent='Submit Application'}}
  },true);
  loadJobs();
 })();
