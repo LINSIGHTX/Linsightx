@@ -7,7 +7,7 @@ on:
       - "auth.html"
       - ".github/workflows/auth-static-checks.yml"
   push:
-    branches: ["feature/account-authenticator-setup"]
+    branches: [main, "feature/account-authenticator-setup"]
     paths:
       - "auth.html"
       - ".github/workflows/auth-static-checks.yml"
