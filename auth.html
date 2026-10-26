@@ -467,14 +467,14 @@
     opportunitiesSection.classList.toggle('hidden',!showOpportunities||isEmployer&&!admin());
     $('employerArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||!isEmployer&&!admin());
     $('adminArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
-    $('employerArea').classList.toggle('hidden',!isEmployer&&!admin());
+    $('employerArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||!isEmployer&&!admin());
     $('applicationComposer').classList.add('hidden');
     // Keep authenticator enrollment controls administrator-only. Do not weaken login MFA checks for accounts that already have a factor enrolled.
-    $('accountSecurity').classList.toggle('hidden',!admin());
+    $('accountSecurity').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
     $('accountSecurity').querySelector('h2').textContent='Administrator account security';
     const securityDescription=$('accountSecurity').querySelector('.sub');
     if(securityDescription)securityDescription.textContent='Set up and verify an authenticator app to protect administrator access.';
-    $('adminArea').classList.toggle('hidden',!admin());
+    $('adminArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
     try{
       await loadProfile();if(routingRun!==sessionRouting)return;
       await loadEmployer();if(routingRun!==sessionRouting)return;
