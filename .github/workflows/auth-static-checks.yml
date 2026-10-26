@@ -128,6 +128,18 @@ jobs:
                   }
                 }
               }
+              if (migration.name.includes('minimize_sightx_table_grants')) {
+                for (const marker of ["revoke all privileges on table", "from public, anon, authenticated", "grant select on table public.sightx_job_listings to anon", "grant select, insert, update on table", "to authenticated"]) {
+                  if (!migration.sql.includes(marker)) {
+                    console.error(`Security migration ${migration.name} is missing expected marker: ${marker}`);
+                    process.exit(1);
+                  }
+                }
+                if (/grant\\s+all\\s+privileges|grant\\s+truncate/i.test(migration.sql)) {
+                  console.error(`Security migration ${migration.name} must not grant broad or TRUNCATE privileges.`);
+                  process.exit(1);
+                }
+              }
             }
           }
           NODE
