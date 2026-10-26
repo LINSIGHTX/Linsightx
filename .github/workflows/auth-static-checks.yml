@@ -5,11 +5,13 @@ on:
     branches: [main]
     paths:
       - "auth.html"
+      - "index.html"
       - ".github/workflows/auth-static-checks.yml"
   push:
     branches: [main, "feature/account-authenticator-setup"]
     paths:
       - "auth.html"
+      - "index.html"
       - ".github/workflows/auth-static-checks.yml"
 
 permissions:
@@ -75,4 +77,21 @@ jobs:
             process.exit(1);
           }
           console.log(`Static checks passed: ${ids.length} unique IDs, ${scripts.length} inline script(s), required MFA markers present.`);
+
+          // The homepage is a multi-page UI shell and currently has repeated IDs
+          // across separate page sections, so validate its inline JS syntax here
+          // without failing on those existing markup IDs.
+          const homepage = fs.readFileSync('index.html', 'utf8');
+          const homepageScripts = [...homepage.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)]
+            .map(m => m[1])
+            .filter(s => s.trim());
+          if (!homepageScripts.length) throw new Error('No inline JavaScript found in index.html');
+          for (const [index, script] of homepageScripts.entries()) {
+            try { new Function(script); }
+            catch (error) {
+              console.error(`index.html inline script ${index + 1} has a syntax error:`, error.message);
+              process.exit(1);
+            }
+          }
+          console.log(`Homepage JavaScript syntax passed: ${homepageScripts.length} inline script(s).`);
           NODE
