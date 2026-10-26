@@ -187,7 +187,7 @@
       return;
     }
     $('mfaLoginChallenge').classList.add('hidden');
-    await loadDashboard();
+    await loadDashboard(run);
   }
   async function verifyLoginMfa(event){
     event.preventDefault();
@@ -351,14 +351,26 @@
     $('adminApplications').innerHTML=ar.error?'<div class="notice error">'+escapeHtml(friendlyError(ar.error))+'</div>':(ar.data.length?ar.data.map(a=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(a.full_name)+' · '+escapeHtml(a.email)+'</h3><div class="meta">Job '+escapeHtml(a.job_id)+' · Applicant '+escapeHtml(a.applicant_id)+'</div></div>'+statusBadge(a.status)+'</div><p>'+escapeHtml(a.cover_message)+'</p><div class="actions">'+['under_review','shortlisted','interview','hired','rejected'].map(st=>'<button class="btn" data-application-status="'+st+'" data-id="'+escapeHtml(a.id)+'">'+st.replaceAll('_',' ')+'</button>').join('')+'</div></article>').join(''):'<div class="empty">No applications yet.</div>');
     $('adminReports').innerHTML=rr.error?'<div class="notice error">'+escapeHtml(friendlyError(rr.error))+'</div>':(rr.data.length?rr.data.map(r=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(r.reason)+'</h3><div class="meta">Job '+escapeHtml(r.job_id)+' · '+escapeHtml(new Date(r.created_at).toLocaleString())+'</div></div>'+statusBadge(r.status)+'</div><p>'+escapeHtml(r.details||'No additional details.')+'</p><div class="actions">'+['reviewing','resolved','dismissed'].map(st=>'<button class="btn" data-report-status="'+st+'" data-id="'+escapeHtml(r.id)+'">'+st+'</button>').join('')+'</div></article>').join(''):'<div class="empty">No job reports.</div>');
   }
-  async function loadDashboard(){
-    if(!user)return;
-    showDashboard();clearNotice('dashboardNotice');
+  async function loadDashboard(routingRun){
+    if(!user||routingRun!==sessionRouting)return;
+    // Keep the dashboard hidden until this session's data load finishes.
+    // If the session changes during any request, discard this stale routing run.
+    clearNotice('dashboardNotice');
     $('welcomeTitle').textContent='Welcome, '+((user.user_metadata&&user.user_metadata.full_name)||user.email||'SIGHTX member');
     $('welcomeMeta').textContent=user.email+(admin()?' · SIGHTX administrator':'');
     $('adminArea').classList.toggle('hidden',!admin());
-    try{await loadProfile();await loadEmployer();await Promise.all([loadMyJobs(),loadPublicJobs(),loadMyApplications(),refreshMfaStatus()]);if(admin())await loadAdmin();}
-    catch(error){notice('dashboardNotice','Account connected, but some dashboard data could not load: '+friendlyError(error),'error');}
+    try{
+      await loadProfile();if(routingRun!==sessionRouting)return;
+      await loadEmployer();if(routingRun!==sessionRouting)return;
+      await Promise.all([loadMyJobs(),loadPublicJobs(),loadMyApplications(),refreshMfaStatus()]);
+      if(routingRun!==sessionRouting)return;
+      if(admin())await loadAdmin();
+      if(routingRun!==sessionRouting)return;
+    }catch(error){
+      if(routingRun!==sessionRouting)return;
+      notice('dashboardNotice','Account connected, but some dashboard data could not load: '+friendlyError(error),'error');
+    }
+    if(routingRun===sessionRouting&&user)showDashboard();
   }
   $('startMfaSetup').addEventListener('click',startMfaSetup);
   $('mfaLoginForm').addEventListener('submit',verifyLoginMfa);
