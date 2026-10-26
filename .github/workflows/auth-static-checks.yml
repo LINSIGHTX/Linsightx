@@ -16,6 +16,7 @@ on:
       - "index.html"
       - ".github/workflows/auth-static-checks.yml"
       - "supabase/migrations/**/*.sql"
+      - "supabase/schema.sql"
 
 permissions:
   contents: read
@@ -97,6 +98,43 @@ jobs:
             }
           }
           console.log(`Homepage JavaScript syntax passed: ${homepageScripts.length} inline script(s).`);
+
+          // Guard the live job application flow and the canonical security schema.
+          const applicationMarkers = [
+            "data-live-apply",
+            "client.auth.getSession()",
+            "client.storage.from('resumes').upload",
+            "client.from('sightx_applications').insert",
+            "file.size>5*1024*1024"
+          ];
+          const missingApplicationMarkers = applicationMarkers.filter(text => !homepage.includes(text));
+          if (missingApplicationMarkers.length) {
+            console.error('Live application flow is missing expected safeguards:', missingApplicationMarkers.join(', '));
+            process.exit(1);
+          }
+          if (/service_role/i.test(homepage)) {
+            console.error('Potential service_role credential found in index.html');
+            process.exit(1);
+          }
+          const accountPortal = fs.readFileSync('auth.html', 'utf8');
+          if (!accountPortal.includes("createSignedUrl") || !accountPortal.includes("client.storage.from('resumes')")) {
+            console.error('Account portal must retain secure resume download support.');
+            process.exit(1);
+          }
+          const schema = fs.readFileSync('supabase/schema.sql', 'utf8').toLowerCase();
+          const schemaMarkers = [
+            'sightx admins require aal2',
+            'applicants and verified job owners can read applications',
+            'applicants and hiring teams read resumes',
+            "split_part(resume_path, '/', 1)",
+            'from public, anon, authenticated'
+          ];
+          const missingSchemaMarkers = schemaMarkers.filter(text => !schema.includes(text));
+          if (missingSchemaMarkers.length) {
+            console.error('Canonical schema is missing expected security controls:', missingSchemaMarkers.join(', '));
+            process.exit(1);
+          }
+          console.log('Live application flow and canonical security schema checks passed.');
 
           // Guard the high-risk authorization invariants in security migrations.
           const migrationDir = 'supabase/migrations';
