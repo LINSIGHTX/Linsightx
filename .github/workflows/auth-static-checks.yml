@@ -7,12 +7,14 @@ on:
       - "auth.html"
       - "index.html"
       - ".github/workflows/auth-static-checks.yml"
+      - "supabase/migrations/**/*.sql"
   push:
     branches: [main, "feature/account-authenticator-setup"]
     paths:
       - "auth.html"
       - "index.html"
       - ".github/workflows/auth-static-checks.yml"
+      - "supabase/migrations/**/*.sql"
 
 permissions:
   contents: read
@@ -94,4 +96,30 @@ jobs:
             }
           }
           console.log(`Homepage JavaScript syntax passed: ${homepageScripts.length} inline script(s).`);
+
+          // Guard the high-risk authorization invariants in security migrations.
+          const migrationDir = 'supabase/migrations';
+          if (fs.existsSync(migrationDir)) {
+            const migrationFiles = fs.readdirSync(migrationDir)
+              .filter(name => name.endsWith('.sql'))
+              .map(name => ({ name, sql: fs.readFileSync(migrationDir + '/' + name, 'utf8').toLowerCase() }));
+            for (const migration of migrationFiles) {
+              if (migration.name.includes('require_aal2_for_admin_resume_access')) {
+                for (const marker of ["'role' = 'admin'", "'aal' = 'aal2'", "verification_status = 'verified'"]) {
+                  if (!migration.sql.includes(marker)) {
+                    console.error(`Security migration ${migration.name} is missing expected marker: ${marker}`);
+                    process.exit(1);
+                  }
+                }
+              }
+              if (migration.name.includes('limit_application_reads_to_verified_employers')) {
+                for (const marker of ["applicant_id = (select auth.uid())", "verification_status = 'verified'", "'role' = 'admin'"]) {
+                  if (!migration.sql.includes(marker)) {
+                    console.error(`Security migration ${migration.name} is missing expected marker: ${marker}`);
+                    process.exit(1);
+                  }
+                }
+              }
+            }
+          }
           NODE
