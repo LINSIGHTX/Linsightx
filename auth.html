@@ -164,6 +164,16 @@
       return;
     }
     if(run!==sessionRouting)return;
+    // Treat missing or unfamiliar assurance data as an error, never as permission.
+    if(!assurance||!['aal1','aal2'].includes(assurance.currentLevel)||!['aal1','aal2'].includes(assurance.nextLevel)){
+      $('authArea').classList.add('hidden');
+      $('dashboard').classList.add('hidden');
+      $('mfaLoginChallenge').classList.remove('hidden');
+      loginMfaMessage('We could not confirm your sign-in security level. Sign out and try again. Your account dashboard remains locked.','error');
+      $('mfaLoginCode').disabled=true;
+      $('verifyLoginMfa').disabled=true;
+      return;
+    }
     $('mfaLoginCode').disabled=false;
     $('verifyLoginMfa').disabled=false;
     if(assurance.nextLevel==='aal2'&&assurance.currentLevel!=='aal2'){
