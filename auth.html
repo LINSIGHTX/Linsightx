@@ -229,6 +229,11 @@
   async function routeSession(nextSession){
     const run=++sessionRouting;
     session=nextSession||null;user=session&&session.user?session.user:null;
+    if(user){
+      // The chosen login path controls dashboard presentation; account metadata must not silently switch a user login to employer view.
+      const chosenView=admin()?'applicant':(selectedAccountType||'applicant');
+      try{localStorage.setItem('sightx_active_account_view',chosenView);}catch(_){}
+    }
     if(!user){
       $('dashboard').classList.add('hidden');
       $('mfaLoginChallenge').classList.add('hidden');
