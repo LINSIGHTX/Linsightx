@@ -1,0 +1,78 @@
+name: Auth portal static checks
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "auth.html"
+      - ".github/workflows/auth-static-checks.yml"
+  push:
+    branches: ["feature/account-authenticator-setup"]
+    paths:
+      - "auth.html"
+      - ".github/workflows/auth-static-checks.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  static-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Validate auth.html and inline JavaScript
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const html = fs.readFileSync('auth.html', 'utf8');
+          const ids = [...html.matchAll(/\bid=["']([^"']+)["']/g)].map(m => m[1]);
+          const duplicates = ids.filter((id, i) => ids.indexOf(id) !== i);
+          if (duplicates.length) {
+            console.error('Duplicate HTML IDs:', [...new Set(duplicates)].join(', '));
+            process.exit(1);
+          }
+
+          const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
+            .map(m => m[1])
+            .filter(s => s.trim());
+          if (!scripts.length) throw new Error('No inline JavaScript found');
+          for (const [index, script] of scripts.entries()) {
+            try { new Function(script); }
+            catch (error) {
+              console.error(`Inline script ${index + 1} has a syntax error:`, error.message);
+              process.exit(1);
+            }
+          }
+
+          const required = [
+            'getAuthenticatorAssuranceLevel',
+            'client.auth.mfa.enroll',
+            'client.auth.mfa.challenge',
+            'client.auth.mfa.verify',
+            'mfaLoginChallenge',
+            'We could not verify your sign-in security level',
+            'Fail closed immediately'
+          ];
+          const missing = required.filter(text => !html.includes(text));
+          if (missing.length) {
+            console.error('Missing expected MFA flow elements:', missing.join(', '));
+            process.exit(1);
+          }
+          const routeStart = html.indexOf('async function routeSession(nextSession)');
+          const assuranceStart = html.indexOf('getAuthenticatorAssuranceLevel()', routeStart);
+          const hideDashboardStart = html.indexOf("$('dashboard').classList.add('hidden')", routeStart);
+          if (routeStart < 0 || assuranceStart < 0 || hideDashboardStart < 0 || hideDashboardStart > assuranceStart) {
+            console.error('Session routing must hide the dashboard before awaiting MFA assurance.');
+            process.exit(1);
+          }
+          if (/service_role/i.test(html)) {
+            console.error('Potential service_role credential found in auth.html');
+            process.exit(1);
+          }
+          console.log(`Static checks passed: ${ids.length} unique IDs, ${scripts.length} inline script(s), required MFA markers present.`);
+          NODE
