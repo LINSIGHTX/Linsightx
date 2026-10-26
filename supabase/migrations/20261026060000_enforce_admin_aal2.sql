@@ -37,9 +37,3 @@ begin
 end
 $$;
 
--- The legacy applications table has RLS enabled but no policies. Remove API grants
--- to prevent these roles from reaching the table if a policy is added accidentally.
-revoke all privileges on table public.applications from anon, authenticated;
-
--- sightx_admin_users is intentionally deny-by-default and already has API grants revoked.
--- Do not add a client-facing policy to the private admin roster.
