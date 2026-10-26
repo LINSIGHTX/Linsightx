@@ -492,12 +492,21 @@
         resume_path:uploadedPath,cover_message:cover,status:'new'
       });
       if(insertError)throw insertError;
+      // The resume is now referenced by a saved application; do not clean it up
+      // if a later UI refresh fails.
+      uploadedPath=null;
       notice('dashboardNotice','Application submitted successfully. Your resume is stored privately.','success');
       $('applicationComposer').classList.add('hidden');$('applicationForm').reset();currentApplicationJob=null;
       await loadMyApplications();
     }catch(err){
-      notice('applicationNotice',friendlyError(err),'error');
-      if(uploadedPath)notice('applicationNotice',friendlyError(err)+' If the file uploaded before submission failed, it remains in private storage; contact SIGHTX support if you need it cleaned up.','error');
+      let message=friendlyError(err);
+      if(uploadedPath){
+        // Best-effort cleanup prevents orphaned private files when the
+        // application insert fails after the upload succeeds.
+        const {error:cleanupError}=await client.storage.from('resumes').remove([uploadedPath]);
+        if(cleanupError)message+=' The resume upload could not be cleaned up automatically; contact SIGHTX support for cleanup.';
+      }
+      notice('applicationNotice',message,'error');
     }finally{button.disabled=false;}
   });
   $('profileForm').addEventListener('submit',saveProfile);
