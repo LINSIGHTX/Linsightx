@@ -112,6 +112,7 @@
           <button class="btn primary" type="submit">Submit job for review</button>
         </form>
         <div class="divider"></div><h3>Your job listings</h3><div id="myJobs" class="list"><div class="empty">Sign in to load your listings.</div></div>
+        <div class="divider"></div><div class="section-head"><div><h3>Applications to your jobs</h3><p>Review candidate details and retrieve resumes for your listings.</p></div><button class="btn" id="refreshEmployerApplications" type="button">Refresh applications</button></div><div id="employerApplications" class="list"><div class="empty">Sign in to load applications for your jobs.</div></div>
       </article>
     </section>
     <section class="section card"><div class="section-head"><div><h2>Open opportunities</h2><p>Only administrator-published jobs are shown here.</p></div><button class="btn" id="refreshJobs" type="button">Refresh</button></div><div id="publicJobs" class="list"><div class="empty">Loading published jobs…</div></div></section>
@@ -376,6 +377,21 @@
     if(error){box.innerHTML='<div class="notice error">'+escapeHtml(friendlyError(error))+'</div>';return;}
     box.innerHTML=data.length?data.map(j=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(j.title)+'</h3><div class="meta">'+escapeHtml(j.location)+' · '+escapeHtml(j.employment_type)+'</div></div>'+statusBadge(j.status)+'</div><p class="meta">'+escapeHtml(j.description.slice(0,180))+(j.description.length>180?'…':'')+'</p></article>').join(''):'<div class="empty">No jobs submitted yet.</div>';
   }
+  async function loadEmployerApplications(){
+    const box=$('employerApplications');
+    if(!user||!employer||employer.verification_status!=='verified'){
+      box.innerHTML='<div class="empty">Applications are available here after your employer is verified.</div>';
+      return;
+    }
+    const {data:jobs,error:jobsError}=await client.from('sightx_job_listings').select('id,title').eq('employer_id',employer.id);
+    if(jobsError){box.innerHTML='<div class="notice error">'+escapeHtml(friendlyError(jobsError))+'</div>';return;}
+    if(!jobs||!jobs.length){box.innerHTML='<div class="empty">Submit a job and wait for approval to receive applications.</div>';return;}
+    const titleByJob=new Map(jobs.map(job=>[job.id,job.title]));
+    const {data:apps,error}=await client.from('sightx_applications').select('id,job_id,applicant_id,full_name,email,resume_path,cover_message,status,created_at').in('job_id',jobs.map(job=>job.id)).order('created_at',{ascending:false});
+    if(error){box.innerHTML='<div class="notice error">'+escapeHtml(friendlyError(error))+'</div>';return;}
+    if(!apps||!apps.length){box.innerHTML='<div class="empty">No applications have been submitted to your jobs yet.</div>';return;}
+    box.innerHTML=apps.map(app=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(app.full_name)+'</h3><div class="meta">'+escapeHtml(app.email)+' · '+escapeHtml(titleByJob.get(app.job_id)||'Your job')+'</div><div class="meta">Submitted '+escapeHtml(new Date(app.created_at).toLocaleDateString())+'</div></div>'+statusBadge(app.status)+'</div><details style="margin-top:10px"><summary class="btn">View cover message</summary><p>'+escapeHtml(app.cover_message||'No cover message saved.')+'</p></details>'+(app.resume_path?'<div class="actions"><button class="btn" type="button" data-employer-resume-application="'+escapeHtml(app.id)+'">Secure resume download</button></div>':'<p class="meta">No resume attached.</p>')+'</article>').join('');
+  }
   async function loadPublicJobs(){
     const box=$('publicJobs');const {data,error}=await client.from('sightx_job_listings').select('id,title,location,employment_type,description,salary_text,experience_text,created_at').eq('status','published').order('created_at',{ascending:false});
     if(error){box.innerHTML='<div class="notice error">'+escapeHtml(friendlyError(error))+'</div>';return;}
@@ -422,7 +438,7 @@
     try{
       await loadProfile();if(routingRun!==sessionRouting)return;
       await loadEmployer();if(routingRun!==sessionRouting)return;
-      await Promise.all([loadMyJobs(),loadPublicJobs(),loadMyApplications(),refreshMfaStatus()]);
+      await Promise.all([loadMyJobs(),loadEmployerApplications(),loadPublicJobs(),loadMyApplications(),refreshMfaStatus()]);
       if(routingRun!==sessionRouting)return;
       if(admin())await loadAdmin();
       if(routingRun!==sessionRouting)return;
@@ -450,6 +466,7 @@
   $('employerForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('submitEmployer');btn.disabled=true;clearNotice('dashboardNotice');const values={owner_id:user.id,company_name:$('companyName').value.trim(),company_website:$('companyWebsite').value.trim()||null,company_email:$('companyEmail').value.trim(),business_phone:$('businessPhone').value.trim()||null,business_address:$('businessAddress').value.trim()||null,registration_details:$('registrationDetails').value.trim()||null,evidence_notes:$('evidenceNotes').value.trim()||null,verification_status:employer&&employer.verification_status!=='rejected'?employer.verification_status:'pending',reviewed_by:null,reviewed_at:null,review_notes:null};try{let result;if(employer){result=await client.from('sightx_employers').update(values).eq('id',employer.id).select().single();}else{result=await client.from('sightx_employers').insert(values).select().single();}if(result.error)throw result.error;notice('dashboardNotice','Employer information saved. Your status remains pending until SIGHTX reviews the evidence.','success');await loadEmployer();await loadMyJobs();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}finally{btn.disabled=false;}});
   $('jobForm').addEventListener('submit',async e=>{e.preventDefault();if(!employer||employer.verification_status!=='verified'){notice('dashboardNotice','Only verified employers can submit jobs.','error');return;}const btn=e.submitter;btn.disabled=true;try{const {error}=await client.from('sightx_job_listings').insert({employer_id:employer.id,title:$('jobTitle').value.trim(),location:$('jobLocation').value.trim(),employment_type:$('jobType').value,description:$('jobDescription').value.trim(),experience_text:$('jobExperience').value.trim()||null,salary_text:$('jobSalary').value.trim()||null,application_email:$('applicationEmail').value.trim(),status:'pending_review'});if(error)throw error;$('jobForm').reset();notice('dashboardNotice','Job submitted for SIGHTX review. It will not appear publicly until approved.','success');await loadMyJobs();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}finally{btn.disabled=false;}});
   $('refreshJobs').addEventListener('click',loadPublicJobs);$('refreshAdmin').addEventListener('click',loadAdmin);
+  $('refreshEmployerApplications').addEventListener('click',loadEmployerApplications);
   $('cancelApplication').addEventListener('click',()=>{$('applicationComposer').classList.add('hidden');$('applicationForm').reset();currentApplicationJob=null;});
   $('applicationForm').addEventListener('submit',async event=>{
     event.preventDefault();
@@ -505,6 +522,24 @@
         $('applicationComposer').classList.remove('hidden');
         $('applicationComposer').scrollIntoView({behavior:'smooth',block:'start'});
       }catch(err){notice('dashboardNotice',friendlyError(err),'error');}
+      return;
+    }
+    const employerResume=e.target.closest('[data-employer-resume-application]');if(employerResume){
+      if(!user||!employer||employer.verification_status!=='verified'){notice('dashboardNotice','Verified employer access is required to retrieve candidate resumes.','error');return;}
+      const button=employerResume;button.disabled=true;
+      try{
+        const {data:jobs,error:jobsError}=await client.from('sightx_job_listings').select('id').eq('employer_id',employer.id);
+        if(jobsError)throw jobsError;
+        const jobIds=(jobs||[]).map(job=>job.id);
+        if(!jobIds.length)throw new Error('No job listings are available for this employer.');
+        const {data:application,error}=await client.from('sightx_applications').select('id,job_id,resume_path').eq('id',button.dataset.employerResumeApplication).in('job_id',jobIds).single();
+        if(error)throw error;
+        if(!application.resume_path)throw new Error('This application does not have a resume attached.');
+        const {data,error:linkError}=await client.storage.from('resumes').createSignedUrl(application.resume_path,60);
+        if(linkError)throw linkError;
+        const link=document.createElement('a');link.href=data.signedUrl;link.target='_blank';link.rel='noopener noreferrer';link.click();
+      }catch(err){notice('dashboardNotice','Could not create a secure resume link: '+friendlyError(err),'error');}
+      finally{button.disabled=false;}
       return;
     }
     const resume=e.target.closest('[data-resume-download]');if(resume){
