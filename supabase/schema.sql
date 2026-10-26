@@ -119,7 +119,7 @@ create policy "users can create own profile" on public.sightx_profiles
 for insert to authenticated with check (id = auth.uid());
 drop policy if exists "users can read own profile" on public.sightx_profiles;
 create policy "users can read own profile" on public.sightx_profiles
-for select to authenticated using (id = auth.uid() or coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false));
+for select to authenticated using (id = auth.uid() or coalesce(((select auth.jwt()) -> 'app_metadata' ->> 'role') = 'admin', false));
 drop policy if exists "users can update own profile" on public.sightx_profiles;
 create policy "users can update own profile" on public.sightx_profiles
 for update to authenticated using (id = auth.uid() or coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)) with check (id = auth.uid() or coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false));
