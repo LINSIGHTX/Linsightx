@@ -5,12 +5,16 @@ on:
     branches: [main]
     paths:
       - "auth.html"
+      - "index.html"
       - ".github/workflows/auth-static-checks.yml"
+      - "supabase/migrations/**/*.sql"
   push:
-    branches: ["feature/account-authenticator-setup"]
+    branches: [main, "feature/account-authenticator-setup"]
     paths:
       - "auth.html"
+      - "index.html"
       - ".github/workflows/auth-static-checks.yml"
+      - "supabase/migrations/**/*.sql"
 
 permissions:
   contents: read
@@ -75,4 +79,67 @@ jobs:
             process.exit(1);
           }
           console.log(`Static checks passed: ${ids.length} unique IDs, ${scripts.length} inline script(s), required MFA markers present.`);
+
+          // The homepage is a multi-page UI shell and currently has repeated IDs
+          // across separate page sections, so validate its inline JS syntax here
+          // without failing on those existing markup IDs.
+          const homepage = fs.readFileSync('index.html', 'utf8');
+          const homepageScripts = [...homepage.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
+            .map(m => m[1])
+            .filter(s => s.trim());
+          if (!homepageScripts.length) throw new Error('No inline JavaScript found in index.html');
+          for (const [index, script] of homepageScripts.entries()) {
+            try { new Function(script); }
+            catch (error) {
+              console.error(`index.html inline script ${index + 1} has a syntax error:`, error.message);
+              process.exit(1);
+            }
+          }
+          console.log(`Homepage JavaScript syntax passed: ${homepageScripts.length} inline script(s).`);
+
+          // Guard the high-risk authorization invariants in security migrations.
+          const migrationDir = 'supabase/migrations';
+          if (fs.existsSync(migrationDir)) {
+            const migrationFiles = fs.readdirSync(migrationDir)
+              .filter(name => name.endsWith('.sql'))
+              .map(name => ({ name, sql: fs.readFileSync(migrationDir + '/' + name, 'utf8').toLowerCase() }));
+            for (const migration of migrationFiles) {
+              if (migration.name.includes('require_aal2_for_admin_resume_access')) {
+                for (const marker of ["'app_metadata' ->> 'role') = 'admin'", "'aal') = 'aal2'", "verification_status = 'verified'"]) {
+                  if (!migration.sql.includes(marker)) {
+                    console.error(`Security migration ${migration.name} is missing expected marker: ${marker}`);
+                    process.exit(1);
+                  }
+                }
+              }
+              if (migration.name.includes('limit_application_reads_to_verified_employers')) {
+                for (const marker of ["applicant_id = (select auth.uid())", "verification_status = 'verified'", "'app_metadata' ->> 'role') = 'admin'"]) {
+                  if (!migration.sql.includes(marker)) {
+                    console.error(`Security migration ${migration.name} is missing expected marker: ${marker}`);
+                    process.exit(1);
+                  }
+                }
+              }
+              if (migration.name.includes('validate_applicant_resume_path')) {
+                for (const marker of ["applicant_id = (select auth.uid())", "resume_path is null", "split_part(resume_path, '/', 1) = (select auth.uid())::text", "j.status = 'published'", "e.verification_status = 'verified'"]) {
+                  if (!migration.sql.includes(marker)) {
+                    console.error(`Security migration ${migration.name} is missing expected marker: ${marker}`);
+                    process.exit(1);
+                  }
+                }
+              }
+              if (migration.name.includes('minimize_sightx_table_grants')) {
+                for (const marker of ["revoke all privileges on table", "from public, anon, authenticated", "grant select on table public.sightx_job_listings to anon", "grant select, insert, update on table", "to authenticated"]) {
+                  if (!migration.sql.includes(marker)) {
+                    console.error(`Security migration ${migration.name} is missing expected marker: ${marker}`);
+                    process.exit(1);
+                  }
+                }
+                if (/grant\s+all\s+privileges|grant\s+truncate/i.test(migration.sql)) {
+                  console.error(`Security migration ${migration.name} must not grant broad or TRUNCATE privileges.`);
+                  process.exit(1);
+                }
+              }
+            }
+          }
           NODE
