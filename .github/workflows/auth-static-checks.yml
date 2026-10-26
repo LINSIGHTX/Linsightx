@@ -127,6 +127,7 @@ jobs:
             "client.auth.getSession()",
             "client.storage.from('resumes').upload",
             "client.from('sightx_applications').insert",
+            'applicant_phone:mobile',
             "file.size>5*1024*1024"
           ];
           const missingApplicationMarkers = applicationMarkers.filter(text => !homepage.includes(text));
@@ -139,6 +140,10 @@ jobs:
             process.exit(1);
           }
           const accountPortal = fs.readFileSync('auth.html', 'utf8');
+          if (!accountPortal.includes('applicant_phone') || !accountPortal.includes('applicant_phone?')) {
+            console.error('Employer application view must support displaying the applicant contact phone when available.');
+            process.exit(1);
+          }
           if (!accountPortal.includes("createSignedUrl") || !accountPortal.includes("client.storage.from('resumes')")) {
             console.error('Account portal must retain secure resume download support.');
             process.exit(1);
@@ -146,6 +151,7 @@ jobs:
           const schema = fs.readFileSync('supabase/schema.sql', 'utf8').toLowerCase();
           const schemaMarkers = [
             'sightx admins require aal2',
+            'applicant_phone text',
             'applicants and verified job owners can read applications',
             'applicants and hiring teams read resumes',
             "split_part(resume_path, '/', 1)",
