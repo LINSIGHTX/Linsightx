@@ -504,7 +504,7 @@
     $('welcomeTitle').textContent='Welcome, '+((user.user_metadata&&user.user_metadata.full_name)||user.email||'SIGHTX member');
     $('welcomeMeta').textContent=user.email+(admin()?' · SIGHTX administrator':'');
     // Account type controls presentation only; employer/admin permissions remain enforced by database policies.
-    const accountType=admin()?'admin':(selectedAccountType||user.user_metadata?.account_type||'applicant');
+    const accountType=admin()?'admin':(selectedAccountType||'applicant');
     const isEmployer=accountType==='employer';
     const requestedView=new URLSearchParams(window.location.search).get('view');
     const opportunitiesSection=$('publicJobs').closest('.section');
