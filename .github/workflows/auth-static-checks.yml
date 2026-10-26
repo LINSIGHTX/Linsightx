@@ -126,6 +126,7 @@ jobs:
             "data-live-apply",
             "client.auth.getSession()",
             "client.storage.from('resumes').upload",
+            "client.storage.from('resumes').remove([uploadedPath])",
             "client.from('sightx_applications').insert",
             'applicant_phone:mobile',
             "file.size>5*1024*1024"
@@ -158,6 +159,7 @@ jobs:
           const schemaMarkers = [
             'sightx admins require aal2',
             'applicant_phone text',
+            'applicants clean up unlinked own resumes',
             'applicants and verified job owners can read applications',
             'applicants and hiring teams read resumes',
             "split_part(resume_path, '/', 1)",
@@ -170,6 +172,13 @@ jobs:
           }
           if (homepage.includes("Your application for '+role+' is complete.")) {
             console.error('Homepage must not contain the legacy fake-success application handler.');
+            process.exit(1);
+          }
+          const resumeCleanupMigration = fs.readFileSync('supabase/migrations/20261026100000_cleanup_unlinked_resumes.sql', 'utf8');
+          if (!resumeCleanupMigration.includes('Applicants clean up unlinked own resumes') ||
+              !resumeCleanupMigration.includes('not exists') ||
+              !resumeCleanupMigration.includes('a.resume_path = objects.name')) {
+            console.error('Resume cleanup migration must only allow deletion of unlinked own-folder resume objects.');
             process.exit(1);
           }
           console.log('Live application flow and canonical security schema checks passed.');
