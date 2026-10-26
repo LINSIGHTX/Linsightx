@@ -1207,3 +1207,30 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
 })();
 </script>
 
+
+<script id="sightx-account-and-jobs-menu-fix">
+(function(){
+ 'use strict';
+ const accountMenu=document.getElementById('accountDropdown'),accountHeading=document.getElementById('accountMenuHeading'),accountGreeting=document.getElementById('accountGreeting'),signOut=document.getElementById('accountSignOut');
+ const accountChoices=accountMenu?Array.from(accountMenu.querySelectorAll('[data-account-modal]')):[];
+ const accountTriggers=[document.getElementById('desktopAccountToggle'),document.getElementById('mobileAccountToggle')].filter(Boolean);
+ const jobsTrigger=document.getElementById('jobsMenuTrigger'),jobsMenu=document.getElementById('jobsQuickMenu');
+ let displayName='',hoverTimer=null;
+ const desktopHover=()=>window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 801px)').matches;
+ function closeAccount(){if(accountMenu)accountMenu.hidden=true;accountTriggers.forEach(t=>t.setAttribute('aria-expanded','false'));}
+ function openAccount(trigger){if(!accountMenu)return;accountMenu.hidden=false;accountTriggers.forEach(t=>t.setAttribute('aria-expanded',String(t===trigger)));const r=trigger.getBoundingClientRect(),w=Math.max(210,accountMenu.offsetWidth);accountMenu.style.left=Math.min(Math.max(8,r.left),window.innerWidth-w-8)+'px';accountMenu.style.top=Math.min(r.bottom+8,window.innerHeight-accountMenu.offsetHeight-8)+'px';}
+ function renderAccount(user){
+  if(!accountMenu)return;
+  if(user){const meta=user.user_metadata||{},name=displayName||meta.full_name||meta.name||(user.email?user.email.split('@')[0]:'SIGHTX member');if(accountHeading)accountHeading.hidden=true;if(accountGreeting){accountGreeting.hidden=false;accountGreeting.textContent='Hello, '+name+'!';}accountChoices.forEach(b=>b.hidden=true);if(signOut)signOut.hidden=false;accountTriggers.forEach(t=>{t.setAttribute('aria-label','Account: '+name);t.title='Account: '+name;});}
+  else{if(accountHeading){accountHeading.hidden=false;accountHeading.textContent='Continue as';}if(accountGreeting){accountGreeting.hidden=true;accountGreeting.textContent='';}accountChoices.forEach(b=>b.hidden=false);if(signOut)signOut.hidden=true;accountTriggers.forEach(t=>{t.setAttribute('aria-label','Choose account type');t.title='Account';});}
+ }
+ async function syncUser(user,client){displayName='';if(user){const meta=user.user_metadata||{};displayName=meta.full_name||meta.name||'';try{const {data}=await client.from('sightx_profiles').select('full_name').eq('id',user.id).maybeSingle();if(data&&data.full_name)displayName=data.full_name;}catch(_){}}renderAccount(user);}
+ function bindClient(){const client=window.sightxSupabase;if(!client||client.__sightxMenuFixBound)return false;client.__sightxMenuFixBound=true;client.auth.getSession().then(({data,error})=>{if(!error)syncUser(data.session&&data.session.user,client);}).catch(()=>{});client.auth.onAuthStateChange((_event,session)=>syncUser(session&&session.user,client));return true;}
+ accountTriggers.forEach(trigger=>{trigger.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();if(accountMenu&&!accountMenu.hidden&&trigger.getAttribute('aria-expanded')==='true')closeAccount();else openAccount(trigger);},true);trigger.addEventListener('mouseenter',()=>{if(desktopHover()){clearTimeout(hoverTimer);openAccount(trigger);}});trigger.addEventListener('mouseleave',()=>{if(desktopHover())hoverTimer=setTimeout(()=>{if(!accountMenu.matches(':hover'))closeAccount();},220);});});
+ if(accountMenu){accountMenu.addEventListener('mouseenter',()=>clearTimeout(hoverTimer));accountMenu.addEventListener('mouseleave',()=>{if(desktopHover())hoverTimer=setTimeout(closeAccount,220);});}
+ if(signOut)signOut.addEventListener('click',async e=>{e.preventDefault();e.stopImmediatePropagation();const client=window.sightxSupabase;if(!client)return;signOut.disabled=true;signOut.textContent='Signing out…';try{const {error}=await client.auth.signOut();if(error)throw error;displayName='';renderAccount(null);closeAccount();}catch(_){signOut.textContent='Sign out failed — try again';}finally{setTimeout(()=>{signOut.textContent='↪ Sign out';signOut.disabled=false;},1200);}},true);
+ document.addEventListener('click',e=>{if(accountMenu&&!accountMenu.hidden&&!accountMenu.contains(e.target)&&!accountTriggers.some(t=>t.contains(e.target)))closeAccount();});
+ if(jobsTrigger&&jobsMenu){let timer=null;function showJobs(){if(!desktopHover())return;clearTimeout(timer);jobsMenu.hidden=false;jobsTrigger.setAttribute('aria-expanded','true');const r=jobsTrigger.getBoundingClientRect(),w=Math.min(310,window.innerWidth-24);jobsMenu.style.left=Math.min(Math.max(12,r.left-30),window.innerWidth-w-12)+'px';jobsMenu.style.right='auto';jobsMenu.style.top=(r.bottom+8)+'px';}function hideJobs(){if(!desktopHover())return;timer=setTimeout(()=>{if(!jobsMenu.matches(':hover')){jobsMenu.hidden=true;jobsTrigger.setAttribute('aria-expanded','false');}},220);}jobsTrigger.addEventListener('mouseenter',showJobs);jobsTrigger.addEventListener('mouseleave',hideJobs);jobsMenu.addEventListener('mouseenter',()=>clearTimeout(timer));jobsMenu.addEventListener('mouseleave',hideJobs);}
+ bindClient();window.addEventListener('sightx-auth-client-ready',bindClient);let retries=0;const wait=setInterval(()=>{if(bindClient()||++retries>30)clearInterval(wait);},300);
+})();
+</script>
