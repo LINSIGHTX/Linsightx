@@ -135,14 +135,39 @@
   async function routeSession(nextSession){
     const run=++sessionRouting;
     session=nextSession||null;user=session&&session.user?session.user:null;
-    if(!user){$('mfaLoginChallenge').classList.add('hidden');showAuth('login');return;}
-    const {data,error}=await client.auth.mfa.getAuthenticatorAssuranceLevel();
-    if(run!==sessionRouting)return;
-    if(error)throw error;
-    if(data.currentLevel==='aal1'&&data.nextLevel==='aal2'){
-      $('authArea').classList.add('hidden');$('dashboard').classList.add('hidden');
+    if(!user){
+      $('dashboard').classList.add('hidden');
+      $('mfaLoginChallenge').classList.add('hidden');
+      showAuth('login');
+      return;
+    }
+    // Fail closed immediately: never leave a previous account's dashboard visible
+    // while the new session's MFA assurance level is being checked.
+    $('authArea').classList.add('hidden');
+    $('dashboard').classList.add('hidden');
+    $('mfaLoginChallenge').classList.add('hidden');
+    $('mfaLoginCode').value='';
+    let assurance;
+    try{
+      const result=await client.auth.mfa.getAuthenticatorAssuranceLevel();
+      if(run!==sessionRouting)return;
+      if(result.error)throw result.error;
+      assurance=result.data;
+    }catch(error){
+      if(run!==sessionRouting)return;
+      $('authArea').classList.add('hidden');
+      $('dashboard').classList.add('hidden');
       $('mfaLoginChallenge').classList.remove('hidden');
-      $('mfaLoginCode').value='';
+      loginMfaMessage('We could not verify your sign-in security level. Sign out and try again. Your account dashboard remains locked. '+friendlyError(error),'error');
+      $('mfaLoginCode').disabled=true;
+      $('verifyLoginMfa').disabled=true;
+      return;
+    }
+    if(run!==sessionRouting)return;
+    $('mfaLoginCode').disabled=false;
+    $('verifyLoginMfa').disabled=false;
+    if(assurance.currentLevel==='aal1'&&assurance.nextLevel==='aal2'){
+      $('mfaLoginChallenge').classList.remove('hidden');
       loginMfaMessage('Authenticator verification is required before you can access your SIGHTX account.');
       $('mfaLoginCode').focus();
       return;
