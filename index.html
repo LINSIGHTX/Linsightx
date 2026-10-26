@@ -1101,6 +1101,15 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     const role = document.body.dataset.accountView;
     if(role === 'applicant' && employerOnly){event.preventDefault();event.stopImmediatePropagation();}
     if(role === 'employer' && applicantOnly){event.preventDefault();event.stopImmediatePropagation();}
+    if(role === 'employer' && employerOnly){
+      event.preventDefault();event.stopImmediatePropagation();
+      window.location.href='auth.html?type=employer&v=20261027-role-pages';
+    }
+  }, true);
+  document.addEventListener('submit', function(event){
+    if(document.body.dataset.accountView !== 'applicant' || !event.target || event.target.id !== 'jobPostingFields') return;
+    event.preventDefault();event.stopImmediatePropagation();
+    window.location.href='auth.html?type=employer&v=20261027-role-pages';
   }, true);
 })();
 </script>
