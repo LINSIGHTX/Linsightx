@@ -100,6 +100,20 @@ jobs:
             }
           }
           console.log(`Homepage JavaScript syntax passed: ${homepageScripts.length} inline script(s).`);
+          // Validate actual HTML markup IDs separately from script templates,
+          // which may contain fallback markup strings that are not in the DOM.
+          for (const file of ['index.html', 'apply-now.html']) {
+            const source = fs.readFileSync(file, 'utf8')
+              .replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi, '')
+              .replace(/<!--[\\s\\S]*?-->/g, '');
+            const markupIds = [...source.matchAll(/\\bid=["']([^"']+)["']/g)].map(match => match[1]);
+            const duplicates = [...new Set(markupIds.filter((id, index) => markupIds.indexOf(id) !== index))];
+            if (duplicates.length) {
+              console.error(file + ' has duplicate IDs in actual markup:', duplicates.join(', '));
+              process.exit(1);
+            }
+            console.log(file + ': ' + markupIds.length + ' markup IDs are unique.');
+          }
 
           const standaloneApply = fs.readFileSync('apply-now.html', 'utf8');
           const standaloneScripts = [...standaloneApply.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
