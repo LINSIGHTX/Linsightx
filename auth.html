@@ -166,7 +166,7 @@
     if(run!==sessionRouting)return;
     $('mfaLoginCode').disabled=false;
     $('verifyLoginMfa').disabled=false;
-    if(assurance.currentLevel==='aal1'&&assurance.nextLevel==='aal2'){
+    if(assurance.nextLevel==='aal2'&&assurance.currentLevel!=='aal2'){
       $('mfaLoginChallenge').classList.remove('hidden');
       loginMfaMessage('Authenticator verification is required before you can access your SIGHTX account.');
       $('mfaLoginCode').focus();
