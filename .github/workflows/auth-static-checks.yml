@@ -6,6 +6,7 @@ on:
     paths:
       - "auth.html"
       - "index.html"
+      - "apply-now.html"
       - ".github/workflows/auth-static-checks.yml"
       - "supabase/migrations/**/*.sql"
       - "supabase/schema.sql"
@@ -14,6 +15,7 @@ on:
     paths:
       - "auth.html"
       - "index.html"
+      - "apply-now.html"
       - ".github/workflows/auth-static-checks.yml"
       - "supabase/migrations/**/*.sql"
       - "supabase/schema.sql"
@@ -98,6 +100,26 @@ jobs:
             }
           }
           console.log(`Homepage JavaScript syntax passed: ${homepageScripts.length} inline script(s).`);
+
+          const standaloneApply = fs.readFileSync('apply-now.html', 'utf8');
+          const standaloneScripts = [...standaloneApply.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
+            .map(m => m[1])
+            .filter(s => s.trim());
+          if (!standaloneScripts.length) throw new Error('No inline JavaScript found in apply-now.html');
+          for (const [index, script] of standaloneScripts.entries()) {
+            try { new Function(script); }
+            catch (error) {
+              console.error(`apply-now.html inline script ${index + 1} has a syntax error:`, error.message);
+              process.exit(1);
+            }
+          }
+          if (!standaloneApply.includes('This standalone page is a preview only') ||
+              !standaloneApply.includes('Nothing has been submitted or saved') ||
+              !standaloneApply.includes('./auth.html')) {
+            console.error('Standalone apply page must clearly disclose preview-only behavior and link to the real account portal.');
+            process.exit(1);
+          }
+          console.log(`Standalone application preview syntax passed: ${standaloneScripts.length} inline script(s).`);
 
           // Guard the live job application flow and the canonical security schema.
           const applicationMarkers = [
