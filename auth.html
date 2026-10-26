@@ -205,9 +205,12 @@
   const pageParams=new URLSearchParams(window.location.search);
   const focusedApplicationsView=pageParams.get('view')==='applications';
   const focusedPostJobView=pageParams.get('view')==='postjob';
+  const explicitAccountView=pageParams.get('account');
   if(pageParams.get('embed')==='1')document.body.classList.add('embed-mode');
-  let session=null,user=null,employer=null,mfaPendingFactorId=null,sessionRouting=0,currentApplicationJob=null,selectedAccountType=pageParams.get('type');
+  let session=null,user=null,employer=null,mfaPendingFactorId=null,sessionRouting=0,currentApplicationJob=null,selectedAccountType=['applicant','employer'].includes(explicitAccountView)?explicitAccountView:pageParams.get('type');
   if(!['applicant','employer'].includes(selectedAccountType))selectedAccountType=null;
+  if(explicitAccountView==='applicant'){try{localStorage.setItem('sightx_active_account_view','applicant');}catch(_){}}
+
   // My Applications is always an applicant-only destination, including when opened without a type parameter.
   if(focusedApplicationsView)selectedAccountType='applicant';
   if(focusedPostJobView)selectedAccountType='employer';
@@ -231,7 +234,7 @@
     session=nextSession||null;user=session&&session.user?session.user:null;
     if(user){
       // The chosen login path controls dashboard presentation; account metadata must not silently switch a user login to employer view.
-      const chosenView=admin()?'applicant':(selectedAccountType||'applicant');
+      const chosenView=admin()?'applicant':(explicitAccountView||selectedAccountType||'applicant');
       try{localStorage.setItem('sightx_active_account_view',chosenView);}catch(_){}
     }
     if(!user){
@@ -509,7 +512,7 @@
     $('welcomeTitle').textContent='Welcome, '+((user.user_metadata&&user.user_metadata.full_name)||user.email||'SIGHTX member');
     $('welcomeMeta').textContent=user.email+(admin()?' · SIGHTX administrator':'');
     // Account type controls presentation only; employer/admin permissions remain enforced by database policies.
-    const accountType=admin()?'admin':(selectedAccountType||'applicant');
+    const accountType=admin()?'admin':(explicitAccountView||selectedAccountType||'applicant');
     const isEmployer=accountType==='employer';
     const requestedView=new URLSearchParams(window.location.search).get('view');
     const opportunitiesSection=$('publicJobs').closest('.section');
