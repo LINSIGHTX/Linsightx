@@ -159,7 +159,7 @@ jobs:
           const schemaMarkers = [
             'sightx admins require aal2',
             'applicant_phone text',
-            'Applicants clean up unlinked own resumes',
+            'applicants clean up unlinked own resumes',
             'applicants and verified job owners can read applications',
             'applicants and hiring teams read resumes',
             "split_part(resume_path, '/', 1)",
