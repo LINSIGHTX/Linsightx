@@ -120,6 +120,14 @@ jobs:
                   }
                 }
               }
+              if (migration.name.includes('validate_applicant_resume_path')) {
+                for (const marker of ["applicant_id = (select auth.uid())", "resume_path is null", "split_part(resume_path, '/', 1) = (select auth.uid())::text", "j.status = 'published'", "e.verification_status = 'verified'"]) {
+                  if (!migration.sql.includes(marker)) {
+                    console.error(`Security migration ${migration.name} is missing expected marker: ${marker}`);
+                    process.exit(1);
+                  }
+                }
+              }
             }
           }
           NODE
