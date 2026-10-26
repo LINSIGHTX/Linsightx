@@ -204,11 +204,13 @@
   const $=id=>document.getElementById(id);
   const pageParams=new URLSearchParams(window.location.search);
   const focusedApplicationsView=pageParams.get('view')==='applications';
+  const focusedPostJobView=pageParams.get('view')==='postjob';
   if(pageParams.get('embed')==='1')document.body.classList.add('embed-mode');
   let session=null,user=null,employer=null,mfaPendingFactorId=null,sessionRouting=0,currentApplicationJob=null,selectedAccountType=pageParams.get('type');
   if(!['applicant','employer'].includes(selectedAccountType))selectedAccountType=null;
   // My Applications is always an applicant-only destination, including when opened without a type parameter.
   if(focusedApplicationsView)selectedAccountType='applicant';
+  if(focusedPostJobView)selectedAccountType='employer';
   const admin=()=>!!(user&&user.app_metadata&&user.app_metadata.role==='admin');
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const notice=(id,message,type='')=>{const el=$(id);el.textContent=message;el.className='notice'+(type?' '+type:'');el.classList.remove('hidden');};
@@ -217,7 +219,7 @@
   const friendlyError=error=>{const m=error&&error.message?error.message:'Something went wrong. Please try again.';return m.length>260?m.slice(0,260)+'…':m;};
   function showRoleChoice(){
     // Never display the account-type chooser from the dedicated My Applications route.
-    if(focusedApplicationsView){showAuth('login');return;}
+    if(focusedApplicationsView||focusedPostJobView){showAuth('login');return;}
     $('roleChoice').classList.remove('hidden');$('authArea').classList.add('hidden');$('dashboard').classList.add('hidden');
   }
   function showAuth(mode){$('roleChoice').classList.add('hidden');$('authArea').classList.remove('hidden');$('dashboard').classList.add('hidden');const signup=mode==='signup';$('loginForm').classList.toggle('hidden',signup);$('signupForm').classList.toggle('hidden',!signup);$('showLogin').classList.toggle('active',!signup);$('showSignup').classList.toggle('active',signup);$('authHeading').textContent=signup?'Create your SIGHTX account':'Welcome to SIGHTX';$('selectedRoleLabel').textContent=selectedAccountType==='employer'?'Employer account':'Applicant / User account';}
