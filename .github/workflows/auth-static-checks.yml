@@ -82,7 +82,7 @@ jobs:
           // across separate page sections, so validate its inline JS syntax here
           // without failing on those existing markup IDs.
           const homepage = fs.readFileSync('index.html', 'utf8');
-          const homepageScripts = [...homepage.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)]
+          const homepageScripts = [...homepage.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
             .map(m => m[1])
             .filter(s => s.trim());
           if (!homepageScripts.length) throw new Error('No inline JavaScript found in index.html');
