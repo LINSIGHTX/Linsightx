@@ -134,6 +134,10 @@ jobs:
             console.error('Canonical schema is missing expected security controls:', missingSchemaMarkers.join(', '));
             process.exit(1);
           }
+          if (homepage.includes("Your application for '+role+' is complete.")) {
+            console.error('Homepage must not contain the legacy fake-success application handler.');
+            process.exit(1);
+          }
           console.log('Live application flow and canonical security schema checks passed.');
 
           // Guard the high-risk authorization invariants in security migrations.
