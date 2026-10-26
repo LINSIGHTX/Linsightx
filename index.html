@@ -548,15 +548,11 @@ function openApplicationForm(role){
 document.addEventListener('submit',e=>{
  if(e.target.id==='applicationFormFields'){
   e.preventDefault();if(!e.target.reportValidity())return;
-  const name=e.target.elements.namedItem('name').value.trim();
-  toast('Thanks, '+name+'. Your application form is complete.');
-  e.target.reset();go('jobs');
+  toast('This homepage application form is a preview only; it does not submit or store your application. Open Account and apply to a published SIGHTX listing to submit securely.');
  }
  if(e.target.id==='jobPostingFields'){
   e.preventDefault();if(!e.target.reportValidity())return;
-  const f=e.target.elements;const title=f.namedItem('title').value.trim();const company=f.namedItem('company').value.trim();
-  toast('Job details completed for '+title+' at '+company+'.');
-  e.target.reset();go('jobs');
+  toast('This homepage job form is a preview only; it does not publish a vacancy. Open Account to sign in, complete employer verification, and submit a job for review.');
  }
 });
 const SAVED_JOBS_KEY='sightx-saved-jobs-v1';
