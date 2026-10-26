@@ -115,6 +115,20 @@
       </article>
     </section>
     <section class="section card"><div class="section-head"><div><h2>Open opportunities</h2><p>Only administrator-published jobs are shown here.</p></div><button class="btn" id="refreshJobs" type="button">Refresh</button></div><div id="publicJobs" class="list"><div class="empty">Loading published jobs…</div></div></section>
+    <section id="applicationComposer" class="section card hidden">
+      <div class="section-head"><div><h2>Apply for <span id="applicationJobTitle">this opportunity</span></h2><p>Submit your details and resume securely to the hiring team.</p></div><button class="btn" id="cancelApplication" type="button">Cancel</button></div>
+      <form id="applicationForm" class="form">
+        <input id="applicationJobId" type="hidden">
+        <div class="two">
+          <div class="field"><label for="applicantFullName">Full name</label><input id="applicantFullName" maxlength="120" autocomplete="name" required></div>
+          <div class="field"><label for="applicantEmailAddress">Email address</label><input id="applicantEmailAddress" type="email" autocomplete="email" required></div>
+        </div>
+        <div class="field"><label for="applicantResumeFile">Resume file (PDF, DOC, or DOCX; max 5 MB)</label><input id="applicantResumeFile" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required><small class="muted">Your resume is uploaded to private storage. Access is restricted by SIGHTX storage policies.</small></div>
+        <div class="field"><label for="applicantCoverMessage">Cover message</label><textarea id="applicantCoverMessage" maxlength="5000" required placeholder="Briefly explain why you're a good fit."></textarea></div>
+        <div id="applicationNotice" class="notice hidden" role="status"></div>
+        <div class="actions"><button class="btn primary" id="submitApplication" type="submit">Submit application</button></div>
+      </form>
+    </section>
     <section class="section card"><div class="section-head"><div><h2>My applications</h2><p class="sub">Track the status of every application you have submitted.</p></div><button class="btn" id="refreshApplications" type="button">Refresh applications</button></div><div id="myApplications" class="list"><div class="empty">Sign in to load your applications.</div></div></section>
     <section id="adminArea" class="section hidden">
       <article class="card"><div class="eyebrow">Restricted tools</div><h2>SIGHTX Admin Review</h2><p class="sub">Visible only when your authenticated account carries a trusted <code>app_metadata.role = admin</code> claim.</p><div class="notice">Verify company identity and recruiter authorization before approval. Publish jobs only after the employer is verified.</div></article>
@@ -133,7 +147,7 @@
   const SUPABASE_PUBLISHABLE_KEY='sb_publishable_EbJZKeEdRR6l_UsRucmpnA_yzWHmVXJ';
   const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
   const $=id=>document.getElementById(id);
-  let session=null,user=null,employer=null,mfaPendingFactorId=null,sessionRouting=0;
+  let session=null,user=null,employer=null,mfaPendingFactorId=null,sessionRouting=0,currentApplicationJob=null;
   const admin=()=>!!(user&&user.app_metadata&&user.app_metadata.role==='admin');
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const notice=(id,message,type='')=>{const el=$(id);el.textContent=message;el.className='notice'+(type?' '+type:'');el.classList.remove('hidden');};
@@ -436,10 +450,63 @@
   $('employerForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('submitEmployer');btn.disabled=true;clearNotice('dashboardNotice');const values={owner_id:user.id,company_name:$('companyName').value.trim(),company_website:$('companyWebsite').value.trim()||null,company_email:$('companyEmail').value.trim(),business_phone:$('businessPhone').value.trim()||null,business_address:$('businessAddress').value.trim()||null,registration_details:$('registrationDetails').value.trim()||null,evidence_notes:$('evidenceNotes').value.trim()||null,verification_status:employer&&employer.verification_status!=='rejected'?employer.verification_status:'pending',reviewed_by:null,reviewed_at:null,review_notes:null};try{let result;if(employer){result=await client.from('sightx_employers').update(values).eq('id',employer.id).select().single();}else{result=await client.from('sightx_employers').insert(values).select().single();}if(result.error)throw result.error;notice('dashboardNotice','Employer information saved. Your status remains pending until SIGHTX reviews the evidence.','success');await loadEmployer();await loadMyJobs();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}finally{btn.disabled=false;}});
   $('jobForm').addEventListener('submit',async e=>{e.preventDefault();if(!employer||employer.verification_status!=='verified'){notice('dashboardNotice','Only verified employers can submit jobs.','error');return;}const btn=e.submitter;btn.disabled=true;try{const {error}=await client.from('sightx_job_listings').insert({employer_id:employer.id,title:$('jobTitle').value.trim(),location:$('jobLocation').value.trim(),employment_type:$('jobType').value,description:$('jobDescription').value.trim(),experience_text:$('jobExperience').value.trim()||null,salary_text:$('jobSalary').value.trim()||null,application_email:$('applicationEmail').value.trim(),status:'pending_review'});if(error)throw error;$('jobForm').reset();notice('dashboardNotice','Job submitted for SIGHTX review. It will not appear publicly until approved.','success');await loadMyJobs();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}finally{btn.disabled=false;}});
   $('refreshJobs').addEventListener('click',loadPublicJobs);$('refreshAdmin').addEventListener('click',loadAdmin);
+  $('cancelApplication').addEventListener('click',()=>{$('applicationComposer').classList.add('hidden');$('applicationForm').reset();currentApplicationJob=null;});
+  $('applicationForm').addEventListener('submit',async event=>{
+    event.preventDefault();
+    if(!user||!currentApplicationJob){notice('applicationNotice','Your session or selected job is no longer available. Please reopen the job and try again.','error');return;}
+    const button=$('submitApplication');button.disabled=true;clearNotice('applicationNotice');
+    let uploadedPath=null;
+    try{
+      const file=$('applicantResumeFile').files[0];
+      if(!file)throw new Error('Choose a resume file before submitting.');
+      if(file.size>5*1024*1024)throw new Error('Resume files must be 5 MB or smaller.');
+      const allowedTypes=['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      const ext=(file.name.split('.').pop()||'').toLowerCase();
+      if(!allowedTypes.includes(file.type)||!['pdf','doc','docx'].includes(ext))throw new Error('Use a PDF, DOC, or DOCX resume file.');
+      const cover=$('applicantCoverMessage').value.trim();
+      if(!cover)throw new Error('Enter a short cover message.');
+      const safeName=file.name.normalize('NFKD').replace(/[^a-zA-Z0-9._-]/g,'_').slice(-100)||('resume.'+ext);
+      uploadedPath=user.id+'/'+crypto.randomUUID()+'-'+safeName;
+      const {error:uploadError}=await client.storage.from('resumes').upload(uploadedPath,file,{contentType:file.type,upsert:false});
+      if(uploadError)throw uploadError;
+      const {error:insertError}=await client.from('sightx_applications').insert({
+        job_id:currentApplicationJob.id,applicant_id:user.id,
+        full_name:$('applicantFullName').value.trim(),email:$('applicantEmailAddress').value.trim(),
+        resume_path:uploadedPath,cover_message:cover,status:'new'
+      });
+      if(insertError)throw insertError;
+      notice('dashboardNotice','Application submitted successfully. Your resume is stored privately.','success');
+      $('applicationComposer').classList.add('hidden');$('applicationForm').reset();currentApplicationJob=null;
+      await loadMyApplications();
+    }catch(err){
+      notice('applicationNotice',friendlyError(err),'error');
+      if(uploadedPath)notice('applicationNotice',friendlyError(err)+' If the file uploaded before submission failed, it remains in private storage; contact SIGHTX support if you need it cleaned up.','error');
+    }finally{button.disabled=false;}
+  });
   $('profileForm').addEventListener('submit',saveProfile);
   $('refreshApplications').addEventListener('click',async()=>{const button=$('refreshApplications');button.disabled=true;try{await loadMyApplications();}finally{button.disabled=false;}});
   document.addEventListener('click',async e=>{
-    const apply=e.target.closest('[data-apply]');if(apply){if(!user){showAuth('login');notice('authNotice','Sign in or create an account to apply.');window.scrollTo({top:0,behavior:'smooth'});return;}const jobId=apply.dataset.apply;const cover=window.prompt('Write a short cover message for this application (required):');if(!cover||!cover.trim())return;try{const name=(user.user_metadata&&user.user_metadata.full_name)||user.email;const {error}=await client.from('sightx_applications').insert({job_id:jobId,applicant_id:user.id,full_name:name,email:user.email,cover_message:cover.trim(),status:'new'});if(error)throw error;notice('dashboardNotice','Application submitted successfully.','success');await loadMyApplications();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}return;}
+    const apply=e.target.closest('[data-apply]');if(apply){
+      if(!user){showAuth('login');notice('authNotice','Sign in or create an account to apply.');window.scrollTo({top:0,behavior:'smooth'});return;}
+      const jobId=apply.dataset.apply;
+      try{
+        const {data:job,error}=await client.from('sightx_job_listings').select('id,title,status').eq('id',jobId).eq('status','published').single();
+        if(error)throw error;
+        const {data:existing,error:existingError}=await client.from('sightx_applications').select('id').eq('job_id',jobId).eq('applicant_id',user.id).maybeSingle();
+        if(existingError)throw existingError;
+        if(existing){notice('dashboardNotice','You have already applied for this job. Check My applications for its status.','error');return;}
+        currentApplicationJob=job;
+        $('applicationForm').reset();
+        $('applicationJobId').value=job.id;
+        $('applicationJobTitle').textContent=job.title;
+        $('applicantFullName').value=(user.user_metadata&&user.user_metadata.full_name)||'';
+        $('applicantEmailAddress').value=user.email||'';
+        clearNotice('applicationNotice');
+        $('applicationComposer').classList.remove('hidden');
+        $('applicationComposer').scrollIntoView({behavior:'smooth',block:'start'});
+      }catch(err){notice('dashboardNotice',friendlyError(err),'error');}
+      return;
+    }
     const report=e.target.closest('[data-report]');if(report){if(!user){showAuth('login');notice('authNotice','Sign in to report a job.');window.scrollTo({top:0,behavior:'smooth'});return;}const reason=window.prompt('Why are you reporting this job? (e.g. suspicious employer, payment request, misleading details)');if(!reason||!reason.trim())return;const details=window.prompt('Additional details (optional):')||'';try{const {error}=await client.from('sightx_job_reports').insert({job_id:report.dataset.report,reporter_id:user.id,reason:reason.trim(),details:details.trim()||null,status:'open'});if(error)throw error;notice('dashboardNotice','Thank you. Your report has been sent for review.','success');}catch(err){notice('dashboardNotice',friendlyError(err),'error')}return;}
     const employerAction=e.target.closest('[data-employer-status]');if(employerAction&&admin()){const id=employerAction.dataset.id,status=employerAction.dataset.employerStatus;let notes=null;if(status==='rejected'||status==='suspended'){notes=window.prompt(status==='rejected'?'Reason for rejection (visible to employer):':'Reason for suspension (visible to employer):');if(!notes||!notes.trim())return;notes=notes.trim();}try{const {error}=await client.from('sightx_employers').update({verification_status:status,reviewed_by:user.id,reviewed_at:new Date().toISOString(),review_notes:notes}).eq('id',id);if(error)throw error;notice('dashboardNotice','Employer status updated.','success');await loadAdmin();await loadEmployer();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}return;}
     const jobAction=e.target.closest('[data-job-status]');if(jobAction&&admin()){const id=jobAction.dataset.id,status=jobAction.dataset.jobStatus;if(status==='published'&&!window.confirm('Confirm that the employer has been verified and this job has passed review?'))return;try{const {error}=await client.from('sightx_job_listings').update({status,reviewed_by:user.id,reviewed_at:new Date().toISOString()}).eq('id',id);if(error)throw error;notice('dashboardNotice','Job status updated.','success');await loadAdmin();await loadPublicJobs();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}return;}
