@@ -58,6 +58,18 @@
   </section>
   <section id="dashboard" class="hidden">
     <article class="card"><div class="section-head"><div><div class="eyebrow">Signed in</div><h2 id="welcomeTitle">Your SIGHTX account</h2><p id="welcomeMeta" class="muted"></p></div><button class="btn" id="signOut" type="button">Sign out</button></div><div id="dashboardNotice" class="notice hidden" role="status"></div></article>
+    <section id="profileSection" class="section card">
+      <div class="section-head"><div><h2>Your profile</h2><p>Keep your contact details current for applications and account management.</p></div></div>
+      <form id="profileForm" class="form">
+        <div class="two">
+          <div class="field"><label for="profileFullName">Full name</label><input id="profileFullName" name="full_name" autocomplete="name" maxlength="120" required></div>
+          <div class="field"><label for="profilePhone">Phone number</label><input id="profilePhone" name="phone" type="tel" autocomplete="tel" maxlength="40" placeholder="Optional"></div>
+        </div>
+        <div class="field"><label>Email address</label><input id="profileEmail" type="email" readonly aria-readonly="true"></div>
+        <div class="actions"><button class="btn primary" id="saveProfile" type="submit">Save profile</button></div>
+        <div id="profileNotice" class="notice hidden" role="status"></div>
+      </form>
+    </section>
     <section id="accountSecurity" class="section card">
       <h2>Account security</h2>
       <p class="sub">Set up an authenticator app for an additional sign-in factor.</p>
@@ -103,7 +115,7 @@
       </article>
     </section>
     <section class="section card"><div class="section-head"><div><h2>Open opportunities</h2><p>Only administrator-published jobs are shown here.</p></div><button class="btn" id="refreshJobs" type="button">Refresh</button></div><div id="publicJobs" class="list"><div class="empty">Loading published jobs…</div></div></section>
-    <section class="section card"><h2>My applications</h2><p class="sub">Your application history and current status.</p><div id="myApplications" class="list"><div class="empty">Sign in to load your applications.</div></div></section>
+    <section class="section card"><div class="section-head"><div><h2>My applications</h2><p class="sub">Track the status of every application you have submitted.</p></div><button class="btn" id="refreshApplications" type="button">Refresh applications</button></div><div id="myApplications" class="list"><div class="empty">Sign in to load your applications.</div></div></section>
     <section id="adminArea" class="section hidden">
       <article class="card"><div class="eyebrow">Restricted tools</div><h2>SIGHTX Admin Review</h2><p class="sub">Visible only when your authenticated account carries a trusted <code>app_metadata.role = admin</code> claim.</p><div class="notice">Verify company identity and recruiter authorization before approval. Publish jobs only after the employer is verified.</div></article>
       <section class="section card"><div class="section-head"><div><h2>Employer verification queue</h2><p>Review business evidence and recruiter association.</p></div><button class="btn" type="button" id="refreshAdmin">Refresh queues</button></div><div id="adminEmployers" class="list"></div></section>
@@ -305,7 +317,30 @@
     $('mfaEnrollment').classList.add('hidden');
     await refreshMfaStatus();
   }
-  async function loadProfile(){const name=(user.user_metadata&&user.user_metadata.full_name)||user.email||'SIGHTX member';const {error}=await client.from('sightx_profiles').upsert({id:user.id,full_name:name},{onConflict:'id'});if(error)throw error;}
+  async function loadProfile(){
+    const name=(user.user_metadata&&user.user_metadata.full_name)||user.email||'SIGHTX member';
+    const {error:saveError}=await client.from('sightx_profiles').upsert({id:user.id,full_name:name},{onConflict:'id',ignoreDuplicates:true});
+    if(saveError)throw saveError;
+    const {data,error}=await client.from('sightx_profiles').select('id,full_name,phone').eq('id',user.id).single();
+    if(error)throw error;
+    $('profileFullName').value=data.full_name||name;
+    $('profilePhone').value=data.phone||'';
+    $('profileEmail').value=user.email||'';
+  }
+  async function saveProfile(event){
+    event.preventDefault();
+    const button=$('saveProfile');button.disabled=true;
+    const fullName=$('profileFullName').value.trim();
+    const phone=$('profilePhone').value.trim();
+    if(!fullName){notice('profileNotice','Please enter your full name.','error');button.disabled=false;return;}
+    try{
+      const {error}=await client.from('sightx_profiles').update({full_name:fullName,phone:phone||null,updated_at:new Date().toISOString()}).eq('id',user.id);
+      if(error)throw error;
+      $('welcomeTitle').textContent='Welcome, '+fullName;
+      notice('profileNotice','Profile saved successfully.','success');
+    }catch(error){notice('profileNotice','Could not save your profile: '+friendlyError(error),'error');}
+    finally{button.disabled=false;}
+  }
   async function loadEmployer(){
     const {data,error}=await client.from('sightx_employers').select('*').eq('owner_id',user.id).maybeSingle();
     if(error)throw error;employer=data;
@@ -333,9 +368,20 @@
     box.innerHTML=data.length?data.map(j=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(j.title)+'</h3><div class="meta">'+escapeHtml(j.location)+' · '+escapeHtml(j.employment_type)+(j.experience_text?' · '+escapeHtml(j.experience_text):'')+'</div></div><span class="badge published">SIGHTX reviewed</span></div>'+(j.salary_text?'<p class="meta">'+escapeHtml(j.salary_text)+'</p>':'')+'<p>'+escapeHtml(j.description)+'</p><div class="actions"><button class="btn primary" data-apply="'+escapeHtml(j.id)+'" type="button">Apply</button><button class="btn" data-report="'+escapeHtml(j.id)+'" type="button">Report job</button></div></article>').join(''):'<div class="empty">No approved jobs are published yet. Please check back soon.</div>';
   }
   async function loadMyApplications(){
-    const box=$('myApplications');const {data,error}=await client.from('sightx_applications').select('*').eq('applicant_id',user.id).order('created_at',{ascending:false});
+    const box=$('myApplications');
+    const {data,error}=await client.from('sightx_applications').select('id,job_id,created_at,status,cover_message').eq('applicant_id',user.id).order('created_at',{ascending:false});
     if(error){box.innerHTML='<div class="notice error">'+escapeHtml(friendlyError(error))+'</div>';return;}
-    box.innerHTML=data.length?data.map(a=>'<article class="item"><div class="item-head"><div><h3>Application</h3><div class="meta">Submitted '+escapeHtml(new Date(a.created_at).toLocaleDateString())+'</div></div>'+statusBadge(a.status)+'</div><p class="meta">Job reference: '+escapeHtml(a.job_id)+'</p></article>').join(''):'<div class="empty">You have not applied for any jobs yet.</div>';
+    if(!data.length){box.innerHTML='<div class="empty">You have not applied for any jobs yet. Browse open opportunities above to get started.</div>';return;}
+    const ids=[...new Set(data.map(a=>a.job_id).filter(Boolean))];
+    const jobsResult=ids.length?await client.from('sightx_job_listings').select('id,title,location,employment_type').in('id',ids):{data:[],error:null};
+    if(jobsResult.error){box.innerHTML='<div class="notice error">Applications loaded, but job details could not be retrieved: '+escapeHtml(friendlyError(jobsResult.error))+'</div>';return;}
+    const jobs=new Map((jobsResult.data||[]).map(j=>[j.id,j]));
+    box.innerHTML=data.map(a=>{
+      const job=jobs.get(a.job_id);
+      const title=job?job.title:'Job details unavailable';
+      const meta=job?[job.location,job.employment_type].filter(Boolean).join(' · '):'This listing may no longer be public.';
+      return '<article class="item"><div class="item-head"><div><h3>'+escapeHtml(title)+'</h3><div class="meta">'+escapeHtml(meta)+'</div><div class="meta">Submitted '+escapeHtml(new Date(a.created_at).toLocaleDateString())+'</div></div>'+statusBadge(a.status)+'</div><details style="margin-top:10px"><summary class="btn">View application details</summary><p>'+escapeHtml(a.cover_message||'No cover message saved.')+'</p></details></article>';
+    }).join('');
   }
   async function loadAdmin(){
     if(!admin())return;
@@ -390,6 +436,8 @@
   $('employerForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('submitEmployer');btn.disabled=true;clearNotice('dashboardNotice');const values={owner_id:user.id,company_name:$('companyName').value.trim(),company_website:$('companyWebsite').value.trim()||null,company_email:$('companyEmail').value.trim(),business_phone:$('businessPhone').value.trim()||null,business_address:$('businessAddress').value.trim()||null,registration_details:$('registrationDetails').value.trim()||null,evidence_notes:$('evidenceNotes').value.trim()||null,verification_status:employer&&employer.verification_status!=='rejected'?employer.verification_status:'pending',reviewed_by:null,reviewed_at:null,review_notes:null};try{let result;if(employer){result=await client.from('sightx_employers').update(values).eq('id',employer.id).select().single();}else{result=await client.from('sightx_employers').insert(values).select().single();}if(result.error)throw result.error;notice('dashboardNotice','Employer information saved. Your status remains pending until SIGHTX reviews the evidence.','success');await loadEmployer();await loadMyJobs();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}finally{btn.disabled=false;}});
   $('jobForm').addEventListener('submit',async e=>{e.preventDefault();if(!employer||employer.verification_status!=='verified'){notice('dashboardNotice','Only verified employers can submit jobs.','error');return;}const btn=e.submitter;btn.disabled=true;try{const {error}=await client.from('sightx_job_listings').insert({employer_id:employer.id,title:$('jobTitle').value.trim(),location:$('jobLocation').value.trim(),employment_type:$('jobType').value,description:$('jobDescription').value.trim(),experience_text:$('jobExperience').value.trim()||null,salary_text:$('jobSalary').value.trim()||null,application_email:$('applicationEmail').value.trim(),status:'pending_review'});if(error)throw error;$('jobForm').reset();notice('dashboardNotice','Job submitted for SIGHTX review. It will not appear publicly until approved.','success');await loadMyJobs();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}finally{btn.disabled=false;}});
   $('refreshJobs').addEventListener('click',loadPublicJobs);$('refreshAdmin').addEventListener('click',loadAdmin);
+  $('profileForm').addEventListener('submit',saveProfile);
+  $('refreshApplications').addEventListener('click',async()=>{const button=$('refreshApplications');button.disabled=true;try{await loadMyApplications();}finally{button.disabled=false;}});
   document.addEventListener('click',async e=>{
     const apply=e.target.closest('[data-apply]');if(apply){if(!user){showAuth('login');notice('authNotice','Sign in or create an account to apply.');window.scrollTo({top:0,behavior:'smooth'});return;}const jobId=apply.dataset.apply;const cover=window.prompt('Write a short cover message for this application (required):');if(!cover||!cover.trim())return;try{const name=(user.user_metadata&&user.user_metadata.full_name)||user.email;const {error}=await client.from('sightx_applications').insert({job_id:jobId,applicant_id:user.id,full_name:name,email:user.email,cover_message:cover.trim(),status:'new'});if(error)throw error;notice('dashboardNotice','Application submitted successfully.','success');await loadMyApplications();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}return;}
     const report=e.target.closest('[data-report]');if(report){if(!user){showAuth('login');notice('authNotice','Sign in to report a job.');window.scrollTo({top:0,behavior:'smooth'});return;}const reason=window.prompt('Why are you reporting this job? (e.g. suspicious employer, payment request, misleading details)');if(!reason||!reason.trim())return;const details=window.prompt('Additional details (optional):')||'';try{const {error}=await client.from('sightx_job_reports').insert({job_id:report.dataset.report,reporter_id:user.id,reason:reason.trim(),details:details.trim()||null,status:'open'});if(error)throw error;notice('dashboardNotice','Thank you. Your report has been sent for review.','success');}catch(err){notice('dashboardNotice',friendlyError(err),'error')}return;}
