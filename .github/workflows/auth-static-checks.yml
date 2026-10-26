@@ -140,6 +140,12 @@ jobs:
             process.exit(1);
           }
           const accountPortal = fs.readFileSync('auth.html', 'utf8');
+          if (!accountPortal.includes('full_name,applicant_phone,email') ||
+              !accountPortal.includes('Contact details:</strong>') ||
+              !accountPortal.includes('escapeHtml(a.applicant_phone)')) {
+            console.error('Applicant dashboard must show safely escaped submitted contact details.');
+            process.exit(1);
+          }
           if (!accountPortal.includes('applicant_phone') || !accountPortal.includes('applicant_phone?')) {
             console.error('Employer application view must support displaying the applicant contact phone when available.');
             process.exit(1);
