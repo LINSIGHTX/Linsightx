@@ -432,7 +432,7 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 </style>
 </head>
 <body>
-<header class="topbar"><button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button><a href="#home" class="brand" aria-label="SIGHTX home"><span class="brandmark">S</span><span>SIGHTX</span></a><div class="searchbox"><span>⌕</span><input id="globalSearch" type="search" placeholder="Search people, jobs, insights" aria-label="Search"><div id="globalSearchResults" class="search-results" role="listbox" aria-label="Search results" hidden></div></div><button class="mobile-account-link account-menu-trigger" id="mobileAccountToggle" type="button" aria-label="Choose account type" aria-expanded="false" title="Account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></button><nav class="toplinks" aria-label="Top navigation"><button class="toplink" data-page="home"><span class="ico">H</span><span>Home</span></button><button class="toplink" id="jobsMenuTrigger" data-page="jobs" type="button" aria-haspopup="true" aria-controls="jobsQuickMenu" aria-expanded="false"><span class="ico">J</span><span>Jobs ▾</span></button><button class="toplink" data-page="about"><span class="ico">A</span><span>About Us</span></button><div class="account-menu-wrap"><button class="toplink account-menu-trigger" id="desktopAccountToggle" type="button" aria-haspopup="true" aria-controls="accountDropdown" aria-expanded="false"><span>Account ▾</span></button></div><button class="desktop-notification" id="desktopNotification" type="button" aria-label="Notifications" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-dot" aria-hidden="true"></span></button></nav><div class="account-dropdown" id="accountDropdown" role="menu" aria-label="Choose account type" hidden><small>Continue as</small><button class="account-option" type="button" role="menuitem" data-account-modal="applicant">👤 Applicant / User</button><button class="account-option" type="button" role="menuitem" data-account-modal="employer">🏢 Employer</button></div></header>
+<header class="topbar"><button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button><a href="#home" class="brand" aria-label="SIGHTX home"><span class="brandmark">S</span><span>SIGHTX</span></a><div class="searchbox"><span>⌕</span><input id="globalSearch" type="search" placeholder="Search people, jobs, insights" aria-label="Search"><div id="globalSearchResults" class="search-results" role="listbox" aria-label="Search results" hidden></div></div><button class="mobile-account-link account-menu-trigger" id="mobileAccountToggle" type="button" aria-label="Choose account type" aria-expanded="false" title="Account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></button><nav class="toplinks" aria-label="Top navigation"><button class="toplink" data-page="home"><span class="ico">H</span><span>Home</span></button><button class="toplink" id="jobsMenuTrigger" data-page="jobs" type="button" aria-haspopup="true" aria-controls="jobsQuickMenu" aria-expanded="false"><span class="ico">J</span><span>Jobs ▾</span></button><button class="toplink" data-page="about"><span class="ico">A</span><span>About Us</span></button><div class="account-menu-wrap"><button class="toplink account-menu-trigger" id="desktopAccountToggle" type="button" aria-haspopup="true" aria-controls="accountDropdown" aria-expanded="false"><span>Account ▾</span></button></div><button class="desktop-notification" id="desktopNotification" type="button" aria-label="Notifications" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-dot" aria-hidden="true"></span></button></nav><div class="account-dropdown" id="accountDropdown" role="menu" aria-label="Account menu" hidden><small id="accountMenuHeading">Continue as</small><div id="accountGreeting" hidden style="padding:8px 12px 10px;color:#173052;font-size:13px;font-weight:800"></div><button class="account-option" type="button" role="menuitem" data-account-modal="applicant">👤 Applicant / User</button><button class="account-option" type="button" role="menuitem" data-account-modal="employer">🏢 Employer</button><button class="account-option" id="accountSignOut" type="button" role="menuitem" hidden>↪ Sign out</button></div></header>
 <div class="jobs-quick-menu" id="jobsQuickMenu" role="menu" aria-label="Jobs navigation" hidden>
   <button type="button" role="menuitem" data-jobs-action="jobs"><span aria-hidden="true">💼</span><span><strong>Jobs</strong><small>Browse all job listings</small></span></button>
   <button type="button" role="menuitem" data-jobs-action="opportunities"><span aria-hidden="true">✨</span><span><strong>Open Opportunities</strong><small>Explore published roles</small></span></button>
@@ -518,34 +518,64 @@ function go(page){const target=document.getElementById('page-'+page);if(!target)
 document.addEventListener('click',e=>{const jobsAction=e.target.closest('[data-jobs-action]');if(jobsAction){e.preventDefault();const action=jobsAction.dataset.jobsAction;const jobsMenu=document.getElementById('jobsQuickMenu');jobsMenu.hidden=true;document.getElementById('jobsMenuTrigger').setAttribute('aria-expanded','false');if(action==='jobs'||action==='opportunities'){go('jobs');if(action==='opportunities'){const heading=document.querySelector('#page-jobs .jobs-header-row');if(heading)heading.scrollIntoView({behavior:'smooth',block:'start'});}return;}if(action==='saved'){go('saved');return;}if(action==='applications'){window.location.href='auth.html?type=applicant&view=applications&v=20261026-applications-hotfix2';return;}}const page=e.target.closest('[data-page]');if(page){if(page.id==='jobsMenuTrigger'){e.preventDefault();const menu=document.getElementById('jobsQuickMenu');const trigger=page;menu.hidden=!menu.hidden;trigger.setAttribute('aria-expanded',String(!menu.hidden));return;}e.preventDefault();go(page.dataset.page)}const msg=e.target.closest('[data-toast]');if(msg)toast(msg.dataset.toast);const close=e.target.closest('[data-close-form]');if(close){const box=document.getElementById(close.dataset.closeForm);if(box){if(box.id==='applyNowFormFields'){go('jobs')}else{box.hidden=true;if(box.id==='applicationForm'||box.id==='jobPostingForm')go('jobs')}}}});
 document.getElementById('mobileMenu').addEventListener('click',()=>document.getElementById('leftcol').classList.toggle('mobile-open'));
 (function setupAccountDropdown(){
- const menu=document.getElementById('accountDropdown');
- const modal=document.getElementById('accountModal');const frame=document.getElementById('accountModalFrame');const modalClose=document.getElementById('accountModalClose');
+ const menu=document.getElementById('accountDropdown'),modal=document.getElementById('accountModal'),frame=document.getElementById('accountModalFrame'),modalClose=document.getElementById('accountModalClose');
+ const heading=document.getElementById('accountMenuHeading'),greeting=document.getElementById('accountGreeting'),signOut=document.getElementById('accountSignOut');
+ const accountButtons=Array.from(menu.querySelectorAll('[data-account-modal]'));
  const triggers=[document.getElementById('desktopAccountToggle'),document.getElementById('mobileAccountToggle')].filter(Boolean);
+ let profileName='',hoverCloseTimer;
  function close(){menu.hidden=true;triggers.forEach(t=>t.setAttribute('aria-expanded','false'));}
  function open(trigger){const rect=trigger.getBoundingClientRect();menu.hidden=false;triggers.forEach(t=>t.setAttribute('aria-expanded',String(t===trigger)));const width=Math.max(210,menu.offsetWidth);const left=Math.min(Math.max(8,rect.left),window.innerWidth-width-8);menu.style.left=left+'px';menu.style.top=Math.min(rect.bottom+8,window.innerHeight-menu.offsetHeight-8)+'px';}
+ function renderAccount(user){
+  if(user){
+   const meta=user.user_metadata||{},name=profileName||meta.full_name||meta.name||(user.email?user.email.split('@')[0]:'SIGHTX member');
+   heading.hidden=true;greeting.hidden=false;greeting.textContent='Hello, '+name+'!';
+   accountButtons.forEach(button=>button.hidden=true);signOut.hidden=false;
+   triggers.forEach(t=>{t.setAttribute('aria-label','Account: '+name);t.title='Account: '+name;});
+  }else{
+   heading.hidden=false;heading.textContent='Continue as';greeting.hidden=true;greeting.textContent='';
+   accountButtons.forEach(button=>button.hidden=false);signOut.hidden=true;
+   triggers.forEach(t=>{t.setAttribute('aria-label','Choose account type');t.title='Account';});
+  }
+ }
+ async function syncAccount(user){
+  profileName='';
+  if(user){
+   const meta=user.user_metadata||{};profileName=meta.full_name||meta.name||'';
+   const client=window.sightxSupabase;
+   if(client){try{const {data}=await client.from('sightx_profiles').select('full_name').eq('id',user.id).maybeSingle();if(data?.full_name)profileName=data.full_name;}catch(_){}}
+  }
+  renderAccount(user);
+ }
+ function bindAuth(){
+  const client=window.sightxSupabase;if(!client)return;
+  client.auth.getSession().then(({data})=>syncAccount(data.session?.user||null)).catch(()=>renderAccount(null));
+  client.auth.onAuthStateChange((_event,session)=>{syncAccount(session?.user||null);});
+ }
+ window.addEventListener('sightx-auth-client-ready',bindAuth,{once:true});
+ if(window.sightxSupabase)bindAuth();
+ signOut.addEventListener('click',async()=>{
+  const client=window.sightxSupabase;if(!client)return;
+  signOut.disabled=true;signOut.textContent='Signing out…';
+  try{const {error}=await client.auth.signOut();if(error)throw error;profileName='';renderAccount(null);close();}
+  catch(_){signOut.textContent='Sign out failed — try again';setTimeout(()=>{signOut.textContent='↪ Sign out';signOut.disabled=false;},2200);return;}
+  signOut.textContent='↪ Sign out';signOut.disabled=false;
+ });
  triggers.forEach(trigger=>trigger.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();if(!menu.hidden&&trigger.getAttribute('aria-expanded')==='true')close();else open(trigger);}));
- let hoverCloseTimer;
  triggers.forEach(trigger=>{
   trigger.addEventListener('mouseenter',()=>{if(window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 801px)').matches){clearTimeout(hoverCloseTimer);open(trigger);}});
   trigger.addEventListener('mouseleave',()=>{if(window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 801px)').matches)hoverCloseTimer=setTimeout(()=>{if(!menu.matches(':hover'))close()},180);});
  });
  menu.addEventListener('mouseenter',()=>clearTimeout(hoverCloseTimer));
  menu.addEventListener('mouseleave',()=>{if(window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 801px)').matches)hoverCloseTimer=setTimeout(close,180);});
-
  document.addEventListener('click',event=>{if(!menu.contains(event.target)&&!triggers.some(t=>t.contains(event.target)))close();});
  document.addEventListener('keydown',event=>{if(event.key==='Escape'){close();triggers.find(t=>t.getAttribute('aria-expanded')==='true')?.focus();}});
  window.addEventListener('resize',close);window.addEventListener('scroll',close,true);
  function closeModal(){modal.hidden=true;frame.src='about:blank';document.body.style.overflow='';}
- document.querySelectorAll('[data-account-modal]').forEach(button=>button.addEventListener('click',()=>{const type=button.dataset.accountModal;close();modal.hidden=false;document.body.style.overflow='hidden';frame.src='auth.html?type='+encodeURIComponent(type)+'&embed=1&v=20261026-jobs-menu';document.getElementById('accountModalTitle').textContent=type==='employer'?'Employer account':'Applicant / User account';modalClose.focus();}));
- (function enableJobsHoverMenu(){
- const menu=document.getElementById('jobsQuickMenu'),trigger=document.getElementById('jobsMenuTrigger');
- if(!menu||!trigger)return;
- let timer;
- const desktop=()=>window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 801px)').matches;
- const show=()=>{if(!desktop())return;clearTimeout(timer);menu.hidden=false;trigger.setAttribute('aria-expanded','true');const r=trigger.getBoundingClientRect();const width=Math.min(310,window.innerWidth-24);menu.style.left=Math.min(Math.max(12,r.left-30),window.innerWidth-width-12)+'px';menu.style.right='auto';menu.style.top=(r.bottom+8)+'px';};
- const schedule=()=>{if(desktop())timer=setTimeout(()=>{if(!menu.matches(':hover')){menu.hidden=true;trigger.setAttribute('aria-expanded','false')}},180)};
- trigger.addEventListener('mouseenter',show);trigger.addEventListener('mouseleave',schedule);menu.addEventListener('mouseenter',()=>clearTimeout(timer));menu.addEventListener('mouseleave',schedule);
-})();
+ accountButtons.forEach(button=>button.addEventListener('click',()=>{const type=button.dataset.accountModal;close();modal.hidden=false;document.body.style.overflow='hidden';frame.src='auth.html?type='+encodeURIComponent(type)+'&embed=1&v=20261026-jobs-menu';document.getElementById('accountModalTitle').textContent=type==='employer'?'Employer account':'Applicant / User account';modalClose.focus();}));
+ document.addEventListener('click',event=>{const jobsMenu=document.getElementById('jobsQuickMenu'),jobsTrigger=document.getElementById('jobsMenuTrigger');if(jobsMenu&&!jobsMenu.hidden&&!jobsMenu.contains(event.target)&&!jobsTrigger.contains(event.target)){jobsMenu.hidden=true;jobsTrigger.setAttribute('aria-expanded','false');}});
+ document.addEventListener('keydown',event=>{if(event.key==='Escape'){const jobsMenu=document.getElementById('jobsQuickMenu'),jobsTrigger=document.getElementById('jobsMenuTrigger');if(jobsMenu&&!jobsMenu.hidden){jobsMenu.hidden=true;jobsTrigger.setAttribute('aria-expanded','false');jobsTrigger.focus();}}});
+ modalClose.addEventListener('click',closeModal);modal.addEventListener('click',event=>{if(event.target===modal)closeModal();});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!modal.hidden)closeModal();});
+})();;
 document.addEventListener('click',event=>{const menu=document.getElementById('jobsQuickMenu'),trigger=document.getElementById('jobsMenuTrigger');if(menu&&!menu.hidden&&!menu.contains(event.target)&&!trigger.contains(event.target)){menu.hidden=true;trigger.setAttribute('aria-expanded','false');}});
  document.addEventListener('keydown',event=>{if(event.key==='Escape'){const menu=document.getElementById('jobsQuickMenu'),trigger=document.getElementById('jobsMenuTrigger');if(menu&&!menu.hidden){menu.hidden=true;trigger.setAttribute('aria-expanded','false');trigger.focus();}}});
  modalClose.addEventListener('click',closeModal);modal.addEventListener('click',event=>{if(event.target===modal)closeModal();});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!modal.hidden)closeModal();});
@@ -865,6 +895,8 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
  const SUPABASE_URL='https://ycfnsufdxztkmtyuceqy.supabase.co';
  const SUPABASE_PUBLISHABLE_KEY='sb_publishable_EbJZKeEdRR6l_UsRucmpnA_yzWHmVXJ';
  const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ window.sightxSupabase=client;
+ window.dispatchEvent(new Event('sightx-auth-client-ready'));
  const root=document.querySelector('#page-jobs .job-cards');
  let liveJobs=[],selectedJob=null,loading=true;
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
