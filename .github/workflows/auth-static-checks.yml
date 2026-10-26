@@ -8,6 +8,7 @@ on:
       - "index.html"
       - ".github/workflows/auth-static-checks.yml"
       - "supabase/migrations/**/*.sql"
+      - "supabase/schema.sql"
   push:
     branches: [main, "feature/account-authenticator-setup"]
     paths:

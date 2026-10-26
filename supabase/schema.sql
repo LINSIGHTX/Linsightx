@@ -1,7 +1,7 @@
 -- SIGHTX launch-ready MVP database foundation for Supabase
 -- This is additive: it uses sightx_* tables so existing public.jobs, public.applications, and public.profiles data is preserved.
 -- Apply to the connected SIGHTX Supabase project only after reviewing the current project and this schema.
--- This schema intentionally does not store resume files in table rows; use a private Storage bucket later.
+-- Resume files live in the private Supabase Storage bucket; only their private object paths are stored in sightx_applications.
 
 create extension if not exists pgcrypto;
 
@@ -207,3 +207,150 @@ for update to authenticated using (coalesce((select auth.jwt() -> 'app_metadata'
 
 -- Employer edits to submitted jobs and application status transitions are intentionally restricted to admins
 -- until trusted server-side moderation actions are implemented.
+
+
+-- Current security-hardening overlay (kept here so a fresh schema install reflects
+-- the security migrations that were subsequently applied to the live project).
+-- This is also represented by timestamped files in supabase/migrations/.
+
+-- Admin operations on SIGHTX data require trusted admin metadata and MFA assurance AAL2.
+-- Restrictive policies intersect with the table's ordinary permissive policies.
+drop policy if exists "SIGHTX admins require AAL2" on public.sightx_profiles;
+create policy "SIGHTX admins require AAL2" on public.sightx_profiles
+as restrictive for all to authenticated
+using (
+  not coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
+  or coalesce((select auth.jwt() ->> 'aal') = 'aal2', false)
+)
+with check (
+  not coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
+  or coalesce((select auth.jwt() ->> 'aal') = 'aal2', false)
+);
+
+drop policy if exists "SIGHTX admins require AAL2" on public.sightx_employers;
+create policy "SIGHTX admins require AAL2" on public.sightx_employers
+as restrictive for all to authenticated
+using (
+  not coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
+  or coalesce((select auth.jwt() ->> 'aal') = 'aal2', false)
+)
+with check (
+  not coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
+  or coalesce((select auth.jwt() ->> 'aal') = 'aal2', false)
+);
+
+drop policy if exists "SIGHTX admins require AAL2" on public.sightx_job_listings;
+create policy "SIGHTX admins require AAL2" on public.sightx_job_listings
+as restrictive for all to authenticated
+using (
+  not coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
+  or coalesce((select auth.jwt() ->> 'aal') = 'aal2', false)
+)
+with check (
+  not coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
+  or coalesce((select auth.jwt() ->> 'aal') = 'aal2', false)
+);
+
+drop policy if exists "SIGHTX admins require AAL2" on public.sightx_applications;
+create policy "SIGHTX admins require AAL2" on public.sightx_applications
+as restrictive for all to authenticated
+using (
+  not coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
+  or coalesce((select auth.jwt() ->> 'aal') = 'aal2', false)
+)
+with check (
+  not coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
+  or coalesce((select auth.jwt() ->> 'aal') = 'aal2', false)
+);
+
+drop policy if exists "SIGHTX admins require AAL2" on public.sightx_job_reports;
+create policy "SIGHTX admins require AAL2" on public.sightx_job_reports
+as restrictive for all to authenticated
+using (
+  not coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
+  or coalesce((select auth.jwt() ->> 'aal') = 'aal2', false)
+)
+with check (
+  not coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
+  or coalesce((select auth.jwt() ->> 'aal') = 'aal2', false)
+);
+
+-- Replace the original application policies with the live, least-privilege rules.
+drop policy if exists "applicants can submit own applications" on public.sightx_applications;
+create policy "applicants can submit own applications" on public.sightx_applications
+for insert to authenticated with check (
+  applicant_id = (select auth.uid())
+  and status = 'new'
+  and employer_notes is null
+  and (
+    resume_path is null
+    or split_part(resume_path, '/', 1) = (select auth.uid())::text
+  )
+  and exists (
+    select 1
+    from public.sightx_job_listings j
+    join public.sightx_employers e on e.id = j.employer_id
+    where j.id = sightx_applications.job_id
+      and j.status = 'published'
+      and e.verification_status = 'verified'
+  )
+);
+
+drop policy if exists "applicants and job owners can read applications" on public.sightx_applications;
+drop policy if exists "applicants and verified job owners can read applications" on public.sightx_applications;
+create policy "applicants and verified job owners can read applications" on public.sightx_applications
+for select to authenticated using (
+  applicant_id = (select auth.uid())
+  or exists (
+    select 1
+    from public.sightx_job_listings j
+    join public.sightx_employers e on e.id = j.employer_id
+    where j.id = sightx_applications.job_id
+      and e.owner_id = (select auth.uid())
+      and e.verification_status = 'verified'
+  )
+  or coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
+);
+
+-- Resume objects are private. Applicants can read their own folder, verified
+-- hiring teams can read resumes attached to applications for their own jobs,
+-- and admins require trusted role metadata plus AAL2.
+drop policy if exists "Applicants and hiring teams read resumes" on storage.objects;
+create policy "Applicants and hiring teams read resumes" on storage.objects
+for select to authenticated using (
+  bucket_id = 'resumes'
+  and (
+    (storage.foldername(name))[1] = (select auth.uid())::text
+    or exists (
+      select 1
+      from public.sightx_applications a
+      join public.sightx_job_listings j on j.id = a.job_id
+      join public.sightx_employers e on e.id = j.employer_id
+      where a.resume_path = objects.name
+        and e.owner_id = (select auth.uid())
+        and e.verification_status = 'verified'
+    )
+    or (
+      coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
+      and coalesce((select auth.jwt() ->> 'aal') = 'aal2', false)
+    )
+  )
+);
+
+-- Remove excessive client privileges. RLS governs row-level access after grants.
+revoke all privileges on table
+  public.sightx_profiles,
+  public.sightx_employers,
+  public.sightx_job_listings,
+  public.sightx_applications,
+  public.sightx_job_reports
+from public, anon, authenticated;
+
+grant select on table public.sightx_job_listings to anon;
+grant select, insert, update on table
+  public.sightx_profiles,
+  public.sightx_employers,
+  public.sightx_job_listings,
+  public.sightx_applications,
+  public.sightx_job_reports
+to authenticated;
