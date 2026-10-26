@@ -455,14 +455,16 @@
     $('publicJobs').closest('.section').classList.toggle('hidden',isEmployer&&!admin());
     $('applicationComposer').classList.toggle('hidden',isEmployer&&!admin());
     $('myApplications').closest('.section').classList.toggle('hidden',isEmployer&&!admin());
-    $('accountSecurity').querySelector('h2').textContent=admin()?'Administrator account security':'Account security (optional)';
+    // Keep authenticator enrollment controls administrator-only. Do not weaken login MFA checks for accounts that already have a factor enrolled.
+    $('accountSecurity').classList.toggle('hidden',!admin());
+    $('accountSecurity').querySelector('h2').textContent='Administrator account security';
     const securityDescription=$('accountSecurity').querySelector('.sub');
-    if(securityDescription)securityDescription.textContent=admin()?'Set up and verify an authenticator app to protect administrator access.':'You can optionally add an authenticator app for extra protection. It is not required to use an applicant account.';
+    if(securityDescription)securityDescription.textContent='Set up and verify an authenticator app to protect administrator access.';
     $('adminArea').classList.toggle('hidden',!admin());
     try{
       await loadProfile();if(routingRun!==sessionRouting)return;
       await loadEmployer();if(routingRun!==sessionRouting)return;
-      await Promise.all([loadMyJobs(),loadEmployerApplications(),loadPublicJobs(),loadMyApplications(),refreshMfaStatus()]);
+      await Promise.all([loadMyJobs(),loadEmployerApplications(),loadPublicJobs(),loadMyApplications(),...(admin()?[refreshMfaStatus()]:[])]);
       if(routingRun!==sessionRouting)return;
       if(admin())await loadAdmin();
       if(routingRun!==sessionRouting)return;
