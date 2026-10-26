@@ -451,10 +451,16 @@
     // Account type controls presentation only; employer/admin permissions remain enforced by database policies.
     const accountType=admin()?'admin':(selectedAccountType||user.user_metadata?.account_type||'applicant');
     const isEmployer=accountType==='employer';
+    const requestedView=new URLSearchParams(window.location.search).get('view');
+    const opportunitiesSection=$('publicJobs').closest('.section');
+    const applicationsSection=$('myApplications').closest('.section');
+    // In the compact sign-in popup, show no dashboard lists by default. The homepage Jobs menu opens each list in its own focused account view.
+    const showOpportunities=requestedView==='opportunities'||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
+    const showApplications=requestedView==='applications'||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
+    opportunitiesSection.classList.toggle('hidden',!showOpportunities||isEmployer&&!admin());
+    applicationsSection.classList.toggle('hidden',!showApplications||isEmployer&&!admin());
     $('employerArea').classList.toggle('hidden',!isEmployer&&!admin());
-    $('publicJobs').closest('.section').classList.toggle('hidden',isEmployer&&!admin());
-    $('applicationComposer').classList.toggle('hidden',isEmployer&&!admin());
-    $('myApplications').closest('.section').classList.toggle('hidden',isEmployer&&!admin());
+    $('applicationComposer').classList.add('hidden');
     // Keep authenticator enrollment controls administrator-only. Do not weaken login MFA checks for accounts that already have a factor enrolled.
     $('accountSecurity').classList.toggle('hidden',!admin());
     $('accountSecurity').querySelector('h2').textContent='Administrator account security';
