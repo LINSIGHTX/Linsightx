@@ -43,7 +43,7 @@
   .grid { gap: 12px; }
   .section { margin-top: 14px; }
 }
-</style>
+/* Dedicated Post a Job banner */.post-job-dashboard-banner{padding:22px 26px;margin:0 0 16px;border:1px solid #dbe8fb;border-radius:18px;background:linear-gradient(120deg,#edf5ff 0%,#f3fbff 55%,#eafaf5 100%);box-shadow:0 8px 24px rgba(32,75,130,.07)}.post-job-dashboard-banner h1{margin:4px 0 7px;color:#173052;font-size:clamp(24px,3vw,34px);letter-spacing:-.035em}.post-job-dashboard-banner p{margin:0;color:#5d718c;font-size:14px;line-height:1.6}.post-job-dashboard-banner .eyebrow{color:#245bea;font-size:10px;font-weight:850;letter-spacing:.1em}</style>
   <script>
     if (new URLSearchParams(window.location.search).get('view') === 'applications') {
       document.documentElement.classList.add('applications-view');
@@ -110,6 +110,7 @@
     </article>
   </section>
   <section id="dashboard" class="hidden">
+    <section id="postJobDashboardBanner" class="post-job-dashboard-banner hidden" aria-labelledby="postJobDashboardTitle"><div class="eyebrow">EMPLOYER WORKSPACE</div><h1 id="postJobDashboardTitle">Post a Job</h1><p>Share your opening with the right candidates. Complete employer verification first if your company has not yet been approved.</p></section>
     <article id="accountHeader" class="card"><div class="section-head"><div><div class="eyebrow">Signed in</div><h2 id="welcomeTitle">Your SIGHTX account</h2><p id="welcomeMeta" class="muted"></p></div><button class="btn" id="signOut" type="button">Sign out</button></div><div id="dashboardNotice" class="notice hidden" role="status"></div></article>
     <section id="profileSection" class="section card">
       <div class="section-head"><div><h2>Your profile</h2><p>Keep your contact details current for applications and account management.</p></div></div>
@@ -511,6 +512,7 @@
     const focusedEmployerJobs=requestedView==='employerjobs';
     const focusedEmployerApplications=requestedView==='employerapplications';
     const focusedPostJob=requestedView==='postjob';
+    $('postJobDashboardBanner').classList.toggle('hidden',!focusedPostJob);
     const focusedEmployerView=focusedEmployerJobs||focusedEmployerApplications||focusedPostJob;
     // Dedicated Jobs menu views should show only the requested list, not the general profile/sign-out dashboard.
     const showOpportunities=focusedOpportunities||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
