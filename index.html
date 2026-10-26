@@ -575,10 +575,6 @@ document.getElementById('mobileMenu').addEventListener('click',()=>document.getE
  document.addEventListener('click',event=>{const jobsMenu=document.getElementById('jobsQuickMenu'),jobsTrigger=document.getElementById('jobsMenuTrigger');if(jobsMenu&&!jobsMenu.hidden&&!jobsMenu.contains(event.target)&&!jobsTrigger.contains(event.target)){jobsMenu.hidden=true;jobsTrigger.setAttribute('aria-expanded','false');}});
  document.addEventListener('keydown',event=>{if(event.key==='Escape'){const jobsMenu=document.getElementById('jobsQuickMenu'),jobsTrigger=document.getElementById('jobsMenuTrigger');if(jobsMenu&&!jobsMenu.hidden){jobsMenu.hidden=true;jobsTrigger.setAttribute('aria-expanded','false');jobsTrigger.focus();}}});
  modalClose.addEventListener('click',closeModal);modal.addEventListener('click',event=>{if(event.target===modal)closeModal();});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!modal.hidden)closeModal();});
-})();;
-document.addEventListener('click',event=>{const menu=document.getElementById('jobsQuickMenu'),trigger=document.getElementById('jobsMenuTrigger');if(menu&&!menu.hidden&&!menu.contains(event.target)&&!trigger.contains(event.target)){menu.hidden=true;trigger.setAttribute('aria-expanded','false');}});
- document.addEventListener('keydown',event=>{if(event.key==='Escape'){const menu=document.getElementById('jobsQuickMenu'),trigger=document.getElementById('jobsMenuTrigger');if(menu&&!menu.hidden){menu.hidden=true;trigger.setAttribute('aria-expanded','false');trigger.focus();}}});
- modalClose.addEventListener('click',closeModal);modal.addEventListener('click',event=>{if(event.target===modal)closeModal();});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!modal.hidden)closeModal();});
 })();
 (function setupNavigationHoverMenus(){
  const menu=document.getElementById('navHoverMenu');
