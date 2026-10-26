@@ -808,8 +808,8 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
   const {data:{session},error:sessionError}=await client.auth.getSession();
   if(sessionError||!session?.user){showStatus(form,'Please sign in to your SIGHTX account first, then return to this job to apply.','error');return}
   const fields=form.elements;
-  const name=fields.namedItem('name').value.trim(),email=fields.namedItem('email').value.trim(),message=fields.namedItem('message').value.trim(),file=fields.namedItem('resume').files[0];
-  if(!name||!email||!message||!file){showStatus(form,'Please complete every field and attach your resume.','error');return}
+  const name=fields.namedItem('name').value.trim(),mobile=fields.namedItem('mobile')?.value.trim()||'',email=fields.namedItem('email').value.trim(),message=fields.namedItem('message').value.trim(),file=fields.namedItem('resume').files[0];
+  if(!name||!mobile||!email||!message||!file){showStatus(form,'Please complete every field and attach your resume.','error');return}
   const allowed={'application/pdf':'.pdf','application/msword':'.doc','application/vnd.openxmlformats-officedocument.wordprocessingml.document':'.docx'};
   const ext=(file.name.split('.').pop()||'').toLowerCase();
   if(file.size>5*1024*1024){showStatus(form,'Your resume must be 5 MB or smaller.','error');return}
@@ -829,7 +829,7 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
    const {error:uploadError}=await client.storage.from('resumes').upload(path,file,{contentType:file.type,upsert:false});
    if(uploadError)throw uploadError;
    uploadedPath=path;
-   const {error:insertError}=await client.from('sightx_applications').insert({job_id:selectedJob.id,applicant_id:user.id,full_name:name,email,status:'new',resume_path:path,cover_message:message,employer_notes:null});
+   const {error:insertError}=await client.from('sightx_applications').insert({job_id:selectedJob.id,applicant_id:user.id,full_name:name,applicant_phone:mobile,email,status:'new',resume_path:path,cover_message:message,employer_notes:null});
    if(insertError)throw insertError;
    uploadedPath=null;
    showStatus(form,'Application submitted successfully. Your application is saved to SIGHTX.','success');
