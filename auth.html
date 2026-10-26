@@ -383,7 +383,7 @@
   }
   async function loadMyApplications(){
     const box=$('myApplications');
-    const {data,error}=await client.from('sightx_applications').select('id,job_id,created_at,status,cover_message').eq('applicant_id',user.id).order('created_at',{ascending:false});
+    const {data,error}=await client.from('sightx_applications').select('id,job_id,created_at,status,cover_message,resume_path').eq('applicant_id',user.id).order('created_at',{ascending:false});
     if(error){box.innerHTML='<div class="notice error">'+escapeHtml(friendlyError(error))+'</div>';return;}
     if(!data.length){box.innerHTML='<div class="empty">You have not applied for any jobs yet. Browse open opportunities above to get started.</div>';return;}
     const ids=[...new Set(data.map(a=>a.job_id).filter(Boolean))];
@@ -394,7 +394,7 @@
       const job=jobs.get(a.job_id);
       const title=job?job.title:'Job details unavailable';
       const meta=job?[job.location,job.employment_type].filter(Boolean).join(' · '):'This listing may no longer be public.';
-      return '<article class="item"><div class="item-head"><div><h3>'+escapeHtml(title)+'</h3><div class="meta">'+escapeHtml(meta)+'</div><div class="meta">Submitted '+escapeHtml(new Date(a.created_at).toLocaleDateString())+'</div></div>'+statusBadge(a.status)+'</div><details style="margin-top:10px"><summary class="btn">View application details</summary><p>'+escapeHtml(a.cover_message||'No cover message saved.')+'</p></details></article>';
+      return '<article class="item"><div class="item-head"><div><h3>'+escapeHtml(title)+'</h3><div class="meta">'+escapeHtml(meta)+'</div><div class="meta">Submitted '+escapeHtml(new Date(a.created_at).toLocaleDateString())+'</div></div>'+statusBadge(a.status)+'</div><details style="margin-top:10px"><summary class="btn">View application details</summary><p>'+escapeHtml(a.cover_message||'No cover message saved.')+'</p></details>'+(a.resume_path?'<div class="actions"><button class="btn" type="button" data-resume-download="'+escapeHtml(a.resume_path)+'">Download my resume</button></div>':'')+'</article>';
     }).join('');
   }
   async function loadAdmin(){
@@ -505,6 +505,19 @@
         $('applicationComposer').classList.remove('hidden');
         $('applicationComposer').scrollIntoView({behavior:'smooth',block:'start'});
       }catch(err){notice('dashboardNotice',friendlyError(err),'error');}
+      return;
+    }
+    const resume=e.target.closest('[data-resume-download]');if(resume){
+      if(!user){notice('dashboardNotice','Please sign in again to access your resume.','error');return;}
+      const button=resume;button.disabled=true;
+      try{
+        const path=button.dataset.resumeDownload;
+        if(!path.startsWith(user.id+'/'))throw new Error('This resume does not belong to your account.');
+        const {data,error}=await client.storage.from('resumes').createSignedUrl(path,60);
+        if(error)throw error;
+        const link=document.createElement('a');link.href=data.signedUrl;link.target='_blank';link.rel='noopener noreferrer';link.click();
+      }catch(err){notice('dashboardNotice','Could not create a secure resume link: '+friendlyError(err),'error');}
+      finally{button.disabled=false;}
       return;
     }
     const report=e.target.closest('[data-report]');if(report){if(!user){showAuth('login');notice('authNotice','Sign in to report a job.');window.scrollTo({top:0,behavior:'smooth'});return;}const reason=window.prompt('Why are you reporting this job? (e.g. suspicious employer, payment request, misleading details)');if(!reason||!reason.trim())return;const details=window.prompt('Additional details (optional):')||'';try{const {error}=await client.from('sightx_job_reports').insert({job_id:report.dataset.report,reporter_id:user.id,reason:reason.trim(),details:details.trim()||null,status:'open'});if(error)throw error;notice('dashboardNotice','Thank you. Your report has been sent for review.','success');}catch(err){notice('dashboardNotice',friendlyError(err),'error')}return;}
