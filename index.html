@@ -1039,6 +1039,72 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
 })();
 </script>
 
+
+<!-- Role-specific job actions: applicants apply; employers manage hiring. -->
+<style id="role-specific-job-actions">
+body[data-account-view="employer"] #jobsApplyCta,
+body[data-account-view="employer"] #page-jobs .apply-btn,
+body[data-account-view="employer"] #page-jobs [data-open-form="apply"],
+body[data-account-view="employer"] #page-jobs [data-live-apply],
+body[data-account-view="employer"] [data-jobs-action="applications"],
+body[data-account-view="applicant"] #postJobCta,
+body[data-account-view="applicant"] .mobile-bottom-nav [data-post-focus],
+body[data-account-view="applicant"] [data-jobs-action="post"],
+body[data-account-view="applicant"] [data-page="post-job"] { display:none!important; }
+</style>
+<script id="role-specific-job-actions-script">
+(function(){
+  const validRole = role => role === 'employer' || role === 'applicant';
+  function applyRole(role){
+    if(!validRole(role)) return;
+    document.body.dataset.accountView = role;
+    try { localStorage.setItem('sightx_active_account_view', role); } catch (_) {}
+    const employer = role === 'employer';
+    document.querySelectorAll('#jobsApplyCta, #page-jobs .apply-btn, #page-jobs [data-open-form="apply"], #page-jobs [data-live-apply], [data-jobs-action="applications"]').forEach(el => {
+      el.hidden = employer;
+      el.setAttribute('aria-hidden', String(employer));
+      if ('disabled' in el) el.disabled = employer;
+    });
+    document.querySelectorAll('#postJobCta, .mobile-bottom-nav [data-post-focus], [data-jobs-action="post"], [data-page="post-job"]').forEach(el => {
+      el.hidden = !employer;
+      el.setAttribute('aria-hidden', String(!employer));
+      if ('disabled' in el) el.disabled = !employer;
+    });
+  }
+  function init(){
+    let saved = '';
+    try { saved = localStorage.getItem('sightx_active_account_view') || ''; } catch (_) {}
+    if(validRole(saved)) applyRole(saved);
+    const client = window.sightxSupabase;
+    if(!client) return;
+    client.auth.getSession().then(({data}) => {
+      const user = data && data.session && data.session.user;
+      if(!user) return;
+      let role = '';
+      try { role = localStorage.getItem('sightx_active_account_view') || ''; } catch (_) {}
+      if(!validRole(role)) role = user.user_metadata && user.user_metadata.account_type;
+      if(validRole(role)) applyRole(role);
+    }).catch(()=>{});
+    client.auth.onAuthStateChange((_event, session) => {
+      if(!session || !session.user) return;
+      let role = '';
+      try { role = localStorage.getItem('sightx_active_account_view') || ''; } catch (_) {}
+      if(!validRole(role)) role = session.user.user_metadata && session.user.user_metadata.account_type;
+      if(validRole(role)) applyRole(role);
+    });
+  }
+  window.addEventListener('sightx-auth-client-ready', init, {once:true});
+  if(window.sightxSupabase) init();
+  document.addEventListener('click', function(event){
+    const employerOnly = event.target.closest('#postJobCta, .mobile-bottom-nav [data-post-focus], [data-jobs-action="post"], [data-page="post-job"]');
+    const applicantOnly = event.target.closest('#jobsApplyCta, #page-jobs .apply-btn, #page-jobs [data-open-form="apply"], #page-jobs [data-live-apply], [data-jobs-action="applications"]');
+    const role = document.body.dataset.accountView;
+    if(role === 'applicant' && employerOnly){event.preventDefault();event.stopImmediatePropagation();}
+    if(role === 'employer' && applicantOnly){event.preventDefault();event.stopImmediatePropagation();}
+  }, true);
+})();
+</script>
+
 </body></html>
 
 
