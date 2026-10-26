@@ -165,7 +165,10 @@
     }
     if(run!==sessionRouting)return;
     // Treat missing or unfamiliar assurance data as an error, never as permission.
-    if(!assurance||!['aal1','aal2'].includes(assurance.currentLevel)||!['aal1','aal2'].includes(assurance.nextLevel)){
+    // Supabase documents currentLevel as null for some AAL1 sessions.
+    // Normalize that documented value to AAL1 instead of locking out users
+    // who have not enrolled in MFA.
+    if(!assurance||!([null,'aal1','aal2'].includes(assurance.currentLevel))||!['aal1','aal2'].includes(assurance.nextLevel)){
       $('authArea').classList.add('hidden');
       $('dashboard').classList.add('hidden');
       $('mfaLoginChallenge').classList.remove('hidden');
@@ -174,9 +177,10 @@
       $('verifyLoginMfa').disabled=true;
       return;
     }
+    const currentLevel=assurance.currentLevel||'aal1';
     $('mfaLoginCode').disabled=false;
     $('verifyLoginMfa').disabled=false;
-    if(assurance.nextLevel==='aal2'&&assurance.currentLevel!=='aal2'){
+    if(assurance.nextLevel==='aal2'&&currentLevel!=='aal2'){
       $('mfaLoginChallenge').classList.remove('hidden');
       loginMfaMessage('Authenticator verification is required before you can access your SIGHTX account.');
       $('mfaLoginCode').focus();
