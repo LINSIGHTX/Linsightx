@@ -826,9 +826,10 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
    const cleanName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(-100);
    const path=user.id+'/'+selectedJob.id+'/'+crypto.randomUUID()+'-'+cleanName;
    showStatus(form,'Uploading your resume securely and submitting your application…');
+   // Track the intended path before upload so failed/partial upload responses can be cleaned up too.
+   uploadedPath=path;
    const {error:uploadError}=await client.storage.from('resumes').upload(path,file,{contentType:file.type,upsert:false});
    if(uploadError)throw uploadError;
-   uploadedPath=path;
    const {error:insertError}=await client.from('sightx_applications').insert({job_id:selectedJob.id,applicant_id:user.id,full_name:name,applicant_phone:mobile,email,status:'new',resume_path:path,cover_message:message,employer_notes:null});
    if(insertError)throw insertError;
    uploadedPath=null;
@@ -838,7 +839,16 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
   }catch(err){
    console.error('SIGHTX application submission failed:',err.message);
    let messageText=err.code==='23505'?'You have already applied for this job with this account.':(err.message||'Submission failed. Please try again.');
-   if(uploadedPath)messageText+=' The resume upload remains in private storage because automatic deletion is not enabled; contact SIGHTX support if cleanup is needed.';
+   if(uploadedPath){
+    try{
+     // Delete policy permits removal only from the caller's own folder and only when no application references the object.
+     const {error:cleanupError}=await client.storage.from('resumes').remove([uploadedPath]);
+     if(cleanupError)throw cleanupError;
+    }catch(cleanupError){
+     console.error('SIGHTX orphan resume cleanup failed:',cleanupError.message);
+     messageText+=' We could not automatically clean up the unlinked resume upload; please contact SIGHTX support.';
+    }
+   }
    showStatus(form,messageText,'error');
    if(submit){submit.disabled=false;submit.textContent='Submit Application'}
   }finally{if(submit){submit.disabled=false;if(submit.textContent==='Submitting…')submit.textContent='Submit Application'}}
