@@ -212,6 +212,13 @@
   }
   async function refreshMfaStatus(){
     if(!user)return;
+    // A manual status refresh must not hide an enrollment that is still in progress.
+    if(mfaPendingFactorId){
+      $('mfaStatus').textContent='Setup pending';$('mfaStatus').className='badge pending';
+      $('startMfaSetup').disabled=true;$('startMfaSetup').textContent='Setup in progress';
+      mfaMessage('Finish verifying the authenticator setup, or cancel it before starting again.');
+      return;
+    }
     $('mfaStatus').textContent='Checking';$('mfaStatus').className='badge pending';
     $('mfaEnrollment').classList.add('hidden');
     try{
