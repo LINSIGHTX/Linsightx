@@ -501,10 +501,9 @@
     }catch(err){
       let message=friendlyError(err);
       if(uploadedPath){
-        // Best-effort cleanup prevents orphaned private files when the
-        // application insert fails after the upload succeeds.
-        const {error:cleanupError}=await client.storage.from('resumes').remove([uploadedPath]);
-        if(cleanupError)message+=' The resume upload could not be cleaned up automatically; contact SIGHTX support for cleanup.';
+        // The live Storage policy currently grants no DELETE permission, so
+        // keep the file private and tell the user how to request cleanup.
+        message+=' The resume upload remains in private storage because automatic deletion is not enabled; contact SIGHTX support if cleanup is needed.';
       }
       notice('applicationNotice',message,'error');
     }finally{button.disabled=false;}
