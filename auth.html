@@ -67,7 +67,7 @@
     </article>
   </section>
   <section id="dashboard" class="hidden">
-    <article class="card"><div class="section-head"><div><div class="eyebrow">Signed in</div><h2 id="welcomeTitle">Your SIGHTX account</h2><p id="welcomeMeta" class="muted"></p></div><button class="btn" id="signOut" type="button">Sign out</button></div><div id="dashboardNotice" class="notice hidden" role="status"></div></article>
+    <article id="accountHeader" class="card"><div class="section-head"><div><div class="eyebrow">Signed in</div><h2 id="welcomeTitle">Your SIGHTX account</h2><p id="welcomeMeta" class="muted"></p></div><button class="btn" id="signOut" type="button">Sign out</button></div><div id="dashboardNotice" class="notice hidden" role="status"></div></article>
     <section id="profileSection" class="section card">
       <div class="section-head"><div><h2>Your profile</h2><p>Keep your contact details current for applications and account management.</p></div></div>
       <form id="profileForm" class="form">
@@ -140,7 +140,7 @@
         <div class="actions"><button class="btn primary" id="submitApplication" type="submit">Submit application</button></div>
       </form>
     </section>
-    <section class="section card"><div class="section-head"><div><h2>My applications</h2><p class="sub">Track the status of every application you have submitted.</p></div><button class="btn" id="refreshApplications" type="button">Refresh applications</button></div><div id="myApplications" class="list"><div class="empty">Sign in to load your applications.</div></div></section>
+    <section id="myApplicationsSection" class="section card"><div class="section-head"><div><h2>My applications</h2><p class="sub">Track the status of every application you have submitted.</p></div><button class="btn" id="refreshApplications" type="button">Refresh applications</button></div><div id="myApplications" class="list"><div class="empty">Sign in to load your applications.</div></div></section>
     <section id="adminArea" class="section hidden">
       <article class="card"><div class="eyebrow">Restricted tools</div><h2>SIGHTX Admin Review</h2><p class="sub">Visible only when your authenticated account carries a trusted <code>app_metadata.role = admin</code> claim.</p><div class="notice">Verify company identity and recruiter authorization before approval. Publish jobs only after the employer is verified.</div></article>
       <section class="section card"><div class="section-head"><div><h2>Employer verification queue</h2><p>Review business evidence and recruiter association.</p></div><button class="btn" type="button" id="refreshAdmin">Refresh queues</button></div><div id="adminEmployers" class="list"></div></section>
@@ -453,12 +453,20 @@
     const isEmployer=accountType==='employer';
     const requestedView=new URLSearchParams(window.location.search).get('view');
     const opportunitiesSection=$('publicJobs').closest('.section');
-    const applicationsSection=$('myApplications').closest('.section');
-    // In the compact sign-in popup, show no dashboard lists by default. The homepage Jobs menu opens each list in its own focused account view.
-    const showOpportunities=requestedView==='opportunities'||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
-    const showApplications=requestedView==='applications'||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
-    opportunitiesSection.classList.toggle('hidden',!showOpportunities||isEmployer&&!admin());
+    const applicationsSection=$('myApplicationsSection');
+    const focusedApplications=requestedView==='applications';
+    const focusedOpportunities=requestedView==='opportunities';
+    // Dedicated Jobs menu views should show only the requested list, not the general profile/sign-out dashboard.
+    const showOpportunities=focusedOpportunities||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
+    const showApplications=focusedApplications||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
+    $('accountHeader').classList.toggle('hidden',focusedApplications||focusedOpportunities);
+    $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities);
+    $('accountSecurity').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
+    $('applicationComposer').classList.add('hidden');
     applicationsSection.classList.toggle('hidden',!showApplications||isEmployer&&!admin());
+    opportunitiesSection.classList.toggle('hidden',!showOpportunities||isEmployer&&!admin());
+    $('employerArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||!isEmployer&&!admin());
+    $('adminArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
     $('employerArea').classList.toggle('hidden',!isEmployer&&!admin());
     $('applicationComposer').classList.add('hidden');
     // Keep authenticator enrollment controls administrator-only. Do not weaken login MFA checks for accounts that already have a factor enrolled.
