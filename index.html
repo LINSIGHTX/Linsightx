@@ -524,12 +524,29 @@ document.getElementById('mobileMenu').addEventListener('click',()=>document.getE
  function close(){menu.hidden=true;triggers.forEach(t=>t.setAttribute('aria-expanded','false'));}
  function open(trigger){const rect=trigger.getBoundingClientRect();menu.hidden=false;triggers.forEach(t=>t.setAttribute('aria-expanded',String(t===trigger)));const width=Math.max(210,menu.offsetWidth);const left=Math.min(Math.max(8,rect.left),window.innerWidth-width-8);menu.style.left=left+'px';menu.style.top=Math.min(rect.bottom+8,window.innerHeight-menu.offsetHeight-8)+'px';}
  triggers.forEach(trigger=>trigger.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();if(!menu.hidden&&trigger.getAttribute('aria-expanded')==='true')close();else open(trigger);}));
+ let hoverCloseTimer;
+ triggers.forEach(trigger=>{
+  trigger.addEventListener('mouseenter',()=>{if(window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 801px)').matches){clearTimeout(hoverCloseTimer);open(trigger);}});
+  trigger.addEventListener('mouseleave',()=>{if(window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 801px)').matches)hoverCloseTimer=setTimeout(()=>{if(!menu.matches(':hover'))close()},180);});
+ });
+ menu.addEventListener('mouseenter',()=>clearTimeout(hoverCloseTimer));
+ menu.addEventListener('mouseleave',()=>{if(window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 801px)').matches)hoverCloseTimer=setTimeout(close,180);});
+
  document.addEventListener('click',event=>{if(!menu.contains(event.target)&&!triggers.some(t=>t.contains(event.target)))close();});
  document.addEventListener('keydown',event=>{if(event.key==='Escape'){close();triggers.find(t=>t.getAttribute('aria-expanded')==='true')?.focus();}});
  window.addEventListener('resize',close);window.addEventListener('scroll',close,true);
  function closeModal(){modal.hidden=true;frame.src='about:blank';document.body.style.overflow='';}
  document.querySelectorAll('[data-account-modal]').forEach(button=>button.addEventListener('click',()=>{const type=button.dataset.accountModal;close();modal.hidden=false;document.body.style.overflow='hidden';frame.src='auth.html?type='+encodeURIComponent(type)+'&embed=1&v=20261026-jobs-menu';document.getElementById('accountModalTitle').textContent=type==='employer'?'Employer account':'Applicant / User account';modalClose.focus();}));
- document.addEventListener('click',event=>{const menu=document.getElementById('jobsQuickMenu'),trigger=document.getElementById('jobsMenuTrigger');if(menu&&!menu.hidden&&!menu.contains(event.target)&&!trigger.contains(event.target)){menu.hidden=true;trigger.setAttribute('aria-expanded','false');}});
+ (function enableJobsHoverMenu(){
+ const menu=document.getElementById('jobsQuickMenu'),trigger=document.getElementById('jobsMenuTrigger');
+ if(!menu||!trigger)return;
+ let timer;
+ const desktop=()=>window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 801px)').matches;
+ const show=()=>{if(!desktop())return;clearTimeout(timer);menu.hidden=false;trigger.setAttribute('aria-expanded','true');const r=trigger.getBoundingClientRect();const width=Math.min(310,window.innerWidth-24);menu.style.left=Math.min(Math.max(12,r.left-30),window.innerWidth-width-12)+'px';menu.style.right='auto';menu.style.top=(r.bottom+8)+'px';};
+ const schedule=()=>{if(desktop())timer=setTimeout(()=>{if(!menu.matches(':hover')){menu.hidden=true;trigger.setAttribute('aria-expanded','false')}},180)};
+ trigger.addEventListener('mouseenter',show);trigger.addEventListener('mouseleave',schedule);menu.addEventListener('mouseenter',()=>clearTimeout(timer));menu.addEventListener('mouseleave',schedule);
+})();
+document.addEventListener('click',event=>{const menu=document.getElementById('jobsQuickMenu'),trigger=document.getElementById('jobsMenuTrigger');if(menu&&!menu.hidden&&!menu.contains(event.target)&&!trigger.contains(event.target)){menu.hidden=true;trigger.setAttribute('aria-expanded','false');}});
  document.addEventListener('keydown',event=>{if(event.key==='Escape'){const menu=document.getElementById('jobsQuickMenu'),trigger=document.getElementById('jobsMenuTrigger');if(menu&&!menu.hidden){menu.hidden=true;trigger.setAttribute('aria-expanded','false');trigger.focus();}}});
  modalClose.addEventListener('click',closeModal);modal.addEventListener('click',event=>{if(event.target===modal)closeModal();});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!modal.hidden)closeModal();});
 })();
