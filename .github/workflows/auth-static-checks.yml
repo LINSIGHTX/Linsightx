@@ -54,11 +54,20 @@ jobs:
             'client.auth.mfa.enroll',
             'client.auth.mfa.challenge',
             'client.auth.mfa.verify',
-            'mfaLoginChallenge'
+            'mfaLoginChallenge',
+            'We could not verify your sign-in security level',
+            'Fail closed immediately'
           ];
           const missing = required.filter(text => !html.includes(text));
           if (missing.length) {
             console.error('Missing expected MFA flow elements:', missing.join(', '));
+            process.exit(1);
+          }
+          const routeStart = html.indexOf('async function routeSession(nextSession)');
+          const assuranceStart = html.indexOf('getAuthenticatorAssuranceLevel()', routeStart);
+          const hideDashboardStart = html.indexOf("$('dashboard').classList.add('hidden')", routeStart);
+          if (routeStart < 0 || assuranceStart < 0 || hideDashboardStart < 0 || hideDashboardStart > assuranceStart) {
+            console.error('Session routing must hide the dashboard before awaiting MFA assurance.');
             process.exit(1);
           }
           if (/service_role/i.test(html)) {
