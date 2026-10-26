@@ -287,12 +287,23 @@
     }finally{button.disabled=false;}
   }
   async function cancelMfaSetup(){
-    $('mfaEnrollment').classList.add('hidden');$('mfaCode').value='';
+    $('mfaCode').value='';
     if(mfaPendingFactorId){
-      try{const {error}=await client.auth.mfa.unenroll({factorId:mfaPendingFactorId});if(error)throw error;}
-      catch(error){mfaMessage('Could not clear the unfinished setup: '+friendlyError(error),'error');}
+      try{
+        const {error}=await client.auth.mfa.unenroll({factorId:mfaPendingFactorId});
+        if(error)throw error;
+      }catch(error){
+        // Keep the pending factor ID and setup panel so the user can retry;
+        // never pretend cancellation succeeded when Supabase rejected it.
+        $('mfaEnrollment').classList.remove('hidden');
+        $('mfaStatus').textContent='Setup pending';$('mfaStatus').className='badge pending';
+        mfaMessage('Could not clear the unfinished setup: '+friendlyError(error)+'. You can retry cancellation or finish verification.','error');
+        return;
+      }
     }
-    mfaPendingFactorId=null;await refreshMfaStatus();
+    mfaPendingFactorId=null;
+    $('mfaEnrollment').classList.add('hidden');
+    await refreshMfaStatus();
   }
   async function loadProfile(){const name=(user.user_metadata&&user.user_metadata.full_name)||user.email||'SIGHTX member';const {error}=await client.from('sightx_profiles').upsert({id:user.id,full_name:name},{onConflict:'id'});if(error)throw error;}
   async function loadEmployer(){
