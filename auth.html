@@ -510,7 +510,8 @@
     const focusedOpportunities=requestedView==='opportunities';
     const focusedEmployerJobs=requestedView==='employerjobs';
     const focusedEmployerApplications=requestedView==='employerapplications';
-    const focusedEmployerView=focusedEmployerJobs||focusedEmployerApplications;
+    const focusedPostJob=requestedView==='postjob';
+    const focusedEmployerView=focusedEmployerJobs||focusedEmployerApplications||focusedPostJob;
     // Dedicated Jobs menu views should show only the requested list, not the general profile/sign-out dashboard.
     const showOpportunities=focusedOpportunities||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
     const showApplications=focusedApplications||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
@@ -536,18 +537,31 @@
         const dividers=workspace.querySelectorAll('.divider');
         const listingsHeading=jobList&&jobList.previousElementSibling;
         const appsDivider=employerApps&&employerApps.previousElementSibling;
-        if(postHeading)postHeading.classList.toggle('hidden',focusedEmployerJobs||focusedEmployerApplications);
-        if(postDescription)postDescription.classList.toggle('hidden',focusedEmployerJobs||focusedEmployerApplications);
-        if(postLock)postLock.classList.add('hidden');
-        if(jobForm)jobForm.classList.add('hidden');
-        if(jobList)jobList.classList.toggle('hidden',focusedEmployerApplications);
-        if(listingsHeading)listingsHeading.classList.toggle('hidden',focusedEmployerApplications);
-        if(appsHead)appsHead.classList.toggle('hidden',focusedEmployerJobs);
-        if(employerApps)employerApps.classList.toggle('hidden',focusedEmployerJobs);
-        if(dividers[0])dividers[0].classList.add('hidden');
-        if(dividers[1])dividers[1].classList.toggle('hidden',focusedEmployerJobs);
-        if(appsDivider)appsDivider.classList.toggle('hidden',focusedEmployerJobs);
-        if(focusedEmployerApplications&&jobList)jobList.classList.add('hidden');
+        if(focusedPostJob){
+          if(postHeading)postHeading.classList.remove('hidden');
+          if(postDescription)postDescription.classList.remove('hidden');
+          if(postLock)postLock.classList.remove('hidden');
+          if(jobForm)jobForm.classList.remove('hidden');
+          if(jobList)jobList.classList.add('hidden');
+          if(listingsHeading)listingsHeading.classList.add('hidden');
+          if(appsHead)appsHead.classList.add('hidden');
+          if(employerApps)employerApps.classList.add('hidden');
+          dividers.forEach(el=>el.classList.add('hidden'));
+          if(appsDivider)appsDivider.classList.add('hidden');
+        }else{
+          if(postHeading)postHeading.classList.toggle('hidden',focusedEmployerJobs||focusedEmployerApplications);
+          if(postDescription)postDescription.classList.toggle('hidden',focusedEmployerJobs||focusedEmployerApplications);
+          if(postLock)postLock.classList.add('hidden');
+          if(jobForm)jobForm.classList.add('hidden');
+          if(jobList)jobList.classList.toggle('hidden',focusedEmployerApplications);
+          if(listingsHeading)listingsHeading.classList.toggle('hidden',focusedEmployerApplications);
+          if(appsHead)appsHead.classList.toggle('hidden',focusedEmployerJobs);
+          if(employerApps)employerApps.classList.toggle('hidden',focusedEmployerJobs);
+          if(dividers[0])dividers[0].classList.add('hidden');
+          if(dividers[1])dividers[1].classList.toggle('hidden',focusedEmployerJobs);
+          if(appsDivider)appsDivider.classList.toggle('hidden',focusedEmployerJobs);
+          if(focusedEmployerApplications&&jobList)jobList.classList.add('hidden');
+        }
       }
     }else{
       $('employerArea').querySelectorAll(':scope > article').forEach(card=>card.classList.remove('hidden'));
