@@ -680,14 +680,10 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
   }
   revealPage('page-apply','apply');
  },true);
- document.addEventListener('submit',function(event){
-  if(event.target.id!=='applyNowFormFields')return;
-  event.preventDefault();if(!event.target.reportValidity())return;
-  const name=event.target.elements.namedItem('name').value.trim();
-  const role=event.target.elements.namedItem('role').value;
-  if(typeof toast==='function')toast('Thanks, '+name+'. Your application for '+role+' is complete.');
-  event.target.reset();revealPage('page-jobs','jobs');
- });
+ // Do not intercept applyNowFormFields here. The live job integration owns
+ // submission, validates the authenticated session, uploads the private resume,
+ // and inserts sightx_applications. A legacy handler here falsely claimed success
+ // and reset the form before the live handler could read its fields.
  window.__sightxEnsureSpecificApplicationPage=ensureSpecificApplicationPage;
 })();
 </script>
