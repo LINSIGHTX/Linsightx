@@ -448,6 +448,16 @@
     clearNotice('dashboardNotice');
     $('welcomeTitle').textContent='Welcome, '+((user.user_metadata&&user.user_metadata.full_name)||user.email||'SIGHTX member');
     $('welcomeMeta').textContent=user.email+(admin()?' · SIGHTX administrator':'');
+    // Account type controls presentation only; employer/admin permissions remain enforced by database policies.
+    const accountType=admin()?'admin':(selectedAccountType||user.user_metadata?.account_type||'applicant');
+    const isEmployer=accountType==='employer';
+    $('employerArea').classList.toggle('hidden',!isEmployer&&!admin());
+    $('publicJobs').closest('.section').classList.toggle('hidden',isEmployer&&!admin());
+    $('applicationComposer').classList.toggle('hidden',isEmployer&&!admin());
+    $('myApplications').closest('.section').classList.toggle('hidden',isEmployer&&!admin());
+    $('accountSecurity').querySelector('h2').textContent=admin()?'Administrator account security':'Account security (optional)';
+    const securityDescription=$('accountSecurity').querySelector('.sub');
+    if(securityDescription)securityDescription.textContent=admin()?'Set up and verify an authenticator app to protect administrator access.':'You can optionally add an authenticator app for extra protection. It is not required to use an applicant account.';
     $('adminArea').classList.toggle('hidden',!admin());
     try{
       await loadProfile();if(routingRun!==sessionRouting)return;
