@@ -161,6 +161,8 @@
   const pageParams=new URLSearchParams(window.location.search);if(pageParams.get('embed')==='1')document.body.classList.add('embed-mode');
   let session=null,user=null,employer=null,mfaPendingFactorId=null,sessionRouting=0,currentApplicationJob=null,selectedAccountType=new URLSearchParams(window.location.search).get('type');
   if(!['applicant','employer'].includes(selectedAccountType))selectedAccountType=null;
+  // A focused My Applications URL is always an applicant destination; never send it to the account-type chooser.
+  if(!selectedAccountType&&new URLSearchParams(window.location.search).get('view')==='applications')selectedAccountType='applicant';
   const admin=()=>!!(user&&user.app_metadata&&user.app_metadata.role==='admin');
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const notice=(id,message,type='')=>{const el=$(id);el.textContent=message;el.className='notice'+(type?' '+type:'');el.classList.remove('hidden');};
