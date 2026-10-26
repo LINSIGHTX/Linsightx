@@ -504,7 +504,7 @@ document.getElementById('mobileMenu').addEventListener('click',()=>document.getE
  document.addEventListener('keydown',event=>{if(event.key==='Escape'){close();triggers.find(t=>t.getAttribute('aria-expanded')==='true')?.focus();}});
  window.addEventListener('resize',close);window.addEventListener('scroll',close,true);
  function closeModal(){modal.hidden=true;frame.src='about:blank';document.body.style.overflow='';}
- document.querySelectorAll('[data-account-modal]').forEach(button=>button.addEventListener('click',()=>{const type=button.dataset.accountModal;close();modal.hidden=false;document.body.style.overflow='hidden';frame.src='auth.html?type='+encodeURIComponent(type)+'&embed=1';document.getElementById('accountModalTitle').textContent=type==='employer'?'Employer account':'Applicant / User account';modalClose.focus();}));
+ document.querySelectorAll('[data-account-modal]').forEach(button=>button.addEventListener('click',()=>{const type=button.dataset.accountModal;close();modal.hidden=false;document.body.style.overflow='hidden';frame.src='auth.html?type='+encodeURIComponent(type)+'&embed=1&v=20261026-account-security-fix';document.getElementById('accountModalTitle').textContent=type==='employer'?'Employer account':'Applicant / User account';modalClose.focus();}));
  modalClose.addEventListener('click',closeModal);modal.addEventListener('click',event=>{if(event.target===modal)closeModal();});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!modal.hidden)closeModal();});
 })();
 document.getElementById('leftCreate').addEventListener('click',()=>{go('home');document.getElementById('postInput').focus()});
