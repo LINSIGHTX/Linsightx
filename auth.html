@@ -186,7 +186,7 @@
     $('roleChoice').classList.remove('hidden');$('authArea').classList.add('hidden');$('dashboard').classList.add('hidden');
   }
   function showAuth(mode){$('roleChoice').classList.add('hidden');$('authArea').classList.remove('hidden');$('dashboard').classList.add('hidden');const signup=mode==='signup';$('loginForm').classList.toggle('hidden',signup);$('signupForm').classList.toggle('hidden',!signup);$('showLogin').classList.toggle('active',!signup);$('showSignup').classList.toggle('active',signup);$('authHeading').textContent=signup?'Create your SIGHTX account':'Welcome to SIGHTX';$('selectedRoleLabel').textContent=selectedAccountType==='employer'?'Employer account':'Applicant / User account';}
-  function showDashboard(){ $('authArea').classList.add('hidden');$('dashboard').classList.remove('hidden'); }
+  function showDashboard(){ $('roleChoice').classList.add('hidden');$('authArea').classList.add('hidden');$('mfaLoginChallenge').classList.add('hidden');$('dashboard').classList.remove('hidden'); }
   function mfaMessage(message,type=''){notice('mfaNotice',message,type);}
   function loginMfaMessage(message,type=''){notice('mfaLoginNotice',message,type);}
   async function routeSession(nextSession){
@@ -200,6 +200,7 @@
     }
     // Fail closed immediately: never leave a previous account's dashboard visible
     // while the new session's MFA assurance level is being checked.
+    $('roleChoice').classList.add('hidden');
     $('authArea').classList.add('hidden');
     $('dashboard').classList.add('hidden');
     $('mfaLoginChallenge').classList.add('hidden');
