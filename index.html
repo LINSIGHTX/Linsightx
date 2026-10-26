@@ -419,6 +419,16 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 @media(max-width:800px){.layout>.rightcol{display:none!important}}
 
 .jobs-quick-menu{position:fixed;z-index:1500;top:78px;right:clamp(12px,8vw,150px);width:min(310px,calc(100vw - 24px));padding:8px;border:1px solid #dce6f5;border-radius:15px;background:#fff;box-shadow:0 18px 45px rgba(18,43,80,.18);display:grid;gap:4px}.jobs-quick-menu[hidden]{display:none!important}.jobs-quick-menu button{display:flex;align-items:center;gap:12px;width:100%;padding:11px 12px;border:0;border-radius:10px;background:#fff;color:#244b83;text-align:left;cursor:pointer}.jobs-quick-menu button:hover,.jobs-quick-menu button:focus-visible{background:#f0f5ff;outline:none}.jobs-quick-menu button>span:first-child{display:grid;place-items:center;flex:0 0 36px;width:36px;height:36px;border-radius:11px;background:#eaf1ff;font-size:16px}.jobs-quick-menu strong{display:block;color:#173052;font-size:13px}.jobs-quick-menu small{display:block;margin-top:2px;color:#71829a;font-size:11px;font-weight:500}@media(max-width:600px){.jobs-quick-menu{top:68px;right:12px;width:min(310px,calc(100vw - 24px))}}
+.nav-hover-menu{position:fixed;z-index:1600;width:min(290px,calc(100vw - 24px));padding:14px;border:1px solid #dce6f5;border-radius:15px;background:#fff;box-shadow:0 18px 45px rgba(18,43,80,.18);animation:navHoverIn .14s ease-out}
+.nav-hover-menu[hidden]{display:none!important}
+.nav-hover-menu .nav-hover-eyebrow{margin:0 0 4px;color:#245bea;font-size:10px;font-weight:850;letter-spacing:.09em;text-transform:uppercase}
+.nav-hover-menu h3{margin:0 0 5px;color:#173052;font-size:15px;letter-spacing:-.02em}
+.nav-hover-menu p{margin:0 0 10px;color:#71829a;font-size:12px;line-height:1.55}
+.nav-hover-menu .nav-hover-actions{display:grid;gap:5px}
+.nav-hover-menu button{display:flex;align-items:center;gap:9px;width:100%;padding:9px 10px;border:0;border-radius:9px;background:#f7faff;color:#244b83;text-align:left;font-size:12px;font-weight:800;cursor:pointer}
+.nav-hover-menu button:hover,.nav-hover-menu button:focus-visible{background:#eaf1ff;color:#1748c8;outline:none}
+@keyframes navHoverIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+@media(hover:none),(max-width:800px){.nav-hover-menu{display:none!important}}
 </style>
 </head>
 <body>
@@ -429,6 +439,7 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
   <button type="button" role="menuitem" data-jobs-action="applications"><span aria-hidden="true">📄</span><span><strong>My Applications</strong><small>Track your application status</small></span></button>
   <button type="button" role="menuitem" data-jobs-action="saved"><span aria-hidden="true">🔖</span><span><strong>Saved Jobs</strong><small>Return to roles you saved</small></span></button>
 </div>
+<div class="nav-hover-menu" id="navHoverMenu" role="region" aria-label="Navigation shortcuts" hidden></div>
 <div class="account-modal" id="accountModal" hidden><section class="account-modal-panel" role="dialog" aria-modal="true" aria-labelledby="accountModalTitle"><div class="account-modal-head"><span id="accountModalTitle">SIGHTX account</span><button class="account-modal-close" id="accountModalClose" type="button" aria-label="Close account window">×</button></div><iframe class="account-modal-frame" id="accountModalFrame" title="SIGHTX account sign in and registration" src="about:blank"></iframe></section></div>
 <div class="layout">
 <aside class="leftcol" id="leftcol"><section class="card profile-card"><div class="profile-cover"></div><div class="profile-info"><div class="avatar">LX</div><h3>Welcome to SIGHTX</h3><p>Your professional hub for growth, hiring, and insight.</p><button class="small-cta" id="leftCreate" type="button">Create post</button></div></section><nav class="card side-nav" aria-label="Side navigation"><button class="navitem active" type="button" data-page="home"><span class="nav-ico" aria-hidden="true">🏠</span>Home</button><button class="navitem" type="button" data-page="network"><span class="nav-ico" aria-hidden="true">🤝</span>Network</button><button class="navitem" type="button" data-page="jobs"><span class="nav-ico" aria-hidden="true">💼</span>Jobs</button><button class="navitem" type="button" data-page="intel"><span class="nav-ico" aria-hidden="true">📊</span>Insights</button><button class="navitem" type="button" data-page="saved"><span class="nav-ico" aria-hidden="true">🔖</span>Saved</button><button class="navitem" type="button" data-page="messages"><span class="nav-ico" aria-hidden="true">💬</span>Messages</button></nav></aside>
@@ -521,6 +532,42 @@ document.getElementById('mobileMenu').addEventListener('click',()=>document.getE
  document.addEventListener('click',event=>{const menu=document.getElementById('jobsQuickMenu'),trigger=document.getElementById('jobsMenuTrigger');if(menu&&!menu.hidden&&!menu.contains(event.target)&&!trigger.contains(event.target)){menu.hidden=true;trigger.setAttribute('aria-expanded','false');}});
  document.addEventListener('keydown',event=>{if(event.key==='Escape'){const menu=document.getElementById('jobsQuickMenu'),trigger=document.getElementById('jobsMenuTrigger');if(menu&&!menu.hidden){menu.hidden=true;trigger.setAttribute('aria-expanded','false');trigger.focus();}}});
  modalClose.addEventListener('click',closeModal);modal.addEventListener('click',event=>{if(event.target===modal)closeModal();});document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!modal.hidden)closeModal();});
+})();
+(function setupNavigationHoverMenus(){
+ const menu=document.getElementById('navHoverMenu');
+ const hoverable=window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 801px)').matches;
+ if(!menu||!hoverable)return;
+ const configs={
+  home:{eyebrow:'Your space',title:'Welcome to your feed',description:'Catch up with your professional community.',actions:[['🏠','Open home feed','home'],['✍️','Create a post','post']]},
+  saved:{eyebrow:'Your collection',title:'Saved items',description:'Return to opportunities and content you kept.',actions:[['🔖','View saved items','saved'],['💼','Browse jobs','jobs']]},
+  about:{eyebrow:'Get to know us',title:'About SIGHTX',description:'Discover the platform and explore professional insights.',actions:[['ℹ️','About SIGHTX','about'],['📊','Explore insights','intel']]},
+  notifications:{eyebrow:'Updates',title:'Your notifications',description:'Notifications and important updates will appear here.',actions:[['✓','Continue browsing','home']]}
+ };
+ let activeTrigger=null,closeTimer=null;
+ function hide(){menu.hidden=true;if(activeTrigger)activeTrigger.setAttribute('aria-expanded','false');activeTrigger=null;}
+ function scheduleHide(){clearTimeout(closeTimer);closeTimer=setTimeout(hide,180);}
+ function show(trigger,key){
+  const data=configs[key];if(!data)return;
+  clearTimeout(closeTimer);activeTrigger=trigger;
+  menu.innerHTML='<div class="nav-hover-eyebrow">'+data.eyebrow+'</div><h3>'+data.title+'</h3><p>'+data.description+'</p><div class="nav-hover-actions">'+data.actions.map(a=>'<button type="button" '+(a[2]==='post'?'data-nav-action="post"':'data-page="'+a[2]+'"')+'><span aria-hidden="true">'+a[0]+'</span><span>'+a[1]+'</span></button>').join('')+'</div>';
+  const rect=trigger.getBoundingClientRect();menu.hidden=false;
+  const width=Math.min(290,window.innerWidth-24);
+  menu.style.left=Math.min(Math.max(12,rect.left),window.innerWidth-width-12)+'px';
+  menu.style.top=Math.min(rect.bottom+8,window.innerHeight-menu.offsetHeight-12)+'px';
+  trigger.setAttribute('aria-expanded','true');
+ }
+ document.querySelectorAll('.toplinks [data-page="home"],.toplinks [data-page="saved"],.toplinks [data-page="about"]').forEach(trigger=>{
+  const key=trigger.dataset.page;trigger.setAttribute('aria-haspopup','true');trigger.setAttribute('aria-expanded','false');
+  trigger.addEventListener('mouseenter',()=>show(trigger,key));trigger.addEventListener('mouseleave',scheduleHide);
+  trigger.addEventListener('focus',()=>show(trigger,key));trigger.addEventListener('blur',scheduleHide);
+ });
+ const notification=document.getElementById('desktopNotification');
+ if(notification){notification.setAttribute('aria-haspopup','true');notification.setAttribute('aria-expanded','false');notification.addEventListener('mouseenter',()=>show(notification,'notifications'));notification.addEventListener('mouseleave',scheduleHide);notification.addEventListener('focus',()=>show(notification,'notifications'));notification.addEventListener('blur',scheduleHide);}
+ menu.addEventListener('mouseenter',()=>clearTimeout(closeTimer));menu.addEventListener('mouseleave',scheduleHide);
+ menu.addEventListener('click',event=>{const action=event.target.closest('[data-nav-action]');if(action&&action.dataset.navAction==='post'){hide();go('home');const input=document.getElementById('postInput');if(input){input.scrollIntoView({behavior:'smooth',block:'center'});input.focus({preventScroll:true});}}else if(event.target.closest('[data-page]'))hide();});
+ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!menu.hidden){hide();activeTrigger?.focus();}});
+ document.addEventListener('pointerdown',event=>{if(!menu.hidden&&!menu.contains(event.target)&&!activeTrigger?.contains(event.target))hide();});
+ window.addEventListener('resize',hide);window.addEventListener('scroll',hide,true);
 })();
 document.getElementById('leftCreate').addEventListener('click',()=>{go('home');document.getElementById('postInput').focus()});
 document.addEventListener('click',e=>{const postBtn=e.target.closest('[data-post-focus]');if(postBtn){go('home');const input=document.getElementById('postInput');if(input){input.scrollIntoView({behavior:'smooth',block:'center'});input.focus({preventScroll:true});}}});
