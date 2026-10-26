@@ -399,7 +399,7 @@
   }
   async function loadMyApplications(){
     const box=$('myApplications');
-    const {data,error}=await client.from('sightx_applications').select('id,job_id,created_at,status,cover_message,resume_path').eq('applicant_id',user.id).order('created_at',{ascending:false});
+    const {data,error}=await client.from('sightx_applications').select('id,job_id,created_at,status,cover_message,resume_path,full_name,applicant_phone,email').eq('applicant_id',user.id).order('created_at',{ascending:false});
     if(error){box.innerHTML='<div class="notice error">'+escapeHtml(friendlyError(error))+'</div>';return;}
     if(!data.length){box.innerHTML='<div class="empty">You have not applied for any jobs yet. Browse open opportunities above to get started.</div>';return;}
     const ids=[...new Set(data.map(a=>a.job_id).filter(Boolean))];
@@ -410,7 +410,8 @@
       const job=jobs.get(a.job_id);
       const title=job?job.title:'Job details unavailable';
       const meta=job?[job.location,job.employment_type].filter(Boolean).join(' · '):'This listing may no longer be public.';
-      return '<article class="item"><div class="item-head"><div><h3>'+escapeHtml(title)+'</h3><div class="meta">'+escapeHtml(meta)+'</div><div class="meta">Submitted '+escapeHtml(new Date(a.created_at).toLocaleDateString())+'</div></div>'+statusBadge(a.status)+'</div><details style="margin-top:10px"><summary class="btn">View application details</summary><p>'+escapeHtml(a.cover_message||'No cover message saved.')+'</p></details>'+(a.resume_path?'<div class="actions"><button class="btn" type="button" data-resume-download="'+escapeHtml(a.resume_path)+'">Download my resume</button></div>':'')+'</article>';
+      const contact=[a.full_name,a.email,a.applicant_phone].filter(Boolean).map(escapeHtml).join(' · ');
+      return '<article class="item"><div class="item-head"><div><h3>'+escapeHtml(title)+'</h3><div class="meta">'+escapeHtml(meta)+'</div><div class="meta">Submitted '+escapeHtml(new Date(a.created_at).toLocaleDateString())+'</div></div>'+statusBadge(a.status)+'</div><details style="margin-top:10px"><summary class="btn">View application details</summary>'+(contact?'<p class="meta"><strong>Contact details:</strong> '+contact+'</p>':'')+'<p><strong>Cover message</strong><br>'+escapeHtml(a.cover_message||'No cover message saved.')+'</p></details>'+(a.resume_path?'<div class="actions"><button class="btn" type="button" data-resume-download="'+escapeHtml(a.resume_path)+'">Download my resume</button></div>':'')+'</article>';
     }).join('');
   }
   async function loadAdmin(){
