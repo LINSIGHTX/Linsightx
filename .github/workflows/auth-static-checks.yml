@@ -161,6 +161,7 @@ jobs:
             'applicant_phone text',
             'applicants clean up unlinked own resumes',
             'applicants and verified job owners can read applications',
+            "((select auth.jwt()) -> 'app_metadata' ->> 'role')",
             'applicants and hiring teams read resumes',
             "split_part(resume_path, '/', 1)",
             'from public, anon, authenticated'
