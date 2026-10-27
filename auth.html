@@ -593,9 +593,16 @@
     const securityDescription=$('accountSecurity').querySelector('.sub');
     if(securityDescription)securityDescription.textContent='Set up and verify an authenticator app to protect administrator access.';
     $('adminArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
+    // Show lightweight loading states immediately so the dashboard never looks blank while data is fetched.
+    $('publicJobs').innerHTML='<div class="empty">Loading opportunities…</div>';
+    $('myApplications').innerHTML='<div class="empty">Loading your applications…</div>';
+    $('myJobs').innerHTML='<div class="empty">Loading your job listings…</div>';
+    $('employerApplications').innerHTML='<div class="empty">Loading applications to your jobs…</div>';
     try{
-      await loadProfile();if(routingRun!==sessionRouting)return;
-      await loadEmployer();if(routingRun!==sessionRouting)return;
+      // Profile and employer verification are independent; fetch them together to avoid serial network waits.
+      await Promise.all([loadProfile(),loadEmployer()]);if(routingRun!==sessionRouting)return;
+      // Reveal the correctly role-gated dashboard before the slower job/application lists finish loading.
+      showDashboard();
       await Promise.all([loadMyJobs(),loadEmployerApplications(),loadPublicJobs(),loadMyApplications(),...(admin()?[refreshMfaStatus()]:[])]);
       if(routingRun!==sessionRouting)return;
       if(admin())await loadAdmin();
