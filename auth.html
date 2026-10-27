@@ -213,7 +213,7 @@
 
   // My Applications is always an applicant-only destination, including when opened without a type parameter.
   if(focusedApplicationsView)selectedAccountType='applicant';
-  if(focusedPostJobView)selectedAccountType='employer';
+  // The requested page view must never override the account type explicitly chosen at login.
   const admin=()=>!!(user&&user.app_metadata&&user.app_metadata.role==='admin');
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const notice=(id,message,type='')=>{const el=$(id);el.textContent=message;el.className='notice'+(type?' '+type:'');el.classList.remove('hidden');};
@@ -521,9 +521,9 @@
     const focusedOpportunities=requestedView==='opportunities';
     const focusedEmployerJobs=requestedView==='employerjobs';
     const focusedEmployerApplications=requestedView==='employerapplications';
-    const focusedPostJob=requestedView==='postjob';
+    const focusedPostJob=requestedView==='postjob'&&isEmployer;
     $('postJobDashboardBanner').classList.toggle('hidden',!focusedPostJob);
-    const focusedEmployerView=focusedEmployerJobs||focusedEmployerApplications||focusedPostJob;
+    const focusedEmployerView=isEmployer&&(focusedEmployerJobs||focusedEmployerApplications||focusedPostJob);
     // Dedicated Jobs menu views should show only the requested list, not the general profile/sign-out dashboard.
     const showOpportunities=focusedOpportunities||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
     const showApplications=focusedApplications||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
