@@ -793,7 +793,20 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
   let signedIn=false;
   try{const client=window.sightxSupabase;if(client){const result=await client.auth.getSession();signedIn=!!(result&&result.data&&result.data.session&&result.data.session.user);}}catch(_){signedIn=false;}
   if(!signedIn){if(typeof window.sightxOpenLoginModal==='function')window.sightxOpenLoginModal(trigger.id==='postJobCta'?'employer':'applicant');return;}
-  if(trigger.id==='postJobCta'){revealPage('page-post-job','post-job');return;}
+  if(trigger.id==='postJobCta'){
+   const client=window.sightxSupabase;
+   let account=null,employerStatus=null;
+   try{
+    const sessionResult=await client.auth.getSession();account=sessionResult&&sessionResult.data&&sessionResult.data.session&&sessionResult.data.session.user;
+    if(!account){window.sightxOpenLoginModal('employer');return;}
+    const employerResult=await client.from('sightx_employers').select('verification_status').eq('owner_id',account.id).maybeSingle();
+    if(employerResult.error)throw employerResult.error;
+    employerStatus=employerResult.data&&employerResult.data.verification_status;
+   }catch(error){alert('We could not confirm your employer verification status. Your job-posting form is locked for now. Please try again shortly.');return;}
+   const view=employerStatus==='verified'?'postjob':'verification';
+   window.location.href='auth.html?type=employer&view='+view+'&v=20261027-employer-verification-gate';
+   return;
+  }
   const isGeneric=trigger.id==='jobsApplyCta';
   const card=trigger.closest('.job-card');
   const role=card&&card.querySelector('h3')?card.querySelector('h3').textContent.trim():'';
