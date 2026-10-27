@@ -1057,6 +1057,11 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
 <script id="role-specific-job-actions-script">
 (function(){
   const validRole = role => role === 'employer' || role === 'applicant';
+  function showSignedOutActions(){
+    document.body.dataset.accountView = '';
+    try { sessionStorage.removeItem('sightx_session_account_view'); localStorage.removeItem('sightx_active_account_view'); } catch (_) {}
+    document.querySelectorAll('#jobsApplyCta, #page-jobs .apply-btn, #page-jobs [data-open-form="apply"], #page-jobs [data-live-apply], [data-jobs-action="applications"], #postJobCta, .mobile-bottom-nav [data-post-focus], [data-jobs-action="post"], [data-page="post-job"]').forEach(el => { el.hidden=false; el.removeAttribute('aria-hidden'); if('disabled' in el) el.disabled=false; });
+  }
   function applyRole(role){
     if(!validRole(role)) return;
     document.body.dataset.accountView = role;
@@ -1074,21 +1079,18 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     });
   }
   function init(){
-    let saved = '';
-    try { saved = sessionStorage.getItem('sightx_session_account_view') || localStorage.getItem('sightx_active_account_view') || ''; } catch (_) {}
-    if(validRole(saved)) applyRole(saved);
     const client = window.sightxSupabase;
-    if(!client) return;
+    if(!client){ showSignedOutActions(); return; }
     client.auth.getSession().then(({data}) => {
       const user = data && data.session && data.session.user;
-      if(!user) return;
+      if(!user){ showSignedOutActions(); return; }
       let role = '';
       try { role = sessionStorage.getItem('sightx_session_account_view') || localStorage.getItem('sightx_active_account_view') || ''; } catch (_) {}
       if(!validRole(role)) role = user.user_metadata && user.user_metadata.account_type;
       if(validRole(role)) applyRole(role);
     }).catch(()=>{});
     client.auth.onAuthStateChange((_event, session) => {
-      if(!session || !session.user) return;
+      if(!session || !session.user){ showSignedOutActions(); return; }
       let role = '';
       try { role = localStorage.getItem('sightx_active_account_view') || ''; } catch (_) {}
       if(!validRole(role)) role = session.user.user_metadata && session.user.user_metadata.account_type;
