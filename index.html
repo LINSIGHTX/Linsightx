@@ -435,10 +435,33 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 .nav-hover-menu button:hover,.nav-hover-menu button:focus-visible{background:#eaf1ff;color:#1748c8;outline:none}
 @keyframes navHoverIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 @media(hover:none),(max-width:800px){.nav-hover-menu{display:none!important}}
+
+/* Account profile and settings pages */
+.profile-settings-card{display:grid;grid-template-columns:76px minmax(0,1fr);gap:20px;padding:clamp(18px,3vw,30px);margin-top:18px}
+.profile-settings-avatar{display:grid;place-items:center;width:68px;height:68px;border-radius:22px;background:linear-gradient(135deg,#245bea,#20b8a8);color:#fff;font-size:22px;font-weight:900;box-shadow:0 8px 20px rgba(36,91,234,.18)}
+.profile-settings-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px 14px;min-width:0}
+.profile-settings-fields label{align-self:end;color:#344967;font-size:12px;font-weight:800}
+.profile-settings-fields input{width:100%;min-width:0;padding:12px 13px;border:1px solid #dfe7f2;border-radius:10px;background:#fff;color:#183052;font:inherit;font-size:13px}
+.profile-settings-fields input:focus{outline:3px solid rgba(36,91,234,.13);border-color:#86a7ff}
+.profile-settings-fields input[readonly]{background:#f5f7fb;color:#6c7b91}
+.profile-settings-fields small{grid-column:1/-1;color:#74839a;font-size:11px}
+.profile-settings-actions{grid-column:2;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#profileSaveStatus,#securitySettingsStatus{display:block;margin-top:8px;color:#27745b;font-size:12px;font-weight:700}
+.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.settings-card{display:flex;gap:15px;align-items:flex-start;padding:22px;min-width:0}
+.settings-icon{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border-radius:13px;background:#eef3ff;font-size:20px}
+.settings-card h2{margin:2px 0 7px;color:#183052;font-size:17px}
+.settings-card p{margin:0 0 15px;color:#687b95;font-size:13px;line-height:1.65}
+.settings-action{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:9px 12px;border:1px solid #dce5f2;border-radius:10px;background:#fff;color:#244b83;text-decoration:none;font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+.settings-action:hover{background:#f0f5ff;border-color:#bfd0f3}
+.setting-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid #edf1f7;color:#344967;font-size:12px;font-weight:700}
+.setting-toggle input{width:18px;height:18px;accent-color:#245bea}
+@media(max-width:600px){.profile-settings-card{grid-template-columns:minmax(0,1fr);gap:14px}.profile-settings-fields{grid-template-columns:minmax(0,1fr);gap:7px}.profile-settings-fields label{margin-top:5px}.profile-settings-fields small{grid-column:auto}.profile-settings-actions{grid-column:1}.settings-grid{grid-template-columns:minmax(0,1fr)}.settings-card{padding:17px}.mobile-bottom-nav .nav-btn{font-size:9px;padding-inline:1px}.mobile-bottom-nav .nav-btn span:first-child{font-size:15px}}
+
 </style>
 </head>
 <body>
-<header class="topbar"><button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button><a href="#home" class="brand" aria-label="Linsight X home"><span class="brandmark">S</span><span>Linsight X</span></a><div class="searchbox"><span>⌕</span><input id="globalSearch" type="search" placeholder="Search people, jobs, insights" aria-label="Search"><div id="globalSearchResults" class="search-results" role="listbox" aria-label="Search results" hidden></div></div><button class="mobile-account-link account-menu-trigger" id="mobileAccountToggle" type="button" aria-label="Choose account type" aria-expanded="false" title="Account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></button><nav class="toplinks" aria-label="Top navigation"><button class="toplink" data-page="home"><span class="ico">H</span><span>Home</span></button><button class="toplink" id="jobsMenuTrigger" data-page="jobs" type="button" aria-haspopup="true" aria-controls="jobsQuickMenu" aria-expanded="false"><span class="ico">J</span><span>Jobs ▾</span></button><button class="toplink role-nav applicant-nav" data-role-nav="applicant" data-nav-target="jobs" type="button">Find Jobs</button><button class="toplink role-nav applicant-nav" data-role-nav="applicant" data-nav-target="applications" type="button">My Applications</button><button class="toplink role-nav applicant-nav" data-role-nav="applicant" data-nav-target="saved" type="button">Saved Jobs</button><button class="toplink role-nav employer-nav" data-role-nav="employer" data-nav-target="post" type="button">Post a Job</button><button class="toplink role-nav employer-nav" data-role-nav="employer" data-nav-target="myjobs" type="button">My Job Listings</button><button class="toplink role-nav employer-nav" data-role-nav="employer" data-nav-target="employerapplications" type="button">Applications to My Jobs</button><button class="toplink" data-page="about"><span class="ico">A</span><span>About Us</span></button><button class="desktop-notification" id="desktopNotification" type="button" aria-label="Notifications" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-dot" aria-hidden="true"></span></button><div class="account-menu-wrap"><button class="toplink account-menu-trigger" id="desktopAccountToggle" type="button" aria-label="Login" title="Login" aria-haspopup="true" aria-controls="accountDropdown" aria-expanded="false" style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;min-width:38px;padding:0;border:1px solid #dce6f5;border-radius:12px;background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);color:#244b83;box-shadow:0 2px 6px rgba(24,50,91,.06);transition:background .18s ease,border-color .18s ease,box-shadow .18s ease"><svg viewBox="0 0 24 24" aria-hidden="true" style="display:block;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/><path d="M4 4.5h.01M20 4.5h.01" stroke-opacity=".0"/></svg></button></div></nav><div class="account-dropdown" id="accountDropdown" role="menu" aria-label="Account menu" hidden><small id="accountMenuHeading">Continue as</small><div id="accountGreeting" hidden style="padding:8px 12px 10px;color:#173052;font-size:13px;font-weight:800"></div><button class="account-option" type="button" role="menuitem" data-account-modal="applicant">👤 Applicant / User</button><button class="account-option" type="button" role="menuitem" data-account-modal="employer">🏢 Employer</button><button class="account-option" id="accountSignOut" type="button" role="menuitem" hidden>↪ Sign out</button></div></header>
+<header class="topbar"><button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button><a href="#home" class="brand" aria-label="Linsight X home"><span class="brandmark">S</span><span>Linsight X</span></a><div class="searchbox"><span>⌕</span><input id="globalSearch" type="search" placeholder="Search people, jobs, insights" aria-label="Search"><div id="globalSearchResults" class="search-results" role="listbox" aria-label="Search results" hidden></div></div><button class="mobile-account-link account-menu-trigger" id="mobileAccountToggle" type="button" aria-label="Choose account type" aria-expanded="false" title="Account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></button><nav class="toplinks" aria-label="Top navigation"><button class="toplink" data-page="home"><span class="ico">H</span><span>Home</span></button><button class="toplink" id="jobsMenuTrigger" data-page="jobs" type="button" aria-haspopup="true" aria-controls="jobsQuickMenu" aria-expanded="false"><span class="ico">J</span><span>Jobs ▾</span></button><button class="toplink role-nav applicant-nav" data-role-nav="applicant" data-nav-target="jobs" type="button">Find Jobs</button><button class="toplink role-nav applicant-nav" data-role-nav="applicant" data-nav-target="applications" type="button">My Applications</button><button class="toplink role-nav applicant-nav" data-role-nav="applicant" data-nav-target="saved" type="button">Saved Jobs</button><button class="toplink role-nav employer-nav" data-role-nav="employer" data-nav-target="post" type="button">Post a Job</button><button class="toplink role-nav employer-nav" data-role-nav="employer" data-nav-target="myjobs" type="button">My Job Listings</button><button class="toplink role-nav employer-nav" data-role-nav="employer" data-nav-target="employerapplications" type="button">Applications to My Jobs</button><button class="toplink" data-page="about"><span class="ico">A</span><span>About Us</span></button><button class="desktop-notification" id="desktopNotification" type="button" aria-label="Notifications" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-dot" aria-hidden="true"></span></button><div class="account-menu-wrap"><button class="toplink account-menu-trigger" id="desktopAccountToggle" type="button" aria-label="Login" title="Login" aria-haspopup="true" aria-controls="accountDropdown" aria-expanded="false" style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;min-width:38px;padding:0;border:1px solid #dce6f5;border-radius:12px;background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);color:#244b83;box-shadow:0 2px 6px rgba(24,50,91,.06);transition:background .18s ease,border-color .18s ease,box-shadow .18s ease"><svg viewBox="0 0 24 24" aria-hidden="true" style="display:block;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/><path d="M4 4.5h.01M20 4.5h.01" stroke-opacity=".0"/></svg></button></div></nav><div class="account-dropdown" id="accountDropdown" role="menu" aria-label="Account menu" hidden><small id="accountMenuHeading">Continue as</small><div id="accountGreeting" hidden style="padding:8px 12px 10px;color:#173052;font-size:13px;font-weight:800"></div><button class="account-option" type="button" role="menuitem" data-account-modal="applicant">👤 Applicant / User</button><button class="account-option" type="button" role="menuitem" data-account-modal="employer">🏢 Employer</button><button class="account-option account-user-only" type="button" role="menuitem" data-account-page="profile" hidden>👤 My Profile</button><button class="account-option account-user-only" type="button" role="menuitem" data-account-page="settings" hidden>⚙️ Settings</button><button class="account-option account-user-only" type="button" role="menuitem" data-account-page="help" hidden>❓ Help &amp; Support</button><button class="account-option" id="accountSignOut" type="button" role="menuitem" hidden>↪ Sign out</button></div></header>
 <div class="jobs-quick-menu" id="jobsQuickMenu" role="menu" aria-label="Jobs navigation" hidden>
   <button type="button" role="menuitem" data-jobs-action="jobs"><span aria-hidden="true">💼</span><span><strong>Jobs</strong><small>Browse all job listings</small></span></button>
   <button type="button" role="menuitem" data-jobs-action="opportunities"><span aria-hidden="true">✨</span><span><strong>Open Opportunities</strong><small>Explore published roles</small></span></button>
@@ -448,7 +471,7 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 <div class="nav-hover-menu" id="navHoverMenu" role="region" aria-label="Navigation shortcuts" hidden></div>
 <div class="account-modal" id="accountModal" hidden><section class="account-modal-panel" role="dialog" aria-modal="true" aria-labelledby="accountModalTitle"><div class="account-modal-head"><span id="accountModalTitle">SIGHTX account</span><button class="account-modal-close" id="accountModalClose" type="button" aria-label="Close account window">×</button></div><iframe class="account-modal-frame" id="accountModalFrame" title="SIGHTX account sign in and registration" src="about:blank"></iframe></section></div>
 <div class="layout">
-<aside class="leftcol" id="leftcol"><section class="card profile-card"><div class="profile-cover"><span class="linsightx-banner-badge" aria-label="Sight X" style="position:absolute!important;top:10px!important;right:10px!important;z-index:99!important;display:inline-flex!important;align-items:center!important;padding:4px 9px!important;border:1px solid rgba(255,255,255,.65)!important;border-radius:999px!important;background:rgba(17,49,105,.45)!important;color:#fff!important;font:900 11px/1.3 Inter,system-ui,sans-serif!important;letter-spacing:.03em!important;box-shadow:0 2px 8px rgba(15,40,80,.14)!important;opacity:1!important;visibility:visible!important;pointer-events:none!important">Sight X</span></div><div class="profile-info"><div class="avatar">LX</div><h3>Welcome to SIGHTX</h3><p>Your professional hub for growth, hiring, and insight.</p><button class="small-cta" id="leftCreate" type="button">Create post</button></div></section><nav class="card side-nav" aria-label="Side navigation"><button class="navitem active" type="button" data-page="home"><span class="nav-ico" aria-hidden="true">🏠</span>Home</button><button class="navitem" type="button" data-page="network"><span class="nav-ico" aria-hidden="true">🤝</span>Network</button><button class="navitem" type="button" data-page="jobs"><span class="nav-ico" aria-hidden="true">💼</span>Jobs</button><button class="navitem" type="button" data-page="intel"><span class="nav-ico" aria-hidden="true">📊</span>Insights</button><button class="navitem" type="button" data-page="messages"><span class="nav-ico" aria-hidden="true">💬</span>Messages</button></nav></aside>
+<aside class="leftcol" id="leftcol"><section class="card profile-card"><div class="profile-cover"><span class="linsightx-banner-badge" aria-label="Sight X" style="position:absolute!important;top:10px!important;right:10px!important;z-index:99!important;display:inline-flex!important;align-items:center!important;padding:4px 9px!important;border:1px solid rgba(255,255,255,.65)!important;border-radius:999px!important;background:rgba(17,49,105,.45)!important;color:#fff!important;font:900 11px/1.3 Inter,system-ui,sans-serif!important;letter-spacing:.03em!important;box-shadow:0 2px 8px rgba(15,40,80,.14)!important;opacity:1!important;visibility:visible!important;pointer-events:none!important">Sight X</span></div><div class="profile-info"><div class="avatar">LX</div><h3>Welcome to SIGHTX</h3><p>Your professional hub for growth, hiring, and insight.</p><button class="small-cta" id="leftCreate" type="button">Create post</button></div></section><nav class="card side-nav" aria-label="Side navigation"><button class="navitem active" type="button" data-page="home"><span class="nav-ico" aria-hidden="true">🏠</span>Home</button><button class="navitem" type="button" data-page="network"><span class="nav-ico" aria-hidden="true">🤝</span>Network</button><button class="navitem" type="button" data-page="jobs"><span class="nav-ico" aria-hidden="true">💼</span>Jobs</button><button class="navitem" type="button" data-page="intel"><span class="nav-ico" aria-hidden="true">📊</span>Insights</button><button class="navitem" type="button" data-page="messages"><span class="nav-ico" aria-hidden="true">💬</span>Messages</button><button class="navitem" type="button" data-page="profile"><span class="nav-ico" aria-hidden="true">👤</span>My Profile</button><button class="navitem" type="button" data-page="settings"><span class="nav-ico" aria-hidden="true">⚙️</span>Settings</button></nav></aside>
 <main class="maincol">
 <section class="page active" id="page-home"><section id="employerHomeDashboard" class="card employer-home hidden" aria-labelledby="employerHomeTitle" hidden><div class="employer-home-top"><div><div class="eyebrow">EMPLOYER WORKSPACE</div><h2 id="employerHomeTitle">Build your team on Linsight X.</h2><p>Manage your company verification, job listings, and hiring activity from your employer dashboard.</p></div><span class="employer-home-icon" aria-hidden="true">▣</span></div><div class="employer-home-actions"><button type="button" class="publish" id="openEmployerWorkspace">Open employer dashboard</button><button type="button" class="employer-secondary" data-page="jobs">Browse jobs</button></div><div class="employer-home-steps"><div><strong>01</strong><span>Submit company details</span></div><div><strong>02</strong><span>Complete verification</span></div><div><strong>03</strong><span>Submit jobs for review</span></div></div></section><div class="page-heading"><span class="linsightx-heading-badge" aria-label="Sight X" style="position:absolute;top:12px;right:14px;z-index:5;display:inline-flex;align-items:center;justify-content:center;padding:7px 13px;border:1px solid rgba(56,116,210,.22);border-radius:999px;background:linear-gradient(135deg,rgba(222,237,255,.94),rgba(211,246,244,.94));color:#234b86;font:900 13px/1.35 Inter,system-ui,sans-serif;letter-spacing:.04em;box-shadow:0 3px 10px rgba(40,91,150,.10);white-space:nowrap">Sight X</span><div><div class="eyebrow">Your professional community</div><h1>Good to see you. <span class="hero-accent">Let’s grow.</span></h1><p>Ideas, opportunities, and people worth knowing.</p></div></div><div class="card composer" id="composer"><div class="composer-top"><div class="mini-avatar">LX</div><textarea class="compose-input" id="postInput" placeholder="Share an idea, a win, or an opportunity"></textarea></div><div class="composer-actions"><div class="composer-tools"><span class="chip">Live</span><span>Professional network</span></div><button class="publish" id="publishPost" type="button">Publish</button></div></div><div class="feed-tabs" id="feedTabs"><button class="active" data-filter="all" type="button">For you</button><button data-filter="insight" type="button">Insights</button><button data-filter="career" type="button">Career</button></div><div id="feedList"><article class="card post" data-category="insight"><div class="post-head"><div class="mini-avatar" style="background:linear-gradient(135deg,#fce5d4,#f6c5a8);color:#9a4c2d">JT</div><div class="post-person"><strong>Jordan Tate</strong><span>@jordantate · 18 min ago</span></div></div><div class="post-body"><div class="post-tag">Insight</div><div>Scaling a sales pipeline in a fragmented market starts with better data and sharper outreach. Which channels are driving your highest quality conversations right now?</div></div><div class="post-actions"><button type="button">Like</button><button type="button">Comment</button><button type="button">Share</button></div></article><article class="card post" data-category="career"><div class="post-head"><div class="mini-avatar" style="background:linear-gradient(135deg,#d5f4e9,#a8ddcb);color:#176d58">AM</div><div class="post-person"><strong>Amina Ross</strong><span>@aminaross · 1 hr ago</span></div></div><div class="post-body"><div class="post-tag">Hiring</div><div>We’re expanding our customer intelligence team and looking for one strong market researcher with B2B experience. If you know someone who fits, send them our way.</div></div><div class="post-actions"><button type="button">Like</button><button type="button">Comment</button><button type="button">Share</button></div></article></div></section>
 <section class="page" id="page-jobs"><div class="jobs-intro"><div class="eyebrow">Fresh opportunities</div><h1>Find the right role for your next chapter.</h1><p>Discover work built around product, growth, research, and partnerships.</p><div class="jobs-tools"><input id="jobSearch" class="search-field" type="search" placeholder="Search roles or companies"><select id="jobType" class="select-field" aria-label="Filter jobs by type"><option value="all">All types</option><option value="Full-time">Full-time</option><option value="Internship">Internship</option><option value="Contract">Contract</option></select></div></div><div class="jobs-cta-row" aria-label="Job actions"><a id="jobsApplyCta" class="jobs-cta jobs-cta-apply" href="#jobs"><span aria-hidden="true">↗</span> Apply for a Job</a><a id="postJobCta" class="jobs-cta jobs-cta-post" href="#jobs"><span aria-hidden="true">＋</span> Post a Job</a></div><div class="jobs-header-row"><h2>Featured openings</h2></div><div class="job-cards">
@@ -456,6 +479,33 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 </div><div id="jobsEmptyState" class="jobs-empty-state" hidden><strong>No matching roles yet</strong><p>Try a different keyword or switch the job type filter.</p><button type="button" id="clearJobFilters">Clear filters</button></div></section><section class="page" id="page-network"><div class="page-heading"><span class="linsightx-heading-badge" aria-label="Sight X" style="position:absolute;top:12px;right:14px;z-index:5;display:inline-flex;align-items:center;justify-content:center;padding:7px 13px;border:1px solid rgba(56,116,210,.22);border-radius:999px;background:linear-gradient(135deg,rgba(222,237,255,.94),rgba(211,246,244,.94));color:#234b86;font:900 13px/1.35 Inter,system-ui,sans-serif;letter-spacing:.04em;box-shadow:0 3px 10px rgba(40,91,150,.10);white-space:nowrap">Sight X</span><div><div class="eyebrow">People move things forward</div><h1>Grow your network.</h1><p>Meet people who share your curiosity and ambition.</p></div></div><div class="network-grid"><div class="card person-card"><div class="mini-avatar" style="background:linear-gradient(135deg,#ffe7db,#f4d4b7);color:#af6838">DL</div><h3>Daria Lee</h3><p>Growth strategist</p><button type="button">Connect</button></div><div class="card person-card"><div class="mini-avatar" style="background:linear-gradient(135deg,#dfeaff,#bad0ff);color:#2357ca">TO</div><h3>Omar Tarek</h3><p>VP Partnerships</p><button type="button">Connect</button></div><div class="card person-card"><div class="mini-avatar" style="background:linear-gradient(135deg,#dff6ee,#b9e7d5);color:#1d7d5b">ES</div><h3>Emilia Stone</h3><p>Product researcher</p><button type="button">Connect</button></div><div class="card person-card"><div class="mini-avatar" style="background:linear-gradient(135deg,#ffebec,#f8d2d8);color:#b3444a">RK</div><h3>Rhea Kim</h3><p>Talent lead</p><button type="button">Connect</button></div></section>
 <section class="page" id="page-intel"><div class="page-heading"><span class="linsightx-heading-badge" aria-label="Sight X" style="position:absolute;top:12px;right:14px;z-index:5;display:inline-flex;align-items:center;justify-content:center;padding:7px 13px;border:1px solid rgba(56,116,210,.22);border-radius:999px;background:linear-gradient(135deg,rgba(222,237,255,.94),rgba(211,246,244,.94));color:#234b86;font:900 13px/1.35 Inter,system-ui,sans-serif;letter-spacing:.04em;box-shadow:0 3px 10px rgba(40,91,150,.10);white-space:nowrap">Sight X</span><div><div class="eyebrow">Signals worth watching</div><h1>Market intelligence.</h1><p>Ideas and trends to help you make your next move.</p></div></div><div class="insight-list"><article class="insight-item"><h3>AI recruiting keeps raising the bar</h3><p>Teams are pairing human judgment with automation to speed up shortlisting without losing context and candidate nuance.</p></article><article class="insight-item"><h3>Demand is shifting toward structured data roles</h3><p>Product and revenue teams are hiring operators who can connect analysis to action, not just report on trends.</p></article><article class="insight-item"><h3>Private-market networking is back</h3><p>Deal flow is increasingly driven by trusted introductions, warm referrals, and community-driven credibility.</p></article></div></section>
 <section class="page" id="page-saved"><div class="page-heading"><span class="linsightx-heading-badge" aria-label="Sight X" style="position:absolute;top:12px;right:14px;z-index:5;display:inline-flex;align-items:center;justify-content:center;padding:7px 13px;border:1px solid rgba(56,116,210,.22);border-radius:999px;background:linear-gradient(135deg,rgba(222,237,255,.94),rgba(211,246,244,.94));color:#234b86;font:900 13px/1.35 Inter,system-ui,sans-serif;letter-spacing:.04em;box-shadow:0 3px 10px rgba(40,91,150,.10);white-space:nowrap">Sight X</span><div><div class="eyebrow">Keep good things close</div><h1>Saved items.</h1><p>Your saved opportunities and useful posts.</p></div></div><div class="saved-list" id="savedList"><div class="saved-empty saved-item"><h3>No saved jobs yet</h3><p>Save a role from the Jobs page and it will appear here for easy access.</p><button type="button" class="jobs-header-row" data-page="jobs">Explore jobs</button></div></div></section>
+
+<section class="page" id="page-profile">
+  <div class="page-heading"><div><div class="eyebrow">Your professional identity</div><h1>My <span>Profile.</span></h1><p>Keep your basic professional details up to date.</p></div></div>
+  <form class="card profile-settings-card" id="profileSettingsForm">
+    <div class="profile-settings-avatar" id="profileSettingsAvatar">LX</div>
+    <div class="profile-settings-fields">
+      <label for="profileFullName">Full name</label><input id="profileFullName" name="full_name" autocomplete="name" maxlength="100" placeholder="Your full name" required>
+      <label for="profileHeadline">Professional headline</label><input id="profileHeadline" name="headline" maxlength="140" placeholder="e.g. Product Designer | Open to opportunities">
+      <label for="profileLocation">Location</label><input id="profileLocation" name="location" maxlength="100" autocomplete="address-level2" placeholder="City, country">
+      <label for="profileEmail">Account email</label><input id="profileEmail" name="email" type="email" readonly aria-describedby="profileEmailHelp"><small id="profileEmailHelp">Your email is shown from your signed-in account.</small>
+    </div>
+    <div class="profile-settings-actions"><button class="publish" type="submit">Save profile</button><span id="profileSaveStatus" role="status" aria-live="polite"></span></div>
+  </form>
+</section>
+<section class="page" id="page-settings">
+  <div class="page-heading"><div><div class="eyebrow">Your account, your choice</div><h1>Settings.</h1><p>Manage your preferences and account security.</p></div></div>
+  <div class="settings-grid">
+    <section class="card settings-card"><span class="settings-icon">🔔</span><div><h2>Notifications</h2><p>These notification controls are saved as preferences on this device.</p><label class="setting-toggle"><span>Email updates preference</span><input id="settingEmailUpdates" type="checkbox"></label><label class="setting-toggle"><span>In-app notifications preference</span><input id="settingInAppNotifications" type="checkbox"></label></div></section>
+    <section class="card settings-card"><span class="settings-icon">🔐</span><div><h2>Password &amp; security</h2><p>Request a password reset email for your signed-in account.</p><button class="settings-action" id="requestPasswordReset" type="button">Send password reset email</button><span id="securitySettingsStatus" role="status" aria-live="polite"></span></div></section>
+    <section class="card settings-card"><span class="settings-icon">🛡️</span><div><h2>Privacy</h2><p>Keep your account details accurate and never share your password or verification codes.</p><button class="settings-action" type="button" data-page="profile">Review profile information</button></div></section>
+    <section class="card settings-card"><span class="settings-icon">💬</span><div><h2>Help &amp; Support</h2><p>Need help with sign-in, job listings, or employer verification?</p><a class="settings-action" href="mailto:support@linsightx.com?subject=Linsight%20X%20support">Contact support</a></div></section>
+  </div>
+</section>
+<section class="page" id="page-help">
+  <div class="page-heading"><div><div class="eyebrow">We're here to help</div><h1>Help &amp; <span>Support.</span></h1><p>Get help with your Linsight X account and job-search experience.</p></div></div>
+  <div class="card settings-card"><div><h2>Contact support</h2><p>For account access, job listing, or verification questions, contact the support team.</p><a class="settings-action" href="mailto:support@linsightx.com?subject=Linsight%20X%20support">Email support</a></div></div>
+</section>
 <section class="page" id="page-about"><div class="page-heading"><span class="linsightx-heading-badge" aria-label="Sight X" style="position:absolute;top:12px;right:14px;z-index:5;display:inline-flex;align-items:center;justify-content:center;padding:7px 13px;border:1px solid rgba(56,116,210,.22);border-radius:999px;background:linear-gradient(135deg,rgba(222,237,255,.94),rgba(211,246,244,.94));color:#234b86;font:900 13px/1.35 Inter,system-ui,sans-serif;letter-spacing:.04em;box-shadow:0 3px 10px rgba(40,91,150,.10);white-space:nowrap">Sight X</span><div><div class="eyebrow">ABOUT SIGHTX</div><h1>Connecting people with opportunities.</h1><p>A professional space to discover jobs, build your network, and share useful insights.</p></div></div><div class="card" style="padding:28px;margin-top:18px"><h2 style="margin:0 0 10px;color:var(--ink)">Built for your next step</h2><p style="margin:0;color:var(--muted);line-height:1.8">SIGHTX brings professional discovery and career opportunities together in one place. Explore roles, keep track of opportunities that matter to you, and stay connected with the professional community.</p></div></section>
 <section class="page" id="page-invite">
   <div class="page-heading"><span class="linsightx-heading-badge" aria-label="Sight X" style="position:absolute;top:12px;right:14px;z-index:5;display:inline-flex;align-items:center;justify-content:center;padding:7px 13px;border:1px solid rgba(56,116,210,.22);border-radius:999px;background:linear-gradient(135deg,rgba(222,237,255,.94),rgba(211,246,244,.94));color:#234b86;font:900 13px/1.35 Inter,system-ui,sans-serif;letter-spacing:.04em;box-shadow:0 3px 10px rgba(40,91,150,.10);white-space:nowrap">Sight X</span><div><div class="eyebrow">Grow your circle</div><h1>Invite your people.</h1><p>Bring friends, colleagues, and your professional network to SIGHTX.</p></div></div>
@@ -514,6 +564,7 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
   <button class="nav-btn" type="button" data-post-focus><span class="post-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/></svg></span><span>Post</span></button>
   <button class="nav-btn" type="button" data-page="intel"><span aria-hidden="true">📊</span><span>Insights</span></button>
   <button class="nav-btn" type="button" data-page="invite"><span aria-hidden="true">👥</span><span>Invite</span></button>
+  <button class="nav-btn" type="button" data-page="profile"><span aria-hidden="true">👤</span><span>Profile</span></button>
   <button class="nav-btn mobile-notification-nav" id="mobileNotification" type="button" aria-label="Notifications" title="Notifications"><span class="notification-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-dot"></span></span><span>Notifications</span></button>
 </nav>
 <div id="toast" class="toast" aria-live="polite"></div>
@@ -1133,6 +1184,100 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     event.preventDefault();event.stopImmediatePropagation();
     window.location.href='auth.html?type=employer&v=20261027-role-pages';
   }, true);
+})();
+</script>
+
+
+<script>
+(function setupProfileAndSettings(){
+  const clientReady = () => window.sightxSupabase;
+  const profileForm = document.getElementById('profileSettingsForm');
+  const nameField = document.getElementById('profileFullName');
+  const headlineField = document.getElementById('profileHeadline');
+  const locationField = document.getElementById('profileLocation');
+  const emailField = document.getElementById('profileEmail');
+  const avatar = document.getElementById('profileSettingsAvatar');
+  const saveStatus = document.getElementById('profileSaveStatus');
+  const securityStatus = document.getElementById('securitySettingsStatus');
+  const accountOnly = document.querySelectorAll('.account-user-only');
+  let activeUser = null;
+
+  function setUser(user) {
+    activeUser = user || null;
+    accountOnly.forEach(button => button.hidden = !activeUser);
+    if (!profileForm) return;
+    const meta = activeUser && activeUser.user_metadata || {};
+    nameField.value = meta.full_name || meta.name || '';
+    headlineField.value = meta.headline || '';
+    locationField.value = meta.location || '';
+    emailField.value = activeUser && activeUser.email || '';
+    const initials = (nameField.value || emailField.value || 'LX').trim().split(/\s+/).slice(0,2).map(part => part[0]).join('').toUpperCase();
+    avatar.textContent = initials || 'LX';
+    saveStatus.textContent = activeUser ? '' : 'Sign in to edit your profile.';
+    [nameField,headlineField,locationField].forEach(field => field.disabled = !activeUser);
+    profileForm.querySelector('button[type="submit"]').disabled = !activeUser;
+  }
+  function bind() {
+    const client = clientReady();
+    if (!client) return;
+    client.auth.getSession().then(({data}) => setUser(data && data.session && data.session.user || null)).catch(() => setUser(null));
+    client.auth.onAuthStateChange((_event, session) => setUser(session && session.user || null));
+  }
+  window.addEventListener('sightx-auth-client-ready', bind, {once:true});
+  if (clientReady()) bind();
+
+  document.querySelectorAll('[data-account-page]').forEach(button => button.addEventListener('click', () => {
+    const menu = document.getElementById('accountDropdown');
+    if (menu) menu.hidden = true;
+    document.querySelectorAll('.account-menu-trigger').forEach(trigger => trigger.setAttribute('aria-expanded','false'));
+    if (typeof go === 'function') go(button.dataset.accountPage);
+  }));
+
+  if (profileForm) profileForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    const client = clientReady();
+    if (!client || !activeUser) { saveStatus.textContent = 'Please sign in to save profile details.'; return; }
+    const submit = profileForm.querySelector('button[type="submit"]');
+    saveStatus.textContent = 'Saving…';
+    submit.disabled = true;
+    try {
+      const {error} = await client.auth.updateUser({data:{
+        full_name:nameField.value.trim(),
+        headline:headlineField.value.trim(),
+        location:locationField.value.trim()
+      }});
+      if (error) throw error;
+      saveStatus.textContent = 'Profile saved.';
+      const initials = nameField.value.trim().split(/\s+/).slice(0,2).map(part => part[0]).join('').toUpperCase();
+      avatar.textContent = initials || 'LX';
+    } catch (error) {
+      saveStatus.textContent = error && error.message ? 'Could not save: ' + error.message : 'Could not save profile. Please try again.';
+    } finally { submit.disabled = false; }
+  });
+
+  const emailToggle = document.getElementById('settingEmailUpdates');
+  const inAppToggle = document.getElementById('settingInAppNotifications');
+  try {
+    emailToggle.checked = localStorage.getItem('linsightx_pref_email_updates') === 'true';
+    inAppToggle.checked = localStorage.getItem('linsightx_pref_inapp_notifications') !== 'false';
+  } catch (_) { inAppToggle.checked = true; }
+  emailToggle.addEventListener('change', () => { try { localStorage.setItem('linsightx_pref_email_updates', String(emailToggle.checked)); } catch (_) {} });
+  inAppToggle.addEventListener('change', () => { try { localStorage.setItem('linsightx_pref_inapp_notifications', String(inAppToggle.checked)); } catch (_) {} });
+
+  const resetButton = document.getElementById('requestPasswordReset');
+  if (resetButton) resetButton.addEventListener('click', async () => {
+    const client = clientReady();
+    if (!client || !activeUser || !activeUser.email) { securityStatus.textContent = 'Sign in first to request a password reset.'; return; }
+    resetButton.disabled = true;
+    securityStatus.textContent = 'Sending reset email…';
+    try {
+      const {error} = await client.auth.resetPasswordForEmail(activeUser.email);
+      if (error) throw error;
+      securityStatus.textContent = 'If the email is registered, a password reset email will arrive shortly.';
+    } catch (_) {
+      securityStatus.textContent = 'Could not send the email. Please try again later.';
+    } finally { resetButton.disabled = false; }
+  });
 })();
 </script>
 
