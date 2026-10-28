@@ -1120,7 +1120,6 @@ body[data-account-view="employer"] #page-jobs [data-open-form="apply"],
 body[data-account-view="employer"] #page-jobs [data-live-apply],
 body[data-account-view="employer"] [data-jobs-action="applications"],
 body[data-account-view="applicant"] #postJobCta,
-body[data-account-view="applicant"] .mobile-bottom-nav [data-post-focus],
 body[data-account-view="applicant"] [data-jobs-action="post"],
 body[data-account-view="applicant"] [data-page="post-job"] { display:none!important; }
 </style>
@@ -1143,9 +1142,10 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
       if ('disabled' in el) el.disabled = employer;
     });
     document.querySelectorAll('#postJobCta, .mobile-bottom-nav [data-post-focus], [data-jobs-action="post"], [data-page="post-job"]').forEach(el => {
-      el.hidden = !employer;
-      el.setAttribute('aria-hidden', String(!employer));
-      if ('disabled' in el) el.disabled = !employer;
+      const mobilePost = el.matches('.mobile-bottom-nav [data-post-focus]');
+      el.hidden = mobilePost ? false : !employer;
+      el.setAttribute('aria-hidden', String(mobilePost ? false : !employer));
+      if ('disabled' in el) el.disabled = mobilePost ? false : !employer;
     });
   }
   function init(){
@@ -1173,7 +1173,7 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     const employerOnly = event.target.closest('#postJobCta, .mobile-bottom-nav [data-post-focus], [data-jobs-action="post"], [data-page="post-job"]');
     const applicantOnly = event.target.closest('#jobsApplyCta, #page-jobs .apply-btn, #page-jobs [data-open-form="apply"], #page-jobs [data-live-apply], [data-jobs-action="applications"]');
     const role = document.body.dataset.accountView;
-    if(role === 'applicant' && employerOnly){event.preventDefault();event.stopImmediatePropagation();}
+    if(role === 'applicant' && employerOnly){event.preventDefault();event.stopImmediatePropagation();if(employerOnly.matches('.mobile-bottom-nav [data-post-focus]')){if(typeof window.sightxOpenLoginModal==='function')window.sightxOpenLoginModal('employer');else toast('Please sign in as an employer to post a job.');}}
     if(role === 'employer' && applicantOnly){event.preventDefault();event.stopImmediatePropagation();}
     if(role === 'employer' && employerOnly){
       event.preventDefault();event.stopImmediatePropagation();
