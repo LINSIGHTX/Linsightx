@@ -1176,16 +1176,9 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     if(employerOnly){
       event.preventDefault();
       event.stopImmediatePropagation();
-      if(role === 'employer'){
-        window.location.href='auth.html?type=employer&v=20261027-role-pages';
-      }else if(role === 'applicant'){
-        if(typeof window.sightxOpenLoginModal==='function')window.sightxOpenLoginModal('employer');
-        else if(typeof toast==='function')toast('Choose Employer sign-in to post a job.');
-      }else if(typeof window.sightxOpenLoginModal==='function'){
-        window.sightxOpenLoginModal('employer');
-      }else if(typeof toast==='function'){
-        toast('Choose Employer sign-in to post a job.');
-      }
+      // Always enter the employer authentication route first. Verification is a later step
+      // after sign-in; applicants must not be routed straight into employer verification.
+      window.location.href='auth.html?type=employer&view=postjob&v=20261028-post-flow';
       return;
     }
     if(role === 'employer' && applicantOnly){event.preventDefault();event.stopImmediatePropagation();}
