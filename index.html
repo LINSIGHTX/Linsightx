@@ -1168,7 +1168,7 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
   window.addEventListener('sightx-auth-client-ready', init, {once:true});
   if(window.sightxSupabase) init();
   document.addEventListener('click', function(event){
-    const employerOnly = event.target.closest('#postJobCta, .mobile-bottom-nav [data-post-focus], [data-jobs-action="post"], [data-page="post-job"]');
+    const employerOnly = event.target.closest('#postJobCta, [data-jobs-action="post"], [data-page="post-job"]');
     const applicantOnly = event.target.closest('#jobsApplyCta, #page-jobs .apply-btn, #page-jobs [data-open-form="apply"], #page-jobs [data-live-apply], [data-jobs-action="applications"]');
     const role = document.body.dataset.accountView;
     if(employerOnly){
