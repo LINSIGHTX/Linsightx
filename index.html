@@ -437,6 +437,7 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 @media(hover:none),(max-width:800px){.nav-hover-menu{display:none!important}}
 
 /* Account profile and settings pages */
+.profile-shortcuts{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 0}
 .profile-settings-card{display:grid;grid-template-columns:76px minmax(0,1fr);gap:20px;padding:clamp(18px,3vw,30px);margin-top:18px}
 .profile-settings-avatar{display:grid;place-items:center;width:68px;height:68px;border-radius:22px;background:linear-gradient(135deg,#245bea,#20b8a8);color:#fff;font-size:22px;font-weight:900;box-shadow:0 8px 20px rgba(36,91,234,.18)}
 .profile-settings-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px 14px;min-width:0}
@@ -482,6 +483,7 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 
 <section class="page" id="page-profile">
   <div class="page-heading"><div><div class="eyebrow">Your professional identity</div><h1>My <span>Profile.</span></h1><p>Keep your basic professional details up to date.</p></div></div>
+  <div class="profile-shortcuts" aria-label="Profile shortcuts"><button type="button" class="settings-action" data-page="settings">⚙️ Open Settings</button><button type="button" class="settings-action" data-page="help">❓ Help &amp; Support</button></div>
   <form class="card profile-settings-card" id="profileSettingsForm">
     <div class="profile-settings-avatar" id="profileSettingsAvatar">LX</div>
     <div class="profile-settings-fields">
@@ -565,6 +567,7 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
   <button class="nav-btn" type="button" data-page="intel"><span aria-hidden="true">📊</span><span>Insights</span></button>
   <button class="nav-btn" type="button" data-page="invite"><span aria-hidden="true">👥</span><span>Invite</span></button>
   <button class="nav-btn" type="button" data-page="profile"><span aria-hidden="true">👤</span><span>Profile</span></button>
+  <button class="nav-btn" type="button" data-page="settings"><span aria-hidden="true">⚙️</span><span>Settings</span></button>
   <button class="nav-btn mobile-notification-nav" id="mobileNotification" type="button" aria-label="Notifications" title="Notifications"><span class="notification-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-dot"></span></span><span>Notifications</span></button>
 </nav>
 <div id="toast" class="toast" aria-live="polite"></div>
