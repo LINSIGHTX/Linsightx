@@ -233,7 +233,19 @@
     const run=++sessionRouting;
     session=nextSession||null;user=session&&session.user?session.user:null;
     if(user){
-      // The chosen login path controls dashboard presentation; account metadata must not silently switch a user login to employer view.
+      // If an applicant follows the Post link, do not reuse that applicant session as an employer
+      // session or send them into employer verification. Keep the employer login form visible.
+      let previousView='';
+      try{previousView=sessionStorage.getItem('sightx_session_account_view')||localStorage.getItem('sightx_active_account_view')||'';}catch(_){}
+      const actualType=user.user_metadata&&user.user_metadata.account_type;
+      if(focusedPostJobView&&selectedAccountType==='employer'&&(previousView==='applicant'||actualType==='applicant')){
+        $('roleChoice').classList.add('hidden');
+        $('dashboard').classList.add('hidden');
+        $('mfaLoginChallenge').classList.add('hidden');
+        showAuth('login');
+        notice('authNotice','You are signed in with an applicant account. Sign in with your employer account to post a job.','error');
+        return;
+      }
       const chosenView=admin()?'applicant':(explicitAccountView||selectedAccountType||'applicant');
       try{sessionStorage.setItem('sightx_session_account_view',chosenView);localStorage.setItem('sightx_active_account_view',chosenView);}catch(_){}
     }
