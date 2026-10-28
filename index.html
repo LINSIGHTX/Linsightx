@@ -1162,7 +1162,7 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     client.auth.onAuthStateChange((_event, session) => {
       if(!session || !session.user){ showSignedOutActions(); return; }
       let role = '';
-      try { role = localStorage.getItem('sightx_active_account_view') || ''; } catch (_) {}
+      try { role = sessionStorage.getItem('sightx_session_account_view') || localStorage.getItem('sightx_active_account_view') || ''; } catch (_) {}
       if(!validRole(role)) role = session.user.user_metadata && session.user.user_metadata.account_type;
       if(validRole(role)) applyRole(role);
     });
@@ -1173,12 +1173,21 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     const employerOnly = event.target.closest('#postJobCta, .mobile-bottom-nav [data-post-focus], [data-jobs-action="post"], [data-page="post-job"]');
     const applicantOnly = event.target.closest('#jobsApplyCta, #page-jobs .apply-btn, #page-jobs [data-open-form="apply"], #page-jobs [data-live-apply], [data-jobs-action="applications"]');
     const role = document.body.dataset.accountView;
-    if(role === 'applicant' && employerOnly){event.preventDefault();event.stopImmediatePropagation();if(employerOnly.matches('.mobile-bottom-nav [data-post-focus]')){if(typeof window.sightxOpenLoginModal==='function')window.sightxOpenLoginModal('employer');else toast('Switch to an employer account to post a job.');}}
-    if(role === 'employer' && applicantOnly){event.preventDefault();event.stopImmediatePropagation();}
-    if(role === 'employer' && employerOnly){
-      event.preventDefault();event.stopImmediatePropagation();
-      window.location.href='auth.html?type=employer&v=20261027-role-pages';
+    if(employerOnly){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if(role === 'employer'){
+        window.location.href='auth.html?type=employer&v=20261027-role-pages';
+      }else if(role === 'applicant'){
+        if(typeof toast==='function')toast('You are signed in as an applicant. Sign out, then choose Employer to post a job.');
+      }else if(typeof window.sightxOpenLoginModal==='function'){
+        window.sightxOpenLoginModal('employer');
+      }else if(typeof toast==='function'){
+        toast('Choose Employer sign-in to post a job.');
+      }
+      return;
     }
+    if(role === 'employer' && applicantOnly){event.preventDefault();event.stopImmediatePropagation();}
   }, true);
   document.addEventListener('submit', function(event){
     if(document.body.dataset.accountView !== 'applicant' || !event.target || event.target.id !== 'jobPostingFields') return;
