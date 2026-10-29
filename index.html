@@ -1602,6 +1602,7 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
   emailToggle.addEventListener('change', () => { try { localStorage.setItem('linsightx_pref_email_updates', String(emailToggle.checked)); } catch (_) {} });
   inAppToggle.addEventListener('change', () => { try { localStorage.setItem('linsightx_pref_inapp_notifications', String(inAppToggle.checked)); } catch (_) {} });
 
+  const securityStatus = document.getElementById('securitySettingsStatus');
   const resetButton = document.getElementById('requestPasswordReset');
   if (resetButton) resetButton.addEventListener('click', async () => {
     const client = clientReady();
