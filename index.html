@@ -1675,6 +1675,7 @@ html.sightx-reduce-motion *,html.sightx-reduce-motion *::before,html.sightx-redu
 </style>
 <script id="sightx-settings-reliable-js">
 (function(){
+ 'use strict';
  function openSettings(event){
   if(event){event.preventDefault();event.stopPropagation();}
   var panel=document.getElementById('sidebarSettingsPanel');
@@ -1688,21 +1689,21 @@ html.sightx-reduce-motion *,html.sightx-reduce-motion *::before,html.sightx-redu
   panel.style.setProperty('opacity','1','important');
   var menu=document.getElementById('accountDropdown');
   if(menu)menu.hidden=true;
-  document.querySelectorAll('.account-menu-trigger').forEach(function(t){t.setAttribute('aria-expanded','false');});
+  [document.getElementById('desktopAccountToggle'),document.getElementById('mobileAccountToggle')].filter(Boolean).forEach(function(t){t.setAttribute('aria-expanded','false');});
   document.querySelectorAll('[data-page="settings"]').forEach(function(b){b.classList.add('active');b.setAttribute('aria-expanded','true');});
   page.classList.remove('active');
-  page.style.display='none';
-  try{panel.scrollIntoView({block:'nearest',behavior:'auto'});}catch(e){}
+  page.style.setProperty('display','none','important');
  }
- function bind(){
-  document.addEventListener('click',function(event){
-   var button=event.target&&event.target.closest?event.target.closest('[data-page="settings"],[data-account-page="settings"]'):null;
-   if(!button)return;
-   openSettings(event);
-   event.stopImmediatePropagation();
-  },true);
+ function bindSettingsButtons(){
+  var buttons=document.querySelectorAll('.side-nav [data-page="settings"],[data-account-page="settings"]');
+  buttons.forEach(function(button){
+   if(button.dataset.sightxSettingsBound==='true')return;
+   button.dataset.sightxSettingsBound='true';
+   button.addEventListener('click',openSettings,true);
+  });
  }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});else bind();
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindSettingsButtons,{once:true});else bindSettingsButtons();
+ new MutationObserver(bindSettingsButtons).observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
 </body></html>
