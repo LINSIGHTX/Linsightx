@@ -489,6 +489,39 @@ html[data-initial-account-view="employer"] #page-home > .page-heading{display:no
 html[data-initial-account-view="employer"] #employerHomeDashboard{display:block!important}
 </style>
 <script>(function(){var theme='light';try{var saved=localStorage.getItem('sightx_theme');if(saved==='dark'||saved==='light')theme=saved}catch(_){}document.documentElement.setAttribute('data-theme',theme);var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',theme==='dark'?'#0b1220':'#edf5ff')})();</script><style id="sightx-theme-system">
+
+/* Explicit header override: keep the full navigation bar in the active theme. */
+html[data-theme="dark"] body>header.topbar,
+html[data-theme="dark"] header.topbar,
+html[data-theme="dark"] body>header.top,
+html[data-theme="dark"] header.top{
+ background-color:#121d2e!important;
+ background-image:linear-gradient(110deg,rgba(24,61,66,.30),rgba(18,29,46,.98) 38%,rgba(23,38,58,.98))!important;
+ color:#edf5ff!important;
+ border-bottom:1px solid #2a3a50!important;
+ box-shadow:0 6px 24px rgba(0,0,0,.24)!important;
+}
+html[data-theme="dark"] header.topbar .searchbox,
+html[data-theme="dark"] header.top .searchbox{
+ background:#0b1524!important;border-color:#2a3a50!important;color:#edf5ff!important;
+}
+html[data-theme="dark"] header.topbar .searchbox input,
+html[data-theme="dark"] header.top .searchbox input{
+ background:transparent!important;color:#edf5ff!important;
+}
+html[data-theme="dark"] header.topbar .toplink,
+html[data-theme="dark"] header.top .toplink,
+html[data-theme="dark"] header.topbar .toplinks a,
+html[data-theme="dark"] header.top .toplinks a{
+ color:#c9d7e8!important;
+}
+html[data-theme="dark"] header.topbar .toplink:hover,
+html[data-theme="dark"] header.topbar .toplink.active,
+html[data-theme="dark"] header.top .toplink:hover,
+html[data-theme="dark"] header.top .toplink.active{
+ color:#8ce9dc!important;
+}
+
 /* SIGHTX Aurora: midnight navy, crisp ice text, and a restrained mint signal color. */
 :root[data-theme="dark"]{
  color-scheme:dark;
