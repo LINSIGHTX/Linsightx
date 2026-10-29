@@ -228,9 +228,9 @@
   function showAuth(mode){$('roleChoice').classList.add('hidden');$('authArea').classList.remove('hidden');$('dashboard').classList.add('hidden');const signup=mode==='signup';$('loginForm').classList.toggle('hidden',signup);$('signupForm').classList.toggle('hidden',!signup);$('showLogin').classList.toggle('active',!signup);$('showSignup').classList.toggle('active',signup);$('authHeading').textContent=signup?'Create your SIGHTX account':'Welcome to SIGHTX';$('selectedRoleLabel').textContent=selectedAccountType==='employer'?'Employer account':'Applicant / User account';}
   function showDashboard(){
     $('roleChoice').classList.add('hidden');$('authArea').classList.add('hidden');$('mfaLoginChallenge').classList.add('hidden');$('dashboard').classList.remove('hidden');
-    let accountView=admin()?'admin':(user&&user.user_metadata&&user.user_metadata.account_type)||explicitAccountView||selectedAccountType||'applicant';
-    try{accountView=sessionStorage.getItem('sightx_session_account_view')||accountView;}catch(_){}
-    // Keep the personal applicant profile separate from the employer's company profile.
+    // Use the current login/selected account view, not stale browser storage from a previous session.
+    const accountView=admin()?'admin':(explicitAccountView||selectedAccountType||(user&&user.user_metadata&&user.user_metadata.account_type)||'applicant');
+    // Keep personal applicant details separate from the employer's company profile.
     $('profileSection').classList.toggle('hidden',accountView==='employer'&&!admin());
     $('employerArea').classList.toggle('hidden',accountView!=='employer'&&!admin());
   }
