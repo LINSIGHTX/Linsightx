@@ -488,36 +488,54 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 html[data-initial-account-view="employer"] #page-home > .page-heading{display:none!important}
 html[data-initial-account-view="employer"] #employerHomeDashboard{display:block!important}
 </style>
-<script>(function(){var theme='light';try{var saved=localStorage.getItem('sightx_theme');if(saved==='dark'||saved==='light')theme=saved}catch(_){}document.documentElement.setAttribute('data-theme',theme);var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',theme==='dark'?'#111c2e':'#edf5ff')})();</script><style id="sightx-theme-system">
-/* SIGHTX graphite theme: softer contrast, plum accents, and consistent surfaces. */
+<script>(function(){var theme='light';try{var saved=localStorage.getItem('sightx_theme');if(saved==='dark'||saved==='light')theme=saved}catch(_){}document.documentElement.setAttribute('data-theme',theme);var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',theme==='dark'?'#0b1220':'#edf5ff')})();</script><style id="sightx-theme-system">
+/* SIGHTX Aurora: midnight navy, crisp ice text, and a restrained mint signal color. */
 :root[data-theme="dark"]{
  color-scheme:dark;
- --bg:#171821;--surface:#22232f;--surface-soft:#292a38;--ink:#f2f0f8;--muted:#b7b4c7;--line:#3b3b4c;
- --blue:#b8a0ff;--blue-dark:#d1c2ff;--blue-soft:#39304f;--teal:#7bd8cb;--teal-soft:#24433f;
- --green:#83dfb6;--green-soft:#234338;--purple:#c6adff;--purple-soft:#39304f;
- --shadow:0 8px 26px rgba(0,0,0,.18);--shadow-hover:0 16px 34px rgba(0,0,0,.28)
+ --bg:#0b1220;--surface:#121d2e;--surface-soft:#17263a;--ink:#edf5ff;--muted:#a5b6ca;--line:#2a3a50;
+ --blue:#55d6c2;--blue-dark:#8ce9dc;--blue-soft:#183d42;--teal:#65e4d1;--teal-soft:#183d42;
+ --green:#70e0ae;--green-soft:#173b32;--purple:#a9c8ff;--purple-soft:#233654;
+ --shadow:0 10px 30px rgba(0,0,0,.22);--shadow-hover:0 18px 42px rgba(0,0,0,.32);
+ --card:#121d2e;--bg-soft:#101a2a
 }
-html[data-theme="dark"] body{background:radial-gradient(ellipse at 12% 0%,rgba(126,93,190,.12),transparent 36%),#171821!important;color:#f2f0f8!important}
-html[data-theme="dark"] .topbar,html[data-theme="dark"] .top,html[data-theme="dark"] .account-dropdown,html[data-theme="dark"] .account-modal-panel,html[data-theme="dark"] .account-modal-head{background:#22232f!important;border-color:#3b3b4c!important;color:#f2f0f8!important}
-html[data-theme="dark"] .topbar{box-shadow:0 4px 22px rgba(0,0,0,.2)!important}
-html[data-theme="dark"] .brand,html[data-theme="dark"] .brandmark,html[data-theme="dark"] .mark{color:#f5f0ff!important}
-html[data-theme="dark"] .brandmark,html[data-theme="dark"] .mark{background:linear-gradient(135deg,#7657d6,#438f91)!important}
-html[data-theme="dark"] .card,html[data-theme="dark"] .profile-card,html[data-theme="dark"] .feed-tabs,html[data-theme="dark"] .right-panel,html[data-theme="dark"] .job-card,html[data-theme="dark"] .person-card,html[data-theme="dark"] .workflow-form,html[data-theme="dark"] .profile-settings-card,html[data-theme="dark"] .settings-grid,html[data-theme="dark"] .settings-card,html[data-theme="dark"] .applications-view,html[data-theme="dark"] .invite-panel,html[data-theme="dark"] .account-modal,html[data-theme="dark"] .account-modal-frame,html[data-theme="dark"] .jobs-quick-menu,html[data-theme="dark"] .nav-hover-menu{background:#22232f!important;border-color:#3b3b4c!important;color:#f2f0f8!important}
-html[data-theme="dark"] .searchbox,html[data-theme="dark"] .compose-input,html[data-theme="dark"] .side-nav,html[data-theme="dark"] .insight-item,html[data-theme="dark"] .saved-item,html[data-theme="dark"] .post,html[data-theme="dark"] .profile-settings-avatar,html[data-theme="dark"] .profile-shortcuts,html[data-theme="dark"] .jobs-intro,html[data-theme="dark"] .jobs-tools,html[data-theme="dark"] .jobs-empty-state,html[data-theme="dark"] .network-grid,html[data-theme="dark"] .saved-list,html[data-theme="dark"] .profile-completion-form,html[data-theme="dark"] .profile-form-content,html[data-theme="dark"] .invite-message-wrap,html[data-theme="dark"] .section,html[data-theme="dark"] .list{background:#22232f!important;border-color:#3b3b4c!important;color:#f2f0f8!important}
-html[data-theme="dark"] .page-heading,html[data-theme="dark"] .hero,html[data-theme="dark"] .employer-profile-hero,html[data-theme="dark"] .post-job-dashboard-banner{background:linear-gradient(125deg,#292735,#242d39)!important;border-color:#454052!important;color:#f2f0f8!important;box-shadow:0 12px 30px rgba(0,0,0,.14)!important}
-html[data-theme="dark"] .page-heading h1,html[data-theme="dark"] .page-heading h2,html[data-theme="dark"] .page-heading h3,html[data-theme="dark"] .post-person strong,html[data-theme="dark"] .panel-title h3,html[data-theme="dark"] .jobs-header-row h2,html[data-theme="dark"] .job-title-row h3,html[data-theme="dark"] .profile-info h3,html[data-theme="dark"] .hero h1,html[data-theme="dark"] .hero h2,html[data-theme="dark"] .card h1,html[data-theme="dark"] .card h2,html[data-theme="dark"] .card h3,html[data-theme="dark"] .section h1,html[data-theme="dark"] .section h2,html[data-theme="dark"] .section h3,html[data-theme="dark"] .role-choice strong,html[data-theme="dark"] .post-job-dashboard-banner h1{color:#f4efff!important}
-html[data-theme="dark"] .page-heading p,html[data-theme="dark"] .profile-info p,html[data-theme="dark"] .post-body,html[data-theme="dark"] .trending strong,html[data-theme="dark"] .sub,html[data-theme="dark"] .hero p,html[data-theme="dark"] .role-choice span,html[data-theme="dark"] label,html[data-theme="dark"] .muted,html[data-theme="dark"] .post-job-dashboard-banner p,html[data-theme="dark"] .form-help,html[data-theme="dark"] .status-line{color:#b7b4c7!important}
-html[data-theme="dark"] .toplink,html[data-theme="dark"] .toplinks a,html[data-theme="dark"] .navitem,html[data-theme="dark"] .post-actions button,html[data-theme="dark"] .account-option{color:#d0ccdf!important}
-html[data-theme="dark"] .toplink:hover,html[data-theme="dark"] .toplink.active,html[data-theme="dark"] .navitem:hover,html[data-theme="dark"] .account-option:hover,html[data-theme="dark"] .account-option:focus-visible{background:#39304f!important;color:#e0d5ff!important}
-html[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),html[data-theme="dark"] textarea,html[data-theme="dark"] select,html[data-theme="dark"] .search-field,html[data-theme="dark"] .select-field{background:#191a24!important;border-color:#49495c!important;color:#f2f0f8!important}
-html[data-theme="dark"] input::placeholder,html[data-theme="dark"] textarea::placeholder{color:#9794aa!important}
-html[data-theme="dark"] .role-choice,html[data-theme="dark"] .auth-card,html[data-theme="dark"] .grid>.card,html[data-theme="dark"] .field,html[data-theme="dark"] .form,html[data-theme="dark"] .tabs{color:#f2f0f8}
-html[data-theme="dark"] .btn.primary,html[data-theme="dark"] .apply-btn,html[data-theme="dark"] .jobs-cta,html[data-theme="dark"] .secondary-btn{background:linear-gradient(135deg,#7858d6,#6650b8)!important;border-color:#8e78e3!important;color:#fff!important}
-html[data-theme="dark"] .small-cta,html[data-theme="dark"] .jobs-header-row button,html[data-theme="dark"] .feed-tabs button.active,html[data-theme="dark"] .tabs button.active,html[data-theme="dark"] .save-btn{background:#39304f!important;border-color:#5b4c79!important;color:#e0d5ff!important}
-html[data-theme="dark"] .notice{background:#292a38!important;border-color:#49495c!important;color:#e8e4f3!important}
-html[data-theme="dark"] .theme-toggle{background:#302b3e!important;border-color:#544a69!important;color:#e4d9ff!important;box-shadow:none}
-html[data-theme="dark"] .theme-toggle:hover{background:#403653!important}
-html[data-theme="dark"] .page-heading:after{opacity:.2}
+html[data-theme="dark"] body{
+ background:radial-gradient(ellipse at 8% -8%,rgba(54,190,180,.12),transparent 34%),radial-gradient(ellipse at 100% 0%,rgba(71,119,200,.12),transparent 30%),#0b1220!important;
+ color:#edf5ff!important
+}
+html[data-theme="dark"] .topbar,html[data-theme="dark"] .top,html[data-theme="dark"] .account-dropdown,html[data-theme="dark"] .account-modal-panel,html[data-theme="dark"] .account-modal-head{
+ background:rgba(18,29,46,.96)!important;border-color:#2a3a50!important;color:#edf5ff!important
+}
+html[data-theme="dark"] .topbar{box-shadow:0 5px 24px rgba(0,0,0,.22)!important;backdrop-filter:blur(16px)}
+html[data-theme="dark"] .brand,html[data-theme="dark"] .brandmark,html[data-theme="dark"] .mark{color:#f3fbff!important}
+html[data-theme="dark"] .brandmark,html[data-theme="dark"] .mark{background:linear-gradient(135deg,#27b8ac,#3b6fd1)!important}
+html[data-theme="dark"] .card,html[data-theme="dark"] .profile-card,html[data-theme="dark"] .feed-tabs,html[data-theme="dark"] .right-panel,html[data-theme="dark"] .job-card,html[data-theme="dark"] .person-card,html[data-theme="dark"] .workflow-form,html[data-theme="dark"] .profile-settings-card,html[data-theme="dark"] .settings-grid,html[data-theme="dark"] .settings-card,html[data-theme="dark"] .applications-view,html[data-theme="dark"] .invite-panel,html[data-theme="dark"] .account-modal,html[data-theme="dark"] .account-modal-frame,html[data-theme="dark"] .jobs-quick-menu,html[data-theme="dark"] .nav-hover-menu,html[data-theme="dark"] .auth-card,html[data-theme="dark"] .role-choice,html[data-theme="dark"] .grid>.card,html[data-theme="dark"] .field,html[data-theme="dark"] .form,html[data-theme="dark"] .tabs{
+ background:#121d2e!important;border-color:#2a3a50!important;color:#edf5ff!important;box-shadow:0 8px 26px rgba(0,0,0,.12)
+}
+html[data-theme="dark"] .searchbox,html[data-theme="dark"] .compose-input,html[data-theme="dark"] .side-nav,html[data-theme="dark"] .insight-item,html[data-theme="dark"] .saved-item,html[data-theme="dark"] .post,html[data-theme="dark"] .profile-settings-avatar,html[data-theme="dark"] .profile-shortcuts,html[data-theme="dark"] .jobs-intro,html[data-theme="dark"] .jobs-tools,html[data-theme="dark"] .jobs-empty-state,html[data-theme="dark"] .network-grid,html[data-theme="dark"] .saved-list,html[data-theme="dark"] .profile-completion-form,html[data-theme="dark"] .profile-form-content,html[data-theme="dark"] .invite-message-wrap,html[data-theme="dark"] .section,html[data-theme="dark"] .list{
+ background:#101a2a!important;border-color:#2a3a50!important;color:#edf5ff!important
+}
+html[data-theme="dark"] .page-heading,html[data-theme="dark"] .hero,html[data-theme="dark"] .employer-profile-hero,html[data-theme="dark"] .post-job-dashboard-banner{
+ background:linear-gradient(125deg,#142d3c 0%,#17263e 58%,#1b2944 100%)!important;border:1px solid #2b4a5a!important;color:#f1fbff!important;box-shadow:0 14px 34px rgba(0,0,0,.18)!important
+}
+html[data-theme="dark"] .page-heading h1,html[data-theme="dark"] .page-heading h2,html[data-theme="dark"] .page-heading h3,html[data-theme="dark"] .post-person strong,html[data-theme="dark"] .panel-title h3,html[data-theme="dark"] .jobs-header-row h2,html[data-theme="dark"] .job-title-row h3,html[data-theme="dark"] .profile-info h3,html[data-theme="dark"] .hero h1,html[data-theme="dark"] .hero h2,html[data-theme="dark"] .card h1,html[data-theme="dark"] .card h2,html[data-theme="dark"] .card h3,html[data-theme="dark"] .section h1,html[data-theme="dark"] .section h2,html[data-theme="dark"] .section h3,html[data-theme="dark"] .role-choice strong,html[data-theme="dark"] .post-job-dashboard-banner h1{color:#f1fbff!important}
+html[data-theme="dark"] .page-heading p,html[data-theme="dark"] .profile-info p,html[data-theme="dark"] .post-body,html[data-theme="dark"] .trending strong,html[data-theme="dark"] .sub,html[data-theme="dark"] .hero p,html[data-theme="dark"] .role-choice span,html[data-theme="dark"] label,html[data-theme="dark"] .muted,html[data-theme="dark"] .post-job-dashboard-banner p,html[data-theme="dark"] .form-help,html[data-theme="dark"] .status-line{color:#a5b6ca!important}
+html[data-theme="dark"] .toplink,html[data-theme="dark"] .toplinks a,html[data-theme="dark"] .navitem,html[data-theme="dark"] .post-actions button,html[data-theme="dark"] .account-option{color:#c9d7e8!important}
+html[data-theme="dark"] .toplink:hover,html[data-theme="dark"] .toplink.active,html[data-theme="dark"] .navitem:hover,html[data-theme="dark"] .account-option:hover,html[data-theme="dark"] .account-option:focus-visible{background:#183d42!important;color:#8ce9dc!important}
+html[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),html[data-theme="dark"] textarea,html[data-theme="dark"] select,html[data-theme="dark"] .search-field,html[data-theme="dark"] .select-field{
+ background:#0b1524!important;border-color:#34475e!important;color:#edf5ff!important
+}
+html[data-theme="dark"] input:focus,html[data-theme="dark"] textarea:focus,html[data-theme="dark"] select:focus{outline-color:#55d6c2!important;border-color:#55d6c2!important;box-shadow:0 0 0 3px rgba(85,214,194,.12)!important}
+html[data-theme="dark"] input::placeholder,html[data-theme="dark"] textarea::placeholder{color:#8094ac!important}
+html[data-theme="dark"] .btn.primary,html[data-theme="dark"] .apply-btn,html[data-theme="dark"] .jobs-cta,html[data-theme="dark"] .secondary-btn{
+ background:linear-gradient(135deg,#28b9aa,#238e9d)!important;border-color:#38c9b9!important;color:#071923!important;box-shadow:0 6px 18px rgba(38,185,170,.18)!important
+}
+html[data-theme="dark"] .small-cta,html[data-theme="dark"] .jobs-header-row button,html[data-theme="dark"] .feed-tabs button.active,html[data-theme="dark"] .tabs button.active,html[data-theme="dark"] .save-btn{
+ background:#183d42!important;border-color:#28655f!important;color:#8ce9dc!important
+}
+html[data-theme="dark"] .notice{background:#17263a!important;border-color:#34475e!important;color:#e3efff!important}
+html[data-theme="dark"] .theme-toggle{background:#17263a!important;border-color:#345267!important;color:#8ce9dc!important;box-shadow:none}
+html[data-theme="dark"] .theme-toggle:hover{background:#1b3547!important}
+html[data-theme="dark"] .page-heading:after{opacity:.22}
 .theme-toggle{display:inline-flex;align-items:center;justify-content:center;gap:7px;flex:0 0 auto;min-width:40px;height:38px;padding:0 11px;border:1px solid #dce6f5;border-radius:12px;background:#fff;color:#244b83;font-size:13px;font-weight:800;line-height:1;box-shadow:0 2px 7px rgba(24,50,91,.06);transition:background .18s ease,border-color .18s ease,transform .18s ease}
 .theme-toggle:hover{transform:translateY(-1px);border-color:#9cbcff;background:#f2f6ff}
 .theme-toggle .theme-icon{font-size:17px}
