@@ -2,26 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<script>
-(function(){
-  function restoreApplicantAfterInviteBack(persisted){
-    try{
-      if(sessionStorage.getItem('sightx_applicant_invite_back')!=='1')return;
-      var nav=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
-      if(!persisted&&(!nav||nav.type!=='back_forward'))return;
-      sessionStorage.removeItem('sightx_applicant_invite_back');
-      sessionStorage.removeItem('sightx_return_account_view');
-      sessionStorage.setItem('sightx_session_account_view','applicant');
-      localStorage.setItem('sightx_active_account_view','applicant');
-      window.location.replace('index.html');
-    }catch(_){}
-  }
-  restoreApplicantAfterInviteBack(false);
-  window.addEventListener('pageshow',function(event){
-    if(event.persisted)restoreApplicantAfterInviteBack(true);
-  });
-})();
-</script>
+
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
