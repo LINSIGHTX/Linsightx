@@ -292,7 +292,6 @@
     document.documentElement.classList.toggle('employer-dashboard-view',isEmployerView);
     document.documentElement.classList.toggle('company-profile-only',companyProfileRoute);
     $('accountHeader').classList.toggle('hidden',companyProfileRoute);
-    $('postJobDashboardBanner').classList.toggle('hidden',companyProfileRoute);
     $('profileSection').classList.toggle('hidden',isEmployerView||companyProfileRoute);
     $('employerProfileSection').classList.toggle('hidden',!companyProfileRoute);
     $('employerArea').classList.toggle('hidden',(!isEmployerView&&!admin())||companyProfileRoute);
@@ -624,7 +623,7 @@
     const requestedView=new URLSearchParams(window.location.search).get('view');
     let storedAccountView='';
     try{storedAccountView=sessionStorage.getItem('sightx_session_account_view')||localStorage.getItem('sightx_active_account_view')||'';}catch(_){}
-    const employerRoute=['postjob','employerjobs','employerapplications'].includes(requestedView);
+    const employerRoute=['postjob','employerjobs','employerapplications','companyprofile'].includes(requestedView);
     const accountType=admin()?'admin':(explicitAccountView||(employerRoute?'employer':null)||(user.user_metadata&&user.user_metadata.account_type==='employer'?'employer':null)||selectedAccountType||storedAccountView||'applicant');
     const isEmployer=accountType==='employer';
     document.documentElement.classList.toggle('employer-dashboard-view',isEmployer&&!admin());
@@ -638,8 +637,6 @@
     const focusedCompanyProfile=requestedView==='companyprofile'&&isEmployer;
     document.documentElement.classList.toggle('company-profile-only',focusedCompanyProfile);
     $('accountHeader').classList.toggle('hidden',focusedCompanyProfile);
-    $('postJobDashboardBanner').classList.toggle('hidden',!focusedPostJob||focusedCompanyProfile);
-    $('postJobDashboardBanner').classList.toggle('hidden',!focusedPostJob);
     const focusedEmployerView=isEmployer&&(focusedEmployerJobs||focusedEmployerApplications||focusedPostJob);
     // Dedicated Jobs menu views should show only the requested list, not the general profile/sign-out dashboard.
     const showOpportunities=focusedOpportunities||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
