@@ -148,11 +148,11 @@
       <article class="card"><h2>Company Profile &amp; Verification</h2><p class="sub">Manage your company details and submit them for manual review. Your first job cannot be published until verification is approved.</p>
         <div id="employerStatus"></div>
         <form id="employerForm" class="form">
-          <div class="field"><label for="companyName">Registered company / organization name</label><input id="companyName" name="company_name" maxlength="180" required></div>
-          <div class="field"><label for="companyWebsite">Company website</label><input id="companyWebsite" name="company_website" type="url" placeholder="https://company.example"></div>
-          <div class="field"><label for="companyEmail">Company email</label><input id="companyEmail" name="company_email" type="email" required></div>
-          <div class="field"><label for="businessPhone">Business phone</label><input id="businessPhone" name="business_phone" type="tel" maxlength="40"></div>
-          <div class="field"><label for="businessAddress">Business address</label><input id="businessAddress" name="business_address" maxlength="240"></div>
+          <div class="field"><label for="companyName">Registered company / organization name</label><input id="companyName" name="company_name" autocomplete="organization" maxlength="180" placeholder="Your registered company name" required></div>
+          <div class="field"><label for="companyWebsite">Company website</label><input id="companyWebsite" name="company_website" type="url" autocomplete="url" placeholder="https://company.example"></div>
+          <div class="field"><label for="companyEmail">Company email</label><input id="companyEmail" name="company_email" type="email" autocomplete="work email" placeholder="name@company.com" required></div>
+          <div class="field"><label for="businessPhone">Business phone</label><input id="businessPhone" name="business_phone" type="tel" autocomplete="work tel" maxlength="40" placeholder="Company contact number"></div>
+          <div class="field"><label for="businessAddress">Business address</label><input id="businessAddress" name="business_address" autocomplete="work street-address" maxlength="240" placeholder="Registered business address"></div>
           <div class="field"><label for="registrationDetails">Company registration details (where applicable)</label><input id="registrationDetails" name="registration_details" maxlength="240" placeholder="Registration number / business registry"></div>
           <div class="field"><label for="evidenceNotes">Evidence or context for reviewer</label><textarea id="evidenceNotes" name="evidence_notes" maxlength="1500" placeholder="Describe your role at the company and where its business records can be checked. Do not paste passwords or sensitive personal documents here."></textarea></div>
           <button class="btn primary" type="submit" id="submitEmployer">Submit for verification</button>
@@ -231,7 +231,8 @@
   function showDashboard(){
     $('roleChoice').classList.add('hidden');$('authArea').classList.add('hidden');$('mfaLoginChallenge').classList.add('hidden');$('dashboard').classList.remove('hidden');
     // Use the current login/selected account view, not stale browser storage from a previous session.
-    const accountView=admin()?'admin':(explicitAccountView||selectedAccountType||(user&&user.user_metadata&&user.user_metadata.account_type)||'applicant');
+    const storedView=(()=>{try{return sessionStorage.getItem('sightx_session_account_view')||localStorage.getItem('sightx_active_account_view')||'';}catch(_){return '';}})();
+    const accountView=admin()?'admin':(explicitAccountView||(user&&user.user_metadata&&user.user_metadata.account_type)||selectedAccountType||storedView||'applicant');
     // Keep personal applicant details separate from the employer's company profile.
     $('profileSection').classList.toggle('hidden',accountView==='employer'&&!admin());
     $('employerArea').classList.toggle('hidden',accountView!=='employer'&&!admin());
