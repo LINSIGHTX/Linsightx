@@ -207,6 +207,12 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
       <div class="role-actions"><span id="selectedRoleLabel" class="role-label">Account type</span><button class="btn" type="button" id="changeAccountType">← Change type</button></div>
       <div class="tabs"><button type="button" id="showLogin" class="active">Sign in</button><button type="button" id="showSignup">Create account</button></div>
       <div id="authNotice" class="notice hidden" role="status"></div>
+      <form id="recoveryForm" class="form hidden">
+        <p class="sub">Choose a new password for your SIGHTX account.</p>
+        <div class="field"><label for="recoveryPassword">New password</label><input id="recoveryPassword" type="password" autocomplete="new-password" minlength="10" required><small class="muted">Use at least 10 characters.</small></div>
+        <div class="field"><label for="recoveryPasswordConfirm">Confirm new password</label><input id="recoveryPasswordConfirm" type="password" autocomplete="new-password" minlength="10" required></div>
+        <button class="btn primary" id="saveNewPassword" type="submit">Save new password</button>
+      </form>
       <form id="loginForm" class="form">
         <div class="field"><label for="loginEmail">Email address</label><input id="loginEmail" type="email" autocomplete="email" required></div>
         <div class="field"><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" minlength="8" required></div>
@@ -361,6 +367,7 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
   const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
   const $=id=>document.getElementById(id);
   const pageParams=new URLSearchParams(window.location.search);
+  let recoveryMode=pageParams.get('mode')==='recovery'||new URLSearchParams(window.location.hash.replace(/^#/,'')).get('type')==='recovery';
   const focusedApplicationsView=pageParams.get('view')==='applications';
   const focusedPostJobView=pageParams.get('view')==='postjob';
   const explicitAccountView=pageParams.get('account');
@@ -406,7 +413,8 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     if(focusedApplicationsView||focusedPostJobView){showAuth('login');return;}
     $('roleChoice').classList.remove('hidden');$('authArea').classList.add('hidden');$('dashboard').classList.add('hidden');
   }
-  function showAuth(mode){$('roleChoice').classList.add('hidden');$('authArea').classList.remove('hidden');$('dashboard').classList.add('hidden');const signup=mode==='signup';$('loginForm').classList.toggle('hidden',signup);$('signupForm').classList.toggle('hidden',!signup);$('showLogin').classList.toggle('active',!signup);$('showSignup').classList.toggle('active',signup);$('authHeading').textContent=signup?'Create your SIGHTX account':'Welcome to SIGHTX';$('selectedRoleLabel').textContent=selectedAccountType==='employer'?'Employer account':'Applicant / User account';}
+  function showRecoveryForm(){$('roleChoice').classList.add('hidden');$('authArea').classList.remove('hidden');$('dashboard').classList.add('hidden');$('mfaLoginChallenge').classList.add('hidden');$('loginForm').classList.add('hidden');$('signupForm').classList.add('hidden');$('recoveryForm').classList.remove('hidden');$('showLogin').classList.add('hidden');$('showSignup').classList.add('hidden');$('authHeading').textContent='Set a new password';$('selectedRoleLabel').textContent='Account recovery';}
+  function showAuth(mode){$('recoveryForm').classList.add('hidden');$('showLogin').classList.remove('hidden');$('showSignup').classList.remove('hidden');$('roleChoice').classList.add('hidden');$('authArea').classList.remove('hidden');$('dashboard').classList.add('hidden');const signup=mode==='signup';$('loginForm').classList.toggle('hidden',signup);$('signupForm').classList.toggle('hidden',!signup);$('showLogin').classList.toggle('active',!signup);$('showSignup').classList.toggle('active',signup);$('authHeading').textContent=signup?'Create your SIGHTX account':'Welcome to SIGHTX';$('selectedRoleLabel').textContent=selectedAccountType==='employer'?'Employer account':'Applicant / User account';}
   function showDashboard(){
     $('roleChoice').classList.add('hidden');$('authArea').classList.add('hidden');$('mfaLoginChallenge').classList.add('hidden');$('dashboard').classList.remove('hidden');
     // Match the same account-view resolution used by loadDashboard so the employer
@@ -429,6 +437,7 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
   function loginMfaMessage(message,type=''){notice('mfaLoginNotice',message,type);}
   async function routeSession(nextSession){
     const run=++sessionRouting;
+    if(recoveryMode){session=nextSession||null;user=session&&session.user?session.user:null;showRecoveryForm();return;}
     session=nextSession||null;user=session&&session.user?session.user:null;
     if(user){
       // If an applicant follows the Post link, do not reuse that applicant session as an employer
@@ -873,7 +882,8 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
   $('showSignup').addEventListener('click',()=>{clearNotice('authNotice');showAuth('signup')});
   $('loginForm').addEventListener('submit',async e=>{e.preventDefault();clearNotice('authNotice');const button=e.submitter;button.disabled=true;try{const {data,error}=await client.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});if(error)throw error;await routeSession(data.session);}catch(err){notice('authNotice',friendlyError(err),'error')}finally{button.disabled=false;}});
   $('signupForm').addEventListener('submit',async e=>{e.preventDefault();clearNotice('authNotice');const button=e.submitter;button.disabled=true;try{const {data,error}=await client.auth.signUp({email:$('signupEmail').value.trim(),password:$('signupPassword').value,options:{data:{full_name:$('signupName').value.trim(),account_type:selectedAccountType||'applicant'},emailRedirectTo:window.location.href.split('?')[0]}});if(error)throw error;if(data.session){await routeSession(data.session);}else{notice('authNotice','Account created. Check your email to confirm your address, then return here and sign in.','success');$('signupForm').reset();}}catch(err){notice('authNotice',friendlyError(err),'error')}finally{button.disabled=false;}});
-  $('resetPassword').addEventListener('click',async()=>{const email=$('loginEmail').value.trim();if(!email){notice('authNotice','Enter your email address first.');return;}try{const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:window.location.href.split('?')[0]});if(error)throw error;notice('authNotice','If that address has an account, a password-reset email will be sent.','success');}catch(err){notice('authNotice',friendlyError(err),'error')}});
+  $('resetPassword').addEventListener('click',async()=>{const email=$('loginEmail').value.trim();if(!email){notice('authNotice','Enter your email address first.');return;}try{const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+window.location.pathname+'?mode=recovery'});if(error)throw error;notice('authNotice','If that address has an account, a password-reset email will be sent.','success');}catch(err){notice('authNotice',friendlyError(err),'error')}});
+  $('recoveryForm').addEventListener('submit',async e=>{e.preventDefault();clearNotice('authNotice');const password=$('recoveryPassword').value;const confirm=$('recoveryPasswordConfirm').value;if(password.length<10){notice('authNotice','Your new password must be at least 10 characters.','error');return;}if(password!==confirm){notice('authNotice','The passwords do not match.','error');return;}const button=$('saveNewPassword');button.disabled=true;try{const {error}=await client.auth.updateUser({password});if(error)throw error;recoveryMode=false;history.replaceState({},'',window.location.pathname);$('recoveryForm').reset();showAuth('login');notice('authNotice','Your password has been updated. You can now sign in with your new password.','success');}catch(err){notice('authNotice',friendlyError(err),'error');}finally{button.disabled=false;}});
   $('signOut').addEventListener('click',async()=>{await client.auth.signOut();session=null;user=null;employer=null;showAuth('login');notice('authNotice','You have signed out.','success');});
   $('employerProfileDetailsForm').addEventListener('submit',async e=>{
     e.preventDefault();
