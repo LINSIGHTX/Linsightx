@@ -209,7 +209,7 @@
   const focusedPostJobView=pageParams.get('view')==='postjob';
   const explicitAccountView=pageParams.get('account');
   if(pageParams.get('embed')==='1')document.body.classList.add('embed-mode');
-  let session=null,user=null,employer=null,mfaPendingFactorId=null,sessionRouting=0,currentApplicationJob=null,selectedAccountType=['applicant','employer'].includes(explicitAccountView)?explicitAccountView:pageParams.get('type');
+  let session=null,user=null,employer=null,mfaPendingFactorId=null,sessionRouting=0,currentApplicationJob=null,employerFormTouched=false,selectedAccountType=['applicant','employer'].includes(explicitAccountView)?explicitAccountView:pageParams.get('type');
   if(!['applicant','employer'].includes(selectedAccountType))selectedAccountType=null;
   if(explicitAccountView==='applicant'){try{sessionStorage.setItem('sightx_session_account_view','applicant');localStorage.setItem('sightx_active_account_view','applicant');}catch(_){}}
 
@@ -220,7 +220,7 @@
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const notice=(id,message,type='')=>{const el=$(id);el.textContent=message;el.className='notice'+(type?' '+type:'');el.classList.remove('hidden');};
   // Keep browser-saved personal contact details from autofilling company fields. Fields become editable on focus.
-  ['companyName','companyWebsite','companyEmail','businessPhone','businessAddress','registrationDetails','evidenceNotes'].forEach(id=>{const field=$(id);field.addEventListener('focus',()=>field.removeAttribute('readonly'),{once:true});});
+  const employerForm=$('employerForm');employerForm.addEventListener('pointerdown',()=>{employerFormTouched=true;});employerForm.addEventListener('keydown',()=>{employerFormTouched=true;});['companyName','companyWebsite','companyEmail','businessPhone','businessAddress','registrationDetails','evidenceNotes'].forEach(id=>{const field=$(id);field.addEventListener('focus',()=>field.removeAttribute('readonly'),{once:true});});
   const clearNotice=id=>{const el=$(id);el.textContent='';el.className='notice hidden';};
   const statusBadge=status=>'<span class="badge '+escapeHtml(String(status||'').toLowerCase())+'">'+escapeHtml(String(status||'pending').replaceAll('_',' '))+'</span>';
   const friendlyError=error=>{const m=error&&error.message?error.message:'Something went wrong. Please try again.';return m.length>260?m.slice(0,260)+'…':m;};
@@ -471,12 +471,15 @@
     const status=$('employerStatus'),form=$('employerForm'),post=$('jobForm'),lock=$('postJobLock');
     if(!employer){status.innerHTML='<div class="notice">No employer application submitted yet.</div>';form.classList.remove('hidden');form.reset();post.classList.add('hidden');lock.classList.remove('hidden');lock.textContent='Complete employer verification first. Your employer status will appear here.';return;}
     status.innerHTML='<div class="status-line"><strong>Status:</strong> '+statusBadge(employer.verification_status)+'</div>'+(employer.review_notes?'<p class="meta">Reviewer note: '+escapeHtml(employer.review_notes)+'</p>':'')+'<p class="meta">Submitted '+escapeHtml(new Date(employer.created_at).toLocaleDateString())+'.</p>';
-    // Populate the employer form only from the employer record. If personal applicant
-    // details were accidentally copied into company fields, leave those fields blank so
-    // the employer can enter the correct company information. The user profile is untouched.
-    // Employer fields must display the saved employer record exactly as stored. Never blank company data merely because it resembles personal profile data.
+    // The employer table is the only source for these fields. Some browsers apply saved
+    // personal autofill after the initial render, so re-apply the saved company values briefly
+    // after load unless the user has started interacting with this form. Never touch profile data.
     const companyValues=[employer.company_name,employer.company_website,employer.company_email,employer.business_phone,employer.business_address,employer.registration_details,employer.evidence_notes];
-    ['companyName','companyWebsite','companyEmail','businessPhone','businessAddress','registrationDetails','evidenceNotes'].forEach((id,i)=>$(id).value=companyValues[i]||'');    const canEdit=['pending','rejected'].includes(employer.verification_status);
+    const companyFieldIds=['companyName','companyWebsite','companyEmail','businessPhone','businessAddress','registrationDetails','evidenceNotes'];
+    employerFormTouched=false;
+    const applySavedCompanyValues=()=>{if(employerFormTouched)return;companyFieldIds.forEach((id,i)=>{$(id).value=companyValues[i]||'';});};
+    applySavedCompanyValues();requestAnimationFrame(applySavedCompanyValues);setTimeout(applySavedCompanyValues,300);setTimeout(applySavedCompanyValues,1200);
+    const canEdit=['pending','rejected'].includes(employer.verification_status);
     form.classList.toggle('hidden',!canEdit);
     $('submitEmployer').textContent=employer.verification_status==='rejected'?'Update and resubmit':'Submit for verification';
     const verified=employer.verification_status==='verified';
