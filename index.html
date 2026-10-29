@@ -99,7 +99,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .sidebar-settings-panel .settings-card p{font-size:11px;line-height:1.45;margin:0 0 8px}
 .sidebar-settings-panel .setting-toggle{font-size:11px;gap:8px;padding:5px 0}
 .sidebar-settings-panel .settings-action{font-size:11px;padding:7px 9px}
-#page-settings{display:none!important}
+
 html[data-theme="dark"] .sidebar-settings-panel{background:#101c2c;border-color:#30435a}
 html[data-theme="dark"] .sidebar-settings-panel .settings-card{background:#142235;border-color:#30435a}
 html[data-theme="dark"] .sidebar-settings-panel .settings-card h2{color:#e7f0ff}
@@ -1682,23 +1682,22 @@ html.sightx-reduce-motion *,html.sightx-reduce-motion *::before,html.sightx-redu
   event.preventDefault();
   event.stopPropagation();
   event.stopImmediatePropagation();
-  var panel=document.getElementById('sidebarSettingsPanel');
   var page=document.getElementById('page-settings');
-  if(!panel||!page)return;
-  var grid=page.querySelector('.settings-grid')||panel.querySelector('.settings-grid');
-  if(grid&&!panel.contains(grid))panel.appendChild(grid);
-  panel.hidden=false;
-  panel.style.setProperty('display','block','important');
-  panel.style.setProperty('visibility','visible','important');
-  panel.style.setProperty('opacity','1','important');
+  var panel=document.getElementById('sidebarSettingsPanel');
+  if(!page)return;
+  if(panel){panel.hidden=true;panel.style.removeProperty('display');}
+  document.querySelectorAll('.page').forEach(function(p){p.classList.toggle('active',p===page);p.style.removeProperty('display');});
+  document.querySelectorAll('.navitem,.toplink,.mobile-bottom-nav .nav-btn').forEach(function(b){
+   var active=b.dataset.page==='settings';
+   b.classList.toggle('active',active);
+   if(b.dataset.page==='settings')b.setAttribute('aria-expanded','false');
+  });
   var menu=document.getElementById('accountDropdown');
   if(menu)menu.hidden=true;
   [document.getElementById('desktopAccountToggle'),document.getElementById('mobileAccountToggle')].filter(Boolean).forEach(function(t){t.setAttribute('aria-expanded','false');});
-  document.querySelectorAll('[data-page="settings"]').forEach(function(b){b.classList.add('active');b.setAttribute('aria-expanded','true');});
-  page.classList.remove('active');
-  page.style.setProperty('display','none','important');
+  try{history.replaceState(null,'','#settings');}catch(e){}
+  page.scrollIntoView({block:'start',behavior:'auto'});
  }
- /* Window capture runs before the legacy document-level capture handlers. */
  window.addEventListener('click',openSettings,true);
 })();
 </script>
