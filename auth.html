@@ -51,6 +51,8 @@
   </script>
   <style>
     html.applications-view #roleChoice { display: none !important; }
+    html.employer-dashboard-view #profileSection { display: none !important; }
+    html.employer-dashboard-view #employerArea { display: grid !important; }
     html.applications-view .hero { display: none !important; }
   </style>
 </head>
@@ -535,9 +537,13 @@
     $('welcomeTitle').textContent='Welcome, '+((user.user_metadata&&user.user_metadata.full_name)||user.email||'SIGHTX member');
     $('welcomeMeta').textContent=user.email+(admin()?' · SIGHTX administrator':'');
     // Account type controls presentation only; employer/admin permissions remain enforced by database policies.
-    const accountType=admin()?'admin':(explicitAccountView||selectedAccountType||'applicant');
-    const isEmployer=accountType==='employer';
     const requestedView=new URLSearchParams(window.location.search).get('view');
+    let storedAccountView='';
+    try{storedAccountView=sessionStorage.getItem('sightx_session_account_view')||localStorage.getItem('sightx_active_account_view')||'';}catch(_){}
+    const employerRoute=['postjob','employerjobs','employerapplications'].includes(requestedView);
+    const accountType=admin()?'admin':(explicitAccountView||(employerRoute?'employer':null)||(user.user_metadata&&user.user_metadata.account_type==='employer'?'employer':null)||selectedAccountType||storedAccountView||'applicant');
+    const isEmployer=accountType==='employer';
+    document.documentElement.classList.toggle('employer-dashboard-view',isEmployer&&!admin());
     const opportunitiesSection=$('publicJobs').closest('.section');
     const applicationsSection=$('myApplicationsSection');
     const focusedApplications=requestedView==='applications';
