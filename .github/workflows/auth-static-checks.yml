@@ -139,9 +139,10 @@ jobs:
             "data-live-apply",
             "client.auth.getSession()",
             "client.storage.from('resumes').upload",
-            "client.storage.from('resumes').remove([uploadedPath])",
             "client.from('sightx_applications').insert",
             'applicant_phone:mobile',
+            'applicant_profile:profileSnapshot',
+            'meta.resume_path',
             "file.size>5*1024*1024"
           ];
           const missingApplicationMarkers = applicationMarkers.filter(text => !homepage.includes(text));
