@@ -474,7 +474,7 @@
     // the employer can enter the correct company information. The user profile is untouched.
     const personalName=String($('profileFullName').value||'').trim().toLocaleLowerCase();
     const personalEmail=String(user.email||'').trim().toLocaleLowerCase();
-    const personalPhone=String($('profilePhone').value||'').replace(/\\D/g,'');
+    const personalPhone=String($('profilePhone').value||'').replace(/\D/g,'');
     const companyValues=[employer.company_name,employer.company_website,employer.company_email,employer.business_phone,employer.business_address,employer.registration_details,employer.evidence_notes];
     let clearedPersonalDetails=false;
     if(String(companyValues[0]||'').trim().toLocaleLowerCase()===personalName&&personalName){companyValues[0]='';clearedPersonalDetails=true;}
@@ -644,8 +644,10 @@
     $('myJobs').innerHTML='<div class="empty">Loading your job listings…</div>';
     $('employerApplications').innerHTML='<div class="empty">Loading applications to your jobs…</div>';
     try{
-      // Profile and employer verification are independent; fetch them together to avoid serial network waits.
-      await Promise.all([loadProfile(),loadEmployer()]);if(routingRun!==sessionRouting)return;
+      // Employer duplicate checks depend on the personal profile values, so load the profile first.
+      // Keep the user profile logic unchanged; loadEmployer still reads/writes only sightx_employers.
+      await loadProfile();if(routingRun!==sessionRouting)return;
+      await loadEmployer();if(routingRun!==sessionRouting)return;
       // Reveal the correctly role-gated dashboard before the slower job/application lists finish loading.
       showDashboard();
       await Promise.all([loadMyJobs(),loadEmployerApplications(),loadPublicJobs(),loadMyApplications(),...(admin()?[refreshMfaStatus()]:[])]);
