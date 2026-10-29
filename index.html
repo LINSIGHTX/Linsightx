@@ -1308,6 +1308,18 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
       window.location.href='auth.html?type=employer&view=companyprofile&v=20261029-employer-profile';
       return;
     }
+    // Let applicants toggle My Profile closed by tapping the active navigation item again.
+    if(profileNav && !isEmployerView && document.getElementById('page-profile')?.classList.contains('active')){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if(typeof window.go === 'function') window.go('home');
+      else {
+        document.querySelectorAll('.page').forEach(page=>page.classList.toggle('active',page.id==='page-home'));
+        document.querySelectorAll('.navitem').forEach(button=>button.classList.toggle('active',button.dataset.page==='home'));
+        try { history.replaceState(null,'','#home'); } catch (_) {}
+      }
+      return;
+    }
     const role = document.body.dataset.accountView;
     if(employerOnly){
       event.preventDefault();
