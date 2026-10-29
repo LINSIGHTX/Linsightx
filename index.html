@@ -681,9 +681,11 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
 <section class="page" id="page-settings">
   <div class="page-heading"><div><div class="eyebrow">Your account, your choice</div><h1>Settings.</h1><p>Manage your preferences and account security.</p></div></div>
   <div class="settings-grid">
-    <section class="card settings-card"><span class="settings-icon">🔔</span><div><h2>Notifications</h2><p>These notification controls are saved as preferences on this device.</p><label class="setting-toggle"><span>Email updates preference</span><input id="settingEmailUpdates" type="checkbox"></label><label class="setting-toggle"><span>In-app notifications preference</span><input id="settingInAppNotifications" type="checkbox"></label></div></section>
+    <section class="card settings-card"><span class="settings-icon">🎨</span><div><h2>Appearance &amp; accessibility</h2><p>Adjust the layout and motion to make SIGHTX more comfortable to use.</p><label class="setting-toggle"><span>Compact layout</span><input id="settingCompactLayout" type="checkbox"></label><label class="setting-toggle"><span>Reduce animations</span><input id="settingReduceMotion" type="checkbox"></label></div></section>
+    <section class="card settings-card"><span class="settings-icon">📰</span><div><h2>Feed preferences</h2><p>Choose whether SIGHTX should remember your notification preferences on this browser.</p><label class="setting-toggle"><span>Email updates</span><input id="settingEmailUpdates" type="checkbox"></label><label class="setting-toggle"><span>In-app notifications</span><input id="settingInAppNotifications" type="checkbox"></label></div></section>
     <section class="card settings-card"><span class="settings-icon">🔐</span><div><h2>Password &amp; security</h2><p>Request a password reset email for your signed-in account.</p><button class="settings-action" id="requestPasswordReset" type="button">Send password reset email</button><span id="securitySettingsStatus" role="status" aria-live="polite"></span></div></section>
     <section class="card settings-card"><span class="settings-icon">🛡️</span><div><h2>Privacy</h2><p>Keep your account details accurate and never share your password or verification codes.</p></div></section>
+    <section class="card settings-card"><span class="settings-icon">🧹</span><div><h2>Reset preferences</h2><p>Restore layout, motion, and notification choices to their default values on this browser.</p><button class="settings-action" id="resetSettingsPreferences" type="button">Reset preferences</button><span id="settingsPreferencesStatus" role="status" aria-live="polite"></span></div></section>
     <section class="card settings-card"><span class="settings-icon">💬</span><div><h2>Help &amp; Support</h2><p>Need help with sign-in, job listings, or employer verification?</p><a class="settings-action" href="mailto:support@linsightx.com?subject=Linsight%20X%20support">Contact support</a></div></section>
   </div>
 </section>
@@ -1671,6 +1673,28 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindSettingsDropdown,{once:true});else bindSettingsDropdown();
 })();
 </script>
+<script id="sightx-settings-preferences">
+(function(){
+ var defaults={settingCompactLayout:false,settingReduceMotion:false,settingEmailUpdates:true,settingInAppNotifications:true};
+ var keyPrefix='sightx_preference_';
+ function apply(id,value){
+  if(id==='settingCompactLayout')document.documentElement.classList.toggle('sightx-compact-layout',!!value);
+  if(id==='settingReduceMotion')document.documentElement.classList.toggle('sightx-reduce-motion',!!value);
+ }
+ function save(id,value){try{localStorage.setItem(keyPrefix+id,value?'1':'0')}catch(e){}apply(id,value);}
+ function init(){
+  Object.keys(defaults).forEach(function(id){var el=document.getElementById(id);if(!el)return;var stored=null;try{stored=localStorage.getItem(keyPrefix+id)}catch(e){}var value=stored===null?defaults[id]:stored==='1';el.checked=value;apply(id,value);el.addEventListener('change',function(){save(id,el.checked);var status=document.getElementById('settingsPreferencesStatus');if(status)status.textContent='Preferences saved on this browser.';});});
+  var reset=document.getElementById('resetSettingsPreferences');if(reset)reset.addEventListener('click',function(){Object.keys(defaults).forEach(function(id){var el=document.getElementById(id);if(el){el.checked=defaults[id];save(id,defaults[id]);}});var status=document.getElementById('settingsPreferencesStatus');if(status)status.textContent='Preferences reset to defaults.';});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
+<style id="sightx-settings-preference-styles">
+html.sightx-compact-layout .card{padding-top:12px!important;padding-bottom:12px!important}
+html.sightx-compact-layout .settings-grid{gap:8px!important}
+html.sightx-compact-layout .post{margin-bottom:10px!important}
+html.sightx-reduce-motion *,html.sightx-reduce-motion *::before,html.sightx-reduce-motion *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+</style>
 </body></html>
 
 
