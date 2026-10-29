@@ -209,7 +209,7 @@
   const focusedPostJobView=pageParams.get('view')==='postjob';
   const explicitAccountView=pageParams.get('account');
   if(pageParams.get('embed')==='1')document.body.classList.add('embed-mode');
-  let session=null,user=null,employer=null,mfaPendingFactorId=null,sessionRouting=0,currentApplicationJob=null,employerFormTouched=false,selectedAccountType=['applicant','employer'].includes(explicitAccountView)?explicitAccountView:pageParams.get('type');
+  let session=null,user=null,employer=null,mfaPendingFactorId=null,sessionRouting=0,employerLoadVersion=0,currentApplicationJob=null,selectedAccountType=['applicant','employer'].includes(explicitAccountView)?explicitAccountView:pageParams.get('type');
   if(!['applicant','employer'].includes(selectedAccountType))selectedAccountType=null;
   if(explicitAccountView==='applicant'){try{sessionStorage.setItem('sightx_session_account_view','applicant');localStorage.setItem('sightx_active_account_view','applicant');}catch(_){}}
 
@@ -219,8 +219,29 @@
   const admin=()=>!!(user&&user.app_metadata&&user.app_metadata.role==='admin');
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const notice=(id,message,type='')=>{const el=$(id);el.textContent=message;el.className='notice'+(type?' '+type:'');el.classList.remove('hidden');};
-  // Keep browser-saved personal contact details from autofilling company fields. Fields become editable on focus.
-  const employerForm=$('employerForm');employerForm.addEventListener('pointerdown',()=>{employerFormTouched=true;});employerForm.addEventListener('keydown',()=>{employerFormTouched=true;});['companyName','companyWebsite','companyEmail','businessPhone','businessAddress','registrationDetails','evidenceNotes'].forEach(id=>{const field=$(id);field.addEventListener('focus',()=>field.removeAttribute('readonly'),{once:true});});
+  // Keep employer fields tied to the employer record, even if browser autofill runs on focus.
+  // Only stop restoring an individual field after the user actually begins editing that field.
+  const employerForm=$('employerForm');
+  const employerFieldColumns={companyName:'company_name',companyWebsite:'company_website',companyEmail:'company_email',businessPhone:'business_phone',businessAddress:'business_address',registrationDetails:'registration_details',evidenceNotes:'evidence_notes'};
+  const employerEditedFields=new Set();
+  Object.entries(employerFieldColumns).forEach(([id,column])=>{
+    const field=$(id);
+    const markEdited=()=>employerEditedFields.add(id);
+    field.addEventListener('beforeinput',markEdited);
+    field.addEventListener('paste',markEdited);
+    field.addEventListener('cut',markEdited);
+    field.addEventListener('drop',markEdited);
+    field.addEventListener('focus',()=>{
+      field.removeAttribute('readonly');
+      const focusVersion=employerLoadVersion;
+      const focusUserId=user&&user.id;
+      const restore=()=>{
+        if(focusVersion!==employerLoadVersion||!user||user.id!==focusUserId||employerEditedFields.has(id)||!employer||employer.owner_id!==focusUserId)return;
+        field.value=employer[column]||'';
+      };
+      restore();requestAnimationFrame(restore);setTimeout(restore,300);setTimeout(restore,1200);
+    },{once:true});
+  });
   const clearNotice=id=>{const el=$(id);el.textContent='';el.className='notice hidden';};
   const statusBadge=status=>'<span class="badge '+escapeHtml(String(status||'').toLowerCase())+'">'+escapeHtml(String(status||'pending').replaceAll('_',' '))+'</span>';
   const friendlyError=error=>{const m=error&&error.message?error.message:'Something went wrong. Please try again.';return m.length>260?m.slice(0,260)+'…':m;};
@@ -466,18 +487,25 @@
     finally{button.disabled=false;}
   }
   async function loadEmployer(){
-    const {data,error}=await client.from('sightx_employers').select('*').eq('owner_id',user.id).maybeSingle();
-    if(error)throw error;employer=data;
+    if(!user)return;
+    const loadVersion=++employerLoadVersion;
+    const loadUserId=user.id;
+    const {data,error}=await client.from('sightx_employers').select('*').eq('owner_id',loadUserId).maybeSingle();
+    if(error)throw error;
+    if(loadVersion!==employerLoadVersion||!user||user.id!==loadUserId)return;
+    employer=data;
     const status=$('employerStatus'),form=$('employerForm'),post=$('jobForm'),lock=$('postJobLock');
-    if(!employer){status.innerHTML='<div class="notice">No employer application submitted yet.</div>';form.classList.remove('hidden');form.reset();post.classList.add('hidden');lock.classList.remove('hidden');lock.textContent='Complete employer verification first. Your employer status will appear here.';return;}
+    if(!employer){employerEditedFields.clear();status.innerHTML='<div class="notice">No employer application submitted yet.</div>';form.classList.remove('hidden');form.reset();post.classList.add('hidden');lock.classList.remove('hidden');lock.textContent='Complete employer verification first. Your employer status will appear here.';return;}
     status.innerHTML='<div class="status-line"><strong>Status:</strong> '+statusBadge(employer.verification_status)+'</div>'+(employer.review_notes?'<p class="meta">Reviewer note: '+escapeHtml(employer.review_notes)+'</p>':'')+'<p class="meta">Submitted '+escapeHtml(new Date(employer.created_at).toLocaleDateString())+'.</p>';
-    // The employer table is the only source for these fields. Some browsers apply saved
-    // personal autofill after the initial render, so re-apply the saved company values briefly
-    // after load unless the user has started interacting with this form. Never touch profile data.
+    // The employer table is the only source for these fields. Restore each field independently
+    // so an autofill or interaction with one field cannot prevent the others being corrected.
     const companyValues=[employer.company_name,employer.company_website,employer.company_email,employer.business_phone,employer.business_address,employer.registration_details,employer.evidence_notes];
-    const companyFieldIds=['companyName','companyWebsite','companyEmail','businessPhone','businessAddress','registrationDetails','evidenceNotes'];
-    employerFormTouched=false;
-    const applySavedCompanyValues=()=>{if(employerFormTouched)return;companyFieldIds.forEach((id,i)=>{$(id).value=companyValues[i]||'';});};
+    const companyFieldIds=Object.keys(employerFieldColumns);
+    employerEditedFields.clear();
+    const applySavedCompanyValues=()=>{
+      if(loadVersion!==employerLoadVersion||!user||user.id!==loadUserId||!employer||employer.owner_id!==loadUserId)return;
+      companyFieldIds.forEach((id,i)=>{if(!employerEditedFields.has(id))$(id).value=companyValues[i]||'';});
+    };
     applySavedCompanyValues();requestAnimationFrame(applySavedCompanyValues);setTimeout(applySavedCompanyValues,300);setTimeout(applySavedCompanyValues,1200);
     const canEdit=['pending','rejected'].includes(employer.verification_status);
     form.classList.toggle('hidden',!canEdit);
