@@ -1263,15 +1263,22 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
   document.addEventListener('click', function(event){
     const employerOnly = event.target.closest('#postJobCta, [data-jobs-action="post"], [data-page="post-job"]');
     const applicantOnly = event.target.closest('#jobsApplyCta, #page-jobs .apply-btn, #page-jobs [data-open-form="apply"], #page-jobs [data-live-apply], [data-jobs-action="applications"]');
-    const role = document.body.dataset.accountView;
     const profileNav = event.target.closest('[data-page="profile"]');
-    if(role === 'employer' && profileNav){
+    let selectedRole = '';
+    try { selectedRole = sessionStorage.getItem('sightx_session_account_view') || localStorage.getItem('sightx_active_account_view') || ''; } catch (_) {}
+    const employerHome = document.getElementById('employerHomeDashboard');
+    const isEmployerView = selectedRole === 'employer'
+      || document.body.dataset.accountView === 'employer'
+      || !!(profileNav && /Company Profile/i.test(profileNav.textContent))
+      || !!(employerHome && !employerHome.hidden && !employerHome.classList.contains('hidden'));
+    if(isEmployerView && profileNav){
       event.preventDefault();
       event.stopImmediatePropagation();
       try { sessionStorage.setItem('sightx_session_account_view','employer'); localStorage.setItem('sightx_active_account_view','employer'); } catch (_) {}
       window.location.href='auth.html?type=employer&view=verification&v=20261029-employer-profile-nav';
       return;
     }
+    const role = document.body.dataset.accountView;
     if(employerOnly){
       event.preventDefault();
       event.stopImmediatePropagation();
