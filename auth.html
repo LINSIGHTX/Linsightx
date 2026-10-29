@@ -56,9 +56,17 @@
   </script>
   <style>
     html.applications-view #roleChoice { display: none !important; }
+    html.applications-view .hero { display: none !important; }
+    /* The dedicated My Applications route must not show profile or account/sign-out controls. */
+    html.applications-view #accountHeader,
+    html.applications-view #profileSection,
+    html.applications-view #accountSecurity,
+    html.applications-view #employerProfileSection,
+    html.applications-view #employerArea,
+    html.applications-view #applicationComposer { display: none !important; }
+    html.applications-view #myApplicationsSection { display: block !important; }
     html.employer-dashboard-view #profileSection { display: none !important; }
     html.employer-dashboard-view #employerArea { display: grid !important; }
-    html.applications-view .hero { display: none !important; }
   </style>
 </head>
 <body>
