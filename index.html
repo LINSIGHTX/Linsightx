@@ -621,7 +621,7 @@ document.getElementById('mobileMenu').addEventListener('click',()=>document.getE
  let profileName='',hoverCloseTimer,currentAccountUser=null;
  function close(){menu.hidden=true;triggers.forEach(t=>t.setAttribute('aria-expanded','false'));}
  function open(trigger){const rect=trigger.getBoundingClientRect();menu.hidden=false;triggers.forEach(t=>t.setAttribute('aria-expanded',String(t===trigger)));const width=Math.max(210,menu.offsetWidth);const left=Math.min(Math.max(8,rect.left),window.innerWidth-width-8);menu.style.left=left+'px';menu.style.top=Math.min(rect.bottom+8,window.innerHeight-menu.offsetHeight-8)+'px';}
- function resolveAccountView(user){let storedRole="";try{storedRole=sessionStorage.getItem("sightx_session_account_view")||localStorage.getItem("sightx_active_account_view")||"";}catch(_){}const metadataRole=user&&user.user_metadata&&user.user_metadata.account_type;const role=metadataRole==="employer"||metadataRole==="applicant"?metadataRole:(storedRole==="employer"||storedRole==="applicant"?storedRole:"applicant");if(user){try{sessionStorage.setItem("sightx_session_account_view",role);localStorage.setItem("sightx_active_account_view",role);}catch(_){}}return role;}function renderRoleNavigation(user){const topbar=document.querySelector(".topbar");const role=resolveAccountView(user);if(topbar)topbar.dataset.accountView=user?role:"";if(user)document.body.dataset.accountView=role;}document.querySelectorAll("[data-nav-target]").forEach(button=>button.addEventListener("click",()=>{const target=button.dataset.navTarget;if(target==="jobs"){go("jobs");return;}if(target==="saved"){go("saved");return;}if(target==="applications"){window.location.href="auth.html?type=applicant&view=applications&v=20261027-role-nav";return;}if(target==="post"){window.location.href="auth.html?type=employer&view=postjob&v=20261027-role-nav";return;}if(target==="myjobs"){window.location.href="auth.html?type=employer&view=employerjobs&v=20261027-role-nav";return;}if(target==="employerapplications"){window.location.href="auth.html?type=employer&view=employerapplications&v=20261027-role-nav";return;}}));
+ function resolveAccountView(user){let storedRole="";try{storedRole=sessionStorage.getItem("sightx_session_account_view")||localStorage.getItem("sightx_active_account_view")||"";}catch(_){}const metadataRole=user&&user.user_metadata&&user.user_metadata.account_type;const role=storedRole==="employer"||storedRole==="applicant"?storedRole:(metadataRole==="employer"||metadataRole==="applicant"?metadataRole:"applicant");if(user){try{sessionStorage.setItem("sightx_session_account_view",role);localStorage.setItem("sightx_active_account_view",role);}catch(_){}}return role;}function renderRoleNavigation(user){const topbar=document.querySelector(".topbar");const role=resolveAccountView(user);if(topbar)topbar.dataset.accountView=user?role:"";if(user)document.body.dataset.accountView=role;}document.querySelectorAll("[data-nav-target]").forEach(button=>button.addEventListener("click",()=>{const target=button.dataset.navTarget;if(target==="jobs"){go("jobs");return;}if(target==="saved"){go("saved");return;}if(target==="applications"){window.location.href="auth.html?type=applicant&view=applications&v=20261027-role-nav";return;}if(target==="post"){window.location.href="auth.html?type=employer&view=postjob&v=20261027-role-nav";return;}if(target==="myjobs"){window.location.href="auth.html?type=employer&view=employerjobs&v=20261027-role-nav";return;}if(target==="employerapplications"){window.location.href="auth.html?type=employer&view=employerapplications&v=20261027-role-nav";return;}}));
  function renderHomeForRole(user){renderRoleNavigation(user);const home=document.getElementById('page-home'),panel=document.getElementById('employerHomeDashboard'),homeHeading=document.querySelector('#page-home .page-heading');const selectedRole=resolveAccountView(user);const isEmployer=!!user&&selectedRole==='employer';document.body.dataset.accountView=user?selectedRole:'';if(home&&!document.querySelector('.page.active'))home.classList.add('active');if(panel){panel.hidden=!isEmployer;panel.classList.toggle('hidden',!isEmployer);panel.setAttribute('aria-hidden',String(!isEmployer));panel.style.setProperty('display',isEmployer?'block':'none','important');}if(homeHeading){homeHeading.classList.toggle('hidden',isEmployer);homeHeading.style.setProperty('display',isEmployer?'none':'','important');homeHeading.setAttribute('aria-hidden',String(isEmployer));}}
 function renderAccount(user){currentAccountUser=user||null;renderHomeForRole(user);
   if(user){
@@ -1223,6 +1223,10 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     document.body.dataset.accountView = role;
     try { sessionStorage.setItem('sightx_session_account_view', role); localStorage.setItem('sightx_active_account_view', role); } catch (_) {}
     const employer = role === 'employer';
+    document.querySelectorAll('[data-page="profile"]').forEach(el => {
+      el.innerHTML = employer ? '<span class="nav-ico" aria-hidden="true">🏢</span> Company Profile' : '<span class="nav-ico" aria-hidden="true">👤</span> My Profile';
+      el.setAttribute('aria-label', employer ? 'Company Profile' : 'My Profile');
+    });
     document.querySelectorAll('#jobsApplyCta, #page-jobs .apply-btn, #page-jobs [data-open-form="apply"], #page-jobs [data-live-apply], [data-jobs-action="applications"]').forEach(el => {
       el.hidden = employer;
       el.setAttribute('aria-hidden', String(employer));
@@ -1241,14 +1245,16 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     client.auth.getSession().then(({data}) => {
       const user = data && data.session && data.session.user;
       if(!user){ showSignedOutActions(); return; }
-      let role = user.user_metadata && user.user_metadata.account_type;
-      if(!validRole(role)) { try { role = sessionStorage.getItem('sightx_session_account_view') || localStorage.getItem('sightx_active_account_view') || ''; } catch (_) {} }
+      let role = '';
+      try { role = sessionStorage.getItem('sightx_session_account_view') || localStorage.getItem('sightx_active_account_view') || ''; } catch (_) {}
+      if(!validRole(role)) role = user.user_metadata && user.user_metadata.account_type;
       if(validRole(role)) applyRole(role);
     }).catch(()=>{});
     client.auth.onAuthStateChange((_event, session) => {
       if(!session || !session.user){ showSignedOutActions(); return; }
-      let role = session.user.user_metadata && session.user.user_metadata.account_type;
-      if(!validRole(role)) { try { role = sessionStorage.getItem('sightx_session_account_view') || localStorage.getItem('sightx_active_account_view') || ''; } catch (_) {} }
+      let role = '';
+      try { role = sessionStorage.getItem('sightx_session_account_view') || localStorage.getItem('sightx_active_account_view') || ''; } catch (_) {}
+      if(!validRole(role)) role = session.user.user_metadata && session.user.user_metadata.account_type;
       if(validRole(role)) applyRole(role);
     });
   }
@@ -1258,6 +1264,14 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     const employerOnly = event.target.closest('#postJobCta, [data-jobs-action="post"], [data-page="post-job"]');
     const applicantOnly = event.target.closest('#jobsApplyCta, #page-jobs .apply-btn, #page-jobs [data-open-form="apply"], #page-jobs [data-live-apply], [data-jobs-action="applications"]');
     const role = document.body.dataset.accountView;
+    const profileNav = event.target.closest('[data-page="profile"]');
+    if(role === 'employer' && profileNav){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      try { sessionStorage.setItem('sightx_session_account_view','employer'); localStorage.setItem('sightx_active_account_view','employer'); } catch (_) {}
+      window.location.href='auth.html?type=employer&view=verification&v=20261029-employer-profile-nav';
+      return;
+    }
     if(employerOnly){
       event.preventDefault();
       event.stopImmediatePropagation();
