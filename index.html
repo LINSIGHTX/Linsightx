@@ -886,7 +886,7 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
   let page=document.getElementById('page-apply-now');
   if(!page){
    page=document.createElement('section');page.id='page-apply-now';page.className='page';
-   page.innerHTML='<div class="workflow-layout apply-now-layout"><section class="workflow-form"><div class="workflow-form-heading"><h3>Apply Now</h3><p class="form-help" id="applyNowRoleLabel"></p></div><form id="applyNowFormFields"><input type="hidden" name="role"><label>Full name<input name="name" type="text" autocomplete="name" placeholder="Enter your full name" required></label><label>Email address<input name="email" type="email" autocomplete="email" placeholder="Enter your email address" required></label><label>Resume (PDF, DOC, or DOCX)<input name="resume" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required></label><label>Cover message<textarea name="message" placeholder="Tell the hiring team why you are a good fit for this role." required></textarea></label><div class="form-row"><button type="button" class="secondary-btn" data-close-form="applyNowFormFields">Cancel</button><button type="submit">Submit Application</button></div></form></section><div class="workflow-promo"><span class="linsightx-banner-badge" aria-label="Sight X" style="position:absolute!important;top:10px!important;right:10px!important;z-index:99!important;display:inline-flex!important;align-items:center!important;padding:5px 10px!important;border:1px solid #d4e2fa!important;border-radius:999px!important;background:#fff!important;color:#245bea!important;font:900 11px/1.3 Inter,system-ui,sans-serif!important;letter-spacing:.03em!important;box-shadow:0 2px 8px rgba(15,40,80,.14)!important;opacity:1!important;visibility:visible!important;pointer-events:none!important">Sight X</span><div class="workflow-brand"><span class="workflow-brand-mark">S</span><span>SIGHTX</span></div><div class="eyebrow">YOUR NEXT OPPORTUNITY</div><h1>Make your next move.</h1><p>Apply directly for the role you selected. Share your experience, portfolio, and a short note to help the hiring team get to know you.</p><div class="workflow-promo-note"><span>✦</span> Your next chapter starts with one application.</div></div></div>';
+   page.innerHTML='<div class="workflow-layout apply-now-layout"><section class="workflow-form"><div class="workflow-form-heading"><h3>Apply Now</h3><p class="form-help" id="applyNowRoleLabel"></p></div><form id="applyNowFormFields"><input type="hidden" name="role"><div id="applySavedProfilePreview" class="notice" style="margin:10px 0" aria-live="polite">Loading your saved profile…</div><label>Full name<input name="name" type="text" autocomplete="name" placeholder="Your saved full name" readonly required></label><label>Email address<input name="email" type="email" autocomplete="email" placeholder="Your account email" readonly required></label><label>Cover message (optional)<textarea name="message" maxlength="5000" placeholder="Add a short note to the hiring team (optional)."></textarea></label><div class="form-row"><button type="button" class="secondary-btn" data-close-form="applyNowFormFields">Cancel</button><button type="submit">Submit Application</button></div></form></section><div class="workflow-promo"><span class="linsightx-banner-badge" aria-label="Sight X" style="position:absolute!important;top:10px!important;right:10px!important;z-index:99!important;display:inline-flex!important;align-items:center!important;padding:5px 10px!important;border:1px solid #d4e2fa!important;border-radius:999px!important;background:#fff!important;color:#245bea!important;font:900 11px/1.3 Inter,system-ui,sans-serif!important;letter-spacing:.03em!important;box-shadow:0 2px 8px rgba(15,40,80,.14)!important;opacity:1!important;visibility:visible!important;pointer-events:none!important">Sight X</span><div class="workflow-brand"><span class="workflow-brand-mark">S</span><span>SIGHTX</span></div><div class="eyebrow">YOUR NEXT OPPORTUNITY</div><h1>Make your next move.</h1><p>Apply directly for the role you selected. Share your experience, portfolio, and a short note to help the hiring team get to know you.</p><div class="workflow-promo-note"><span>✦</span> Your next chapter starts with one application.</div></div></div>';
    const jobs=document.getElementById('page-jobs');if(jobs&&jobs.parentNode)jobs.parentNode.appendChild(page);else document.body.appendChild(page);
   }
   const name=role||'Selected job';
@@ -1052,11 +1052,48 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
  }
  document.getElementById('jobSearch')?.addEventListener('input',renderJobs);
  document.getElementById('jobType')?.addEventListener('change',renderJobs);
- window.addEventListener('click',function(e){
+ window.addEventListener('click',async function(e){
   const btn=e.target.closest('[data-live-apply]');if(!btn)return;
   const job=liveJobs.find(j=>j.id===btn.dataset.liveApply);if(!job)return;
   selectedJob=job;
-  setTimeout(()=>{const role=document.querySelector('#applyNowFormFields [name="role"]');if(role)role.value=job.title;const label=document.getElementById('applyNowRoleLabel');if(label)label.textContent='Applying for: '+job.title;},0);
+  setTimeout(async()=>{
+   const role=document.querySelector('#applyNowFormFields [name="role"]');
+   if(role)role.value=job.title;
+   const label=document.getElementById('applyNowRoleLabel');
+   if(label)label.textContent='Applying for: '+job.title;
+   const form=document.getElementById('applyNowFormFields');
+   const preview=document.getElementById('applySavedProfilePreview');
+   if(!form)return;
+   try{
+    const {data:{session},error}=await client.auth.getSession();
+    if(error)throw error;
+    const user=session&&session.user;
+    if(!user){
+     if(preview)preview.textContent='Please sign in as an applicant to apply. Your saved profile will be used automatically.';
+     return;
+    }
+    const meta=user.user_metadata||{};
+    const fullName=String(meta.full_name||meta.name||'').trim();
+    const email=String(user.email||'').trim();
+    const resumePath=String(meta.resume_path||'').trim();
+    const nameField=form.elements.namedItem('name');
+    const emailField=form.elements.namedItem('email');
+    if(nameField)nameField.value=fullName;
+    if(emailField)emailField.value=email;
+    if(!fullName||!email||!meta.phone||!meta.location||!meta.education||!meta.experience||!meta.skills||!resumePath){
+     if(preview)preview.textContent='Your profile or saved resume is incomplete. Please finish and save the required details on My Profile before applying.';
+     const submit=form.querySelector('button[type="submit"]');
+     if(submit){submit.disabled=true;submit.textContent='Complete profile first';}
+     return;
+    }
+    if(preview)preview.textContent='Applying with your saved profile: '+fullName+' · '+email+' · '+meta.location+' · '+(meta.resume_name||'Saved resume')+'. The employer for this job will receive the details you submit.';
+    const submit=form.querySelector('button[type="submit"]');
+    if(submit){submit.disabled=false;submit.textContent='Submit Application';}
+   }catch(err){
+    if(preview)preview.textContent='Could not load your saved profile. Please refresh and try again.';
+    console.error('Could not load applicant profile:',err.message);
+   }
+  },0);
  },true);
  window.addEventListener('submit',async function(e){
   const form=e.target;if(form.id!=='applyNowFormFields')return;
@@ -1065,51 +1102,45 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
   if(!form.reportValidity())return;
   const {data:{session},error:sessionError}=await client.auth.getSession();
   if(sessionError||!session?.user){showStatus(form,'Please sign in to your SIGHTX account first, then return to this job to apply.','error');return}
-  const fields=form.elements;
-  const name=fields.namedItem('name').value.trim(),mobile=fields.namedItem('mobile')?.value.trim()||'',email=fields.namedItem('email').value.trim(),message=fields.namedItem('message').value.trim(),file=fields.namedItem('resume').files[0];
-  if(!name||!mobile||!email||!message||!file){showStatus(form,'Please complete every field and attach your resume.','error');return}
-  const allowed={'application/pdf':'.pdf','application/msword':'.doc','application/vnd.openxmlformats-officedocument.wordprocessingml.document':'.docx'};
-  const ext=(file.name.split('.').pop()||'').toLowerCase();
-  if(file.size>5*1024*1024){showStatus(form,'Your resume must be 5 MB or smaller.','error');return}
-  if(!['pdf','doc','docx'].includes(ext)||!(file.type in allowed)){showStatus(form,'Please upload a PDF, DOC, or DOCX resume.','error');return}
-  const user=session.user;
+  const user=session.user,meta=user.user_metadata||{},fields=form.elements;
+  const name=String(meta.full_name||meta.name||'').trim();
+  const email=String(user.email||'').trim();
+  const mobile=String(meta.phone||'').trim();
+  const resumePath=String(meta.resume_path||'').trim();
+  const message=String(fields.namedItem('message').value||'').trim();
+  if(!name||!email||!mobile||!meta.location||!meta.education||!meta.experience||!meta.skills||!resumePath){
+   showStatus(form,'Please complete and save your required profile details and resume on My Profile before applying.','error');return;
+  }
   const submit=form.querySelector('button[type="submit"]');
   if(submit){submit.disabled=true;submit.textContent='Submitting…'}
-  let uploadedPath=null;
   try{
-   // Check before upload so an ordinary duplicate submission does not create an orphaned file.
    const {data:existing,error:existingError}=await client.from('sightx_applications').select('id').eq('job_id',selectedJob.id).eq('applicant_id',user.id).maybeSingle();
    if(existingError)throw existingError;
    if(existing){showStatus(form,'You have already applied for this job with this account. Check your SIGHTX account for the application status.','error');return}
-   const cleanName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(-100);
-   const path=user.id+'/'+selectedJob.id+'/'+crypto.randomUUID()+'-'+cleanName;
-   showStatus(form,'Uploading your resume securely and submitting your application…');
-   // Track the intended path before upload so failed/partial upload responses can be cleaned up too.
-   uploadedPath=path;
-   const {error:uploadError}=await client.storage.from('resumes').upload(path,file,{contentType:file.type,upsert:false});
-   if(uploadError)throw uploadError;
-   const {error:insertError}=await client.from('sightx_applications').insert({job_id:selectedJob.id,applicant_id:user.id,full_name:name,applicant_phone:mobile,email,status:'new',resume_path:path,cover_message:message,employer_notes:null});
+   const profileSnapshot={
+    full_name:name,email,phone:mobile,location:String(meta.location||''),
+    headline:String(meta.headline||''),linkedin_url:String(meta.linkedin_url||''),
+    portfolio_url:String(meta.portfolio_url||''),education:String(meta.education||''),
+    field_of_study:String(meta.field_of_study||''),institution:String(meta.institution||''),
+    graduation_year:String(meta.graduation_year||''),experience:String(meta.experience||''),
+    current_role:String(meta.current_role||''),skills:String(meta.skills||''),
+    summary:String(meta.summary||''),resume_name:String(meta.resume_name||'')
+   };
+   const {error:insertError}=await client.from('sightx_applications').insert({
+    job_id:selectedJob.id,applicant_id:user.id,full_name:name,applicant_phone:mobile,email,
+    status:'new',resume_path:resumePath,cover_message:message,employer_notes:null,
+    applicant_profile:profileSnapshot
+   });
    if(insertError)throw insertError;
-   uploadedPath=null;
-   showStatus(form,'Application submitted successfully. Your application is saved to SIGHTX.','success');
+   showStatus(form,'Application submitted successfully using your saved profile and resume. The employer who posted this job can now review your application.','success');
    form.reset();selectedJob=null;
-   if(submit){submit.disabled=false;submit.textContent='Submit Application'}
+   const preview=document.getElementById('applySavedProfilePreview');
+   if(preview)preview.textContent='Application submitted. Your saved profile was shared for this job.';
   }catch(err){
    console.error('SIGHTX application submission failed:',err.message);
-   let messageText=err.code==='23505'?'You have already applied for this job with this account.':(err.message||'Submission failed. Please try again.');
-   if(uploadedPath){
-    try{
-     // Delete policy permits removal only from the caller's own folder and only when no application references the object.
-     const {error:cleanupError}=await client.storage.from('resumes').remove([uploadedPath]);
-     if(cleanupError)throw cleanupError;
-    }catch(cleanupError){
-     console.error('SIGHTX orphan resume cleanup failed:',cleanupError.message);
-     messageText+=' We could not automatically clean up the unlinked resume upload; please contact SIGHTX support.';
-    }
-   }
+   const messageText=err.code==='23505'?'You have already applied for this job with this account.':(err.message||'Submission failed. Please try again.');
    showStatus(form,messageText,'error');
-   if(submit){submit.disabled=false;submit.textContent='Submit Application'}
-  }finally{if(submit){submit.disabled=false;if(submit.textContent==='Submitting…')submit.textContent='Submit Application'}}
+  }finally{if(submit){submit.disabled=false;submit.textContent='Submit Application'}}
  },true);
  loadJobs();
 })();
