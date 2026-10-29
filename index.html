@@ -678,7 +678,7 @@ window.addEventListener('sightx-auth-client-ready',bindAuth,{once:true});
   const employer=selectedRole==='employer'||(selectedRole!=='applicant'&&metaRole==='employer');
   if(employer){
    try{sessionStorage.setItem('sightx_session_account_view','employer');localStorage.setItem('sightx_active_account_view','employer');}catch(_){}
-   window.location.href='auth.html?type=employer&view=verification&v=20261029-employer-profile-nav';
+   window.location.href='auth.html?type=employer&view=companyprofile&v=20261029-employer-profile';
    return;
   }
   if(typeof go==='function')go('profile');
@@ -1288,7 +1288,7 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
       event.preventDefault();
       event.stopImmediatePropagation();
       try { sessionStorage.setItem('sightx_session_account_view','employer'); localStorage.setItem('sightx_active_account_view','employer'); } catch (_) {}
-      window.location.href='auth.html?type=employer&view=verification&v=20261029-employer-profile-nav';
+      window.location.href='auth.html?type=employer&view=companyprofile&v=20261029-employer-profile';
       return;
     }
     const role = document.body.dataset.accountView;
