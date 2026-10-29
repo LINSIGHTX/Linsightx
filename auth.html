@@ -148,13 +148,13 @@
       <article class="card"><h2>Company Profile &amp; Verification</h2><p class="sub">Manage your company details and submit them for manual review. Your first job cannot be published until verification is approved.</p>
         <div id="employerStatus"></div>
         <form id="employerForm" class="form" autocomplete="off">
-          <div class="field"><label for="companyName">Registered company / organization name</label><input id="companyName" name="employer_company_name" autocomplete="section-employer organization" readonly maxlength="180" placeholder="Your registered company name" required></div>
-          <div class="field"><label for="companyWebsite">Company website</label><input id="companyWebsite" name="employer_company_website" type="url" autocomplete="section-employer url" readonly placeholder="https://company.example"></div>
-          <div class="field"><label for="companyEmail">Company email</label><input id="companyEmail" name="employer_company_email" type="email" autocomplete="section-employer work email" readonly placeholder="name@company.com" required></div>
-          <div class="field"><label for="businessPhone">Business phone</label><input id="businessPhone" name="employer_business_phone" type="tel" autocomplete="section-employer work tel" readonly maxlength="40" placeholder="Company contact number"></div>
-          <div class="field"><label for="businessAddress">Business address</label><input id="businessAddress" name="employer_business_address" autocomplete="section-employer street-address" readonly maxlength="240" placeholder="Registered business address"></div>
-          <div class="field"><label for="registrationDetails">Company registration details (where applicable)</label><input id="registrationDetails" name="employer_registration_details" autocomplete="off" readonly maxlength="240" placeholder="Registration number / business registry"></div>
-          <div class="field"><label for="evidenceNotes">Evidence or context for reviewer</label><textarea id="evidenceNotes" name="employer_evidence_notes" autocomplete="off" readonly maxlength="1500" placeholder="Describe your role at the company and where its business records can be checked. Do not paste passwords or sensitive personal documents here."></textarea></div>
+          <div class="field"><label for="companyName">Registered company / organization name</label><input id="companyName" name="employer_company_name" autocomplete="new-password" readonly maxlength="180" placeholder="Your registered company name" required></div>
+          <div class="field"><label for="companyWebsite">Company website</label><input id="companyWebsite" name="employer_company_website" type="url" autocomplete="new-password" readonly placeholder="https://company.example"></div>
+          <div class="field"><label for="companyEmail">Company email</label><input id="companyEmail" name="employer_company_email" type="email" autocomplete="new-password" readonly placeholder="name@company.com" required></div>
+          <div class="field"><label for="businessPhone">Business phone</label><input id="businessPhone" name="employer_business_phone" type="tel" autocomplete="new-password" readonly maxlength="40" placeholder="Company contact number"></div>
+          <div class="field"><label for="businessAddress">Business address</label><input id="businessAddress" name="employer_business_address" autocomplete="new-password" readonly maxlength="240" placeholder="Registered business address"></div>
+          <div class="field"><label for="registrationDetails">Company registration details (where applicable)</label><input id="registrationDetails" name="employer_registration_details" autocomplete="new-password" readonly maxlength="240" placeholder="Registration number / business registry"></div>
+          <div class="field"><label for="evidenceNotes">Evidence or context for reviewer</label><textarea id="evidenceNotes" name="employer_evidence_notes" autocomplete="new-password" readonly maxlength="1500" placeholder="Describe your role at the company and where its business records can be checked. Do not paste passwords or sensitive personal documents here."></textarea></div>
           <button class="btn primary" type="submit" id="submitEmployer">Submit for verification</button>
         </form>
       </article>
@@ -474,19 +474,9 @@
     // Populate the employer form only from the employer record. If personal applicant
     // details were accidentally copied into company fields, leave those fields blank so
     // the employer can enter the correct company information. The user profile is untouched.
-    const personalName=String($('profileFullName').value||'').trim().toLocaleLowerCase();
-    const personalEmail=String(user.email||'').trim().toLocaleLowerCase();
-    const personalPhone=String($('profilePhone').value||'').replace(/\D/g,'');
+    // Employer fields must display the saved employer record exactly as stored. Never blank company data merely because it resembles personal profile data.
     const companyValues=[employer.company_name,employer.company_website,employer.company_email,employer.business_phone,employer.business_address,employer.registration_details,employer.evidence_notes];
-    let clearedPersonalDetails=false;
-    if(String(companyValues[0]||'').trim().toLocaleLowerCase()===personalName&&personalName){companyValues[0]='';clearedPersonalDetails=true;}
-    if(String(companyValues[2]||'').trim().toLocaleLowerCase()===personalEmail&&personalEmail){companyValues[2]='';clearedPersonalDetails=true;}
-    if(String(companyValues[3]||'').replace(/\\D/g,'')===personalPhone&&personalPhone){companyValues[3]='';clearedPersonalDetails=true;}
-    ['companyName','companyWebsite','companyEmail','businessPhone','businessAddress','registrationDetails','evidenceNotes'].forEach((id,i)=>$(id).value=companyValues[i]||'');
-    if(clearedPersonalDetails){
-      status.innerHTML+='<div class="notice">Some company fields matched your personal profile and were cleared from this form. Enter the correct company details and save to update the employer profile. Your user profile has not been changed.</div>';
-    }
-    const canEdit=['pending','rejected'].includes(employer.verification_status);
+    ['companyName','companyWebsite','companyEmail','businessPhone','businessAddress','registrationDetails','evidenceNotes'].forEach((id,i)=>$(id).value=companyValues[i]||'');    const canEdit=['pending','rejected'].includes(employer.verification_status);
     form.classList.toggle('hidden',!canEdit);
     $('submitEmployer').textContent=employer.verification_status==='rejected'?'Update and resubmit':'Submit for verification';
     const verified=employer.verification_status==='verified';
