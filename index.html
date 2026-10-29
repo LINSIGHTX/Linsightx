@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+<link rel="preconnect" href="https://ycfnsufdxztkmtyuceqy.supabase.co" crossorigin>
+<link rel="dns-prefetch" href="//ycfnsufdxztkmtyuceqy.supabase.co">
 <meta name="theme-color" content="#edf5ff">
 <title>Linsight X — Work. Connect. Grow.</title>
 
@@ -1155,7 +1159,9 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
    showStatus(form,messageText,'error');
   }finally{if(submit){submit.disabled=false;submit.textContent='Submit Application'}}
  },true);
- loadJobs();
+ // Let the page paint before starting the public-jobs network request.
+ if('requestIdleCallback' in window) window.requestIdleCallback(()=>loadJobs(),{timeout:1800});
+ else window.setTimeout(loadJobs,250);
 })();
 </script>
 
