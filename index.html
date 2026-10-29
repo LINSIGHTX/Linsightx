@@ -440,13 +440,25 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 .profile-shortcuts{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 0}
 .profile-settings-card{display:grid;grid-template-columns:76px minmax(0,1fr);gap:20px;padding:clamp(18px,3vw,30px);margin-top:18px}
 .profile-settings-avatar{display:grid;place-items:center;width:68px;height:68px;border-radius:22px;background:linear-gradient(135deg,#245bea,#20b8a8);color:#fff;font-size:22px;font-weight:900;box-shadow:0 8px 20px rgba(36,91,234,.18)}
-.profile-settings-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px 14px;min-width:0}
-.profile-settings-fields label{align-self:end;color:#344967;font-size:12px;font-weight:800}
-.profile-settings-fields input{width:100%;min-width:0;padding:12px 13px;border:1px solid #dfe7f2;border-radius:10px;background:#fff;color:#183052;font:inherit;font-size:13px}
-.profile-settings-fields input:focus{outline:3px solid rgba(36,91,234,.13);border-color:#86a7ff}
+.profile-completion-form{grid-template-columns:68px minmax(0,1fr);align-items:start}
+.profile-form-content{min-width:0}
+.profile-section-title{margin:8px 0 12px;padding-bottom:9px;border-bottom:1px solid #e7edf6}
+.profile-section-title:not(:first-child){margin-top:25px}
+.profile-section-title h2{margin:0;color:#183052;font-size:17px;letter-spacing:-.025em}
+.profile-section-title p{margin:4px 0 0;color:#71819a;font-size:12px}
+.profile-settings-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 15px;min-width:0}
+.profile-settings-fields label{display:flex;flex-direction:column;gap:6px;align-self:stretch;color:#344967;font-size:12px;font-weight:800;min-width:0}
+.profile-settings-fields label span{display:inline;color:#d14343}
+.profile-settings-fields input,.profile-settings-fields select,.profile-settings-fields textarea{width:100%;min-width:0;padding:11px 12px;border:1px solid #dfe7f2;border-radius:10px;background:#fff;color:#183052;font:inherit;font-size:13px}
+.profile-settings-fields textarea{resize:vertical;line-height:1.5}
+.profile-settings-fields input:focus,.profile-settings-fields select:focus,.profile-settings-fields textarea:focus{outline:3px solid rgba(36,91,234,.13);border-color:#86a7ff}
 .profile-settings-fields input[readonly]{background:#f5f7fb;color:#6c7b91}
-.profile-settings-fields small{grid-column:1/-1;color:#74839a;font-size:11px}
+.profile-settings-fields small{color:#74839a;font-size:11px;font-weight:500;line-height:1.45}
+.profile-settings-fields input[type=file]{padding:9px;font-size:12px}
+.profile-resume-current{padding:12px;border:1px solid #cfe8dc;background:#f0fbf5;border-radius:10px;color:#236548;font-size:12px}
+.profile-privacy-note{margin:20px 0 0;color:#71819a;font-size:12px;line-height:1.6}
 .profile-settings-actions{grid-column:2;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+@media(max-width:600px){.profile-completion-form{grid-template-columns:minmax(0,1fr);gap:12px}.profile-settings-avatar{margin-bottom:0}.profile-settings-fields{grid-template-columns:minmax(0,1fr)}.profile-settings-actions{grid-column:1}.profile-section-title:not(:first-child){margin-top:20px}}
 #profileSaveStatus,#securitySettingsStatus{display:block;margin-top:8px;color:#27745b;font-size:12px;font-weight:700}
 .settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
 .settings-card{display:flex;gap:15px;align-items:flex-start;padding:22px;min-width:0}
@@ -482,15 +494,41 @@ footer{padding:27px 18px 24px;text-align:center;color:#74839a;font-size:11px}
 <section class="page" id="page-saved"><div class="page-heading"><span class="linsightx-heading-badge" aria-label="Sight X" style="position:absolute;top:12px;right:14px;z-index:5;display:inline-flex;align-items:center;justify-content:center;padding:7px 13px;border:1px solid rgba(56,116,210,.22);border-radius:999px;background:linear-gradient(135deg,rgba(222,237,255,.94),rgba(211,246,244,.94));color:#234b86;font:900 13px/1.35 Inter,system-ui,sans-serif;letter-spacing:.04em;box-shadow:0 3px 10px rgba(40,91,150,.10);white-space:nowrap">Sight X</span><div><div class="eyebrow">Keep good things close</div><h1>Saved items.</h1><p>Your saved opportunities and useful posts.</p></div></div><div class="saved-list" id="savedList"><div class="saved-empty saved-item"><h3>No saved jobs yet</h3><p>Save a role from the Jobs page and it will appear here for easy access.</p><button type="button" class="jobs-header-row" data-page="jobs">Explore jobs</button></div></div></section>
 
 <section class="page" id="page-profile">
-  <div class="page-heading"><div><div class="eyebrow">Your professional identity</div><h1>My <span>Profile.</span></h1><p>Keep your basic professional details up to date.</p></div></div>
+  <div class="page-heading"><div><div class="eyebrow">Your professional identity</div><h1>My <span>Profile.</span></h1><p>Complete your profile once to make job applications faster. Required fields are marked with *.</p></div></div>
   <div class="profile-shortcuts" aria-label="Profile shortcuts"><button type="button" class="settings-action" data-page="settings">⚙️ Open Settings</button><button type="button" class="settings-action" data-page="help">❓ Help &amp; Support</button></div>
-  <form class="card profile-settings-card" id="profileSettingsForm">
+  <form class="card profile-settings-card profile-completion-form" id="profileSettingsForm">
     <div class="profile-settings-avatar" id="profileSettingsAvatar">LX</div>
-    <div class="profile-settings-fields">
-      <label for="profileFullName">Full name</label><input id="profileFullName" name="full_name" autocomplete="name" maxlength="100" placeholder="Your full name" required>
-      <label for="profileHeadline">Professional headline</label><input id="profileHeadline" name="headline" maxlength="140" placeholder="e.g. Product Designer | Open to opportunities">
-      <label for="profileLocation">Location</label><input id="profileLocation" name="location" maxlength="100" autocomplete="address-level2" placeholder="City, country">
-      <label for="profileEmail">Account email</label><input id="profileEmail" name="email" type="email" readonly aria-describedby="profileEmailHelp"><small id="profileEmailHelp">Your email is shown from your signed-in account.</small>
+    <div class="profile-form-content">
+      <div class="profile-section-title"><h2>Personal details</h2><p>How employers can contact you.</p></div>
+      <div class="profile-settings-fields">
+        <label for="profileFullName">Full name <span aria-hidden="true">*</span><input id="profileFullName" name="full_name" autocomplete="name" maxlength="100" placeholder="Your full name" required></label>
+        <label for="profilePhone">Phone number <span aria-hidden="true">*</span><input id="profilePhone" name="phone" type="tel" autocomplete="tel" maxlength="25" placeholder="+91 98765 43210" required></label>
+        <label for="profileEmail">Account email <span aria-hidden="true">*</span><input id="profileEmail" name="email" type="email" readonly aria-describedby="profileEmailHelp"><small id="profileEmailHelp">Your email is taken from your signed-in account.</small></label>
+        <label for="profileLocation">City and country <span aria-hidden="true">*</span><input id="profileLocation" name="location" maxlength="100" autocomplete="address-level2" placeholder="e.g. Bengaluru, India" required></label>
+        <label for="profileHeadline">Professional headline<input id="profileHeadline" name="headline" maxlength="140" placeholder="e.g. Frontend Developer"></label>
+        <label for="profileLinkedIn">LinkedIn profile URL<input id="profileLinkedIn" name="linkedin_url" type="url" maxlength="300" placeholder="https://linkedin.com/in/yourname"></label>
+        <label for="profilePortfolio">Portfolio / website URL<input id="profilePortfolio" name="portfolio_url" type="url" maxlength="300" placeholder="https://yourportfolio.com"></label>
+      </div>
+      <div class="profile-section-title"><h2>Education</h2><p>Your most relevant qualification.</p></div>
+      <div class="profile-settings-fields">
+        <label for="profileEducation">Highest qualification <span aria-hidden="true">*</span><select id="profileEducation" name="education" required><option value="">Select qualification</option><option>High school</option><option>Diploma</option><option>Bachelor's degree</option><option>Master's degree</option><option>Doctorate</option><option>Professional certification</option><option>Other</option></select></label>
+        <label for="profileFieldOfStudy">Field of study<input id="profileFieldOfStudy" name="field_of_study" maxlength="120" placeholder="e.g. Computer Science"></label>
+        <label for="profileInstitution">College / institution<input id="profileInstitution" name="institution" maxlength="160" placeholder="Institution name"></label>
+        <label for="profileGraduationYear">Graduation year<input id="profileGraduationYear" name="graduation_year" type="number" min="1950" max="2100" inputmode="numeric" placeholder="e.g. 2025"></label>
+      </div>
+      <div class="profile-section-title"><h2>Experience and skills</h2><p>Help recruiters understand what you can do.</p></div>
+      <div class="profile-settings-fields">
+        <label for="profileExperience">Work experience <span aria-hidden="true">*</span><select id="profileExperience" name="experience" required><option value="">Select experience</option><option value="Fresher">Fresher / no formal experience</option><option value="Less than 1 year">Less than 1 year</option><option value="1–2 years">1–2 years</option><option value="3–5 years">3–5 years</option><option value="6–10 years">6–10 years</option><option value="10+ years">10+ years</option></select></label>
+        <label for="profileCurrentRole">Current / most recent job title<input id="profileCurrentRole" name="current_role" maxlength="120" placeholder="e.g. Sales Executive"></label>
+        <label for="profileSkills">Key skills <span aria-hidden="true">*</span><textarea id="profileSkills" name="skills" maxlength="1200" rows="3" placeholder="List skills separated by commas" required></textarea></label>
+        <label for="profileSummary">Professional summary<textarea id="profileSummary" name="summary" maxlength="1500" rows="3" placeholder="Briefly describe your strengths and career goals"></textarea></label>
+      </div>
+      <div class="profile-section-title"><h2>Resume</h2><p>Upload a PDF, DOC, or DOCX file up to 5 MB. Your file is stored in private storage.</p></div>
+      <div class="profile-settings-fields">
+        <label for="profileResumeFile">Resume file <span aria-hidden="true">*</span><input id="profileResumeFile" name="resume" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"><small id="profileResumeStatus" role="status" aria-live="polite">No resume uploaded yet.</small></label>
+        <div class="profile-resume-current" id="profileResumeCurrent" hidden></div>
+      </div>
+      <p class="profile-privacy-note">Only share accurate information. Your contact details and resume are used to support job applications.</p>
     </div>
     <div class="profile-settings-actions"><button class="publish" type="submit">Save profile</button><span id="profileSaveStatus" role="status" aria-live="polite"></span></div>
   </form>
@@ -1211,13 +1249,14 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
   const clientReady = () => window.sightxSupabase;
   const profileForm = document.getElementById('profileSettingsForm');
   const nameField = document.getElementById('profileFullName');
-  const headlineField = document.getElementById('profileHeadline');
-  const locationField = document.getElementById('profileLocation');
   const emailField = document.getElementById('profileEmail');
   const avatar = document.getElementById('profileSettingsAvatar');
   const saveStatus = document.getElementById('profileSaveStatus');
-  const securityStatus = document.getElementById('securitySettingsStatus');
+  const resumeFile = document.getElementById('profileResumeFile');
+  const resumeStatus = document.getElementById('profileResumeStatus');
+  const resumeCurrent = document.getElementById('profileResumeCurrent');
   const accountOnly = document.querySelectorAll('.account-user-only');
+  const profileFields = ['profileFullName','profilePhone','profileHeadline','profileLocation','profileLinkedIn','profilePortfolio','profileEducation','profileFieldOfStudy','profileInstitution','profileGraduationYear','profileExperience','profileCurrentRole','profileSkills','profileSummary'].map(id=>document.getElementById(id)).filter(Boolean);
   let activeUser = null;
 
   function setUser(user) {
@@ -1225,14 +1264,17 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     accountOnly.forEach(button => button.hidden = !activeUser);
     if (!profileForm) return;
     const meta = activeUser && activeUser.user_metadata || {};
-    nameField.value = meta.full_name || meta.name || '';
-    headlineField.value = meta.headline || '';
-    locationField.value = meta.location || '';
+    const values = {profileFullName:meta.full_name||meta.name,profilePhone:meta.phone,profileHeadline:meta.headline,profileLocation:meta.location,profileLinkedIn:meta.linkedin_url,profilePortfolio:meta.portfolio_url,profileEducation:meta.education,profileFieldOfStudy:meta.field_of_study,profileInstitution:meta.institution,profileGraduationYear:meta.graduation_year,profileExperience:meta.experience,profileCurrentRole:meta.current_role,profileSkills:meta.skills,profileSummary:meta.summary};
+    Object.entries(values).forEach(([id,value])=>{const field=document.getElementById(id);if(field)field.value=value||'';});
     emailField.value = activeUser && activeUser.email || '';
     const initials = (nameField.value || emailField.value || 'LX').trim().split(/\s+/).slice(0,2).map(part => part[0]).join('').toUpperCase();
     avatar.textContent = initials || 'LX';
+    const resumePath=meta.resume_path||'';
+    resumeStatus.textContent=resumePath?'A resume is saved to your profile. Choose a new file to replace it.':'No resume uploaded yet.';
+    resumeCurrent.hidden=!resumePath;
+    resumeCurrent.textContent=resumePath?'✓ Resume saved. It will remain private in storage.':'';
+    [...profileFields,emailField,resumeFile].forEach(field=>{if(field)field.disabled=!activeUser;});
     saveStatus.textContent = activeUser ? '' : 'Sign in to edit your profile.';
-    [nameField,headlineField,locationField].forEach(field => field.disabled = !activeUser);
     profileForm.querySelector('button[type="submit"]').disabled = !activeUser;
   }
   function bind() {
@@ -1255,21 +1297,57 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     event.preventDefault();
     const client = clientReady();
     if (!client || !activeUser) { saveStatus.textContent = 'Please sign in to save profile details.'; return; }
+    if (!profileForm.reportValidity()) return;
     const submit = profileForm.querySelector('button[type="submit"]');
-    saveStatus.textContent = 'Saving…';
+    const file = resumeFile && resumeFile.files && resumeFile.files[0];
+    let uploadedPath = '';
+    saveStatus.textContent = 'Saving your profile…';
+    if(resumeStatus)resumeStatus.textContent=file?'Uploading resume…':(activeUser.user_metadata?.resume_path?'Keeping your saved resume.':'Resume required before applying.');
     submit.disabled = true;
     try {
-      const {error} = await client.auth.updateUser({data:{
+      const data = {
         full_name:nameField.value.trim(),
-        headline:headlineField.value.trim(),
-        location:locationField.value.trim()
-      }});
+        phone:document.getElementById('profilePhone').value.trim(),
+        headline:document.getElementById('profileHeadline').value.trim(),
+        location:document.getElementById('profileLocation').value.trim(),
+        linkedin_url:document.getElementById('profileLinkedIn').value.trim(),
+        portfolio_url:document.getElementById('profilePortfolio').value.trim(),
+        education:document.getElementById('profileEducation').value,
+        field_of_study:document.getElementById('profileFieldOfStudy').value.trim(),
+        institution:document.getElementById('profileInstitution').value.trim(),
+        graduation_year:document.getElementById('profileGraduationYear').value,
+        experience:document.getElementById('profileExperience').value,
+        current_role:document.getElementById('profileCurrentRole').value.trim(),
+        skills:document.getElementById('profileSkills').value.trim(),
+        summary:document.getElementById('profileSummary').value.trim()
+      };
+      if(file){
+        if(file.size>5*1024*1024)throw new Error('Resume files must be 5 MB or smaller.');
+        const allowedTypes=['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        const ext=(file.name.split('.').pop()||'').toLowerCase();
+        if(!allowedTypes.includes(file.type)||!['pdf','doc','docx'].includes(ext))throw new Error('Use a PDF, DOC, or DOCX resume file.');
+        const safeName=file.name.normalize('NFKD').replace(/[^a-zA-Z0-9._-]/g,'_').slice(-100)||('resume.'+ext);
+        uploadedPath=activeUser.id+'/'+crypto.randomUUID()+'-'+safeName;
+        const {error:uploadError}=await client.storage.from('resumes').upload(uploadedPath,file,{contentType:file.type,upsert:false});
+        if(uploadError)throw uploadError;
+        data.resume_path=uploadedPath;
+        data.resume_name=file.name;
+      } else if(activeUser.user_metadata?.resume_path) {
+        data.resume_path=activeUser.user_metadata.resume_path;
+        data.resume_name=activeUser.user_metadata.resume_name||'';
+      } else {
+        throw new Error('Please upload your resume before saving your job application profile.');
+      }
+      const {error} = await client.auth.updateUser({data});
       if (error) throw error;
-      saveStatus.textContent = 'Profile saved.';
+      saveStatus.textContent = 'Profile saved successfully.';
+      if(resumeStatus)resumeStatus.textContent='Resume uploaded and saved privately.';
+      if(resumeCurrent){resumeCurrent.hidden=false;resumeCurrent.textContent='✓ '+(data.resume_name||'Resume')+' saved to private storage.';}
       const initials = nameField.value.trim().split(/\s+/).slice(0,2).map(part => part[0]).join('').toUpperCase();
       avatar.textContent = initials || 'LX';
     } catch (error) {
       saveStatus.textContent = error && error.message ? 'Could not save: ' + error.message : 'Could not save profile. Please try again.';
+      if(resumeStatus && file)resumeStatus.textContent='Resume upload/save did not finish. Please try again.';
     } finally { submit.disabled = false; }
   });
 
