@@ -280,12 +280,14 @@
     const requestedView=new URLSearchParams(window.location.search).get('view');
     let storedView='';
     try{storedView=sessionStorage.getItem('sightx_session_account_view')||localStorage.getItem('sightx_active_account_view')||'';}catch(_){}
-    const employerRoute=['postjob','employerjobs','employerapplications'].includes(requestedView);
+    const employerRoute=['postjob','employerjobs','employerapplications','companyprofile'].includes(requestedView);
     const accountView=admin()?'admin':(explicitAccountView||(employerRoute?'employer':null)||(user&&user.user_metadata&&user.user_metadata.account_type==='employer'?'employer':null)||selectedAccountType||storedView||'applicant');
     const isEmployerView=accountView==='employer'&&!admin();
+    const companyProfileRoute=requestedView==='companyprofile'&&isEmployerView;
     document.documentElement.classList.toggle('employer-dashboard-view',isEmployerView);
-    $('profileSection').classList.toggle('hidden',isEmployerView);
-    $('employerArea').classList.toggle('hidden',!isEmployerView&&!admin());
+    $('profileSection').classList.toggle('hidden',isEmployerView||companyProfileRoute);
+    $('employerProfileSection').classList.toggle('hidden',!companyProfileRoute);
+    $('employerArea').classList.toggle('hidden',(!isEmployerView&&!admin())||companyProfileRoute);
   }
   function mfaMessage(message,type=''){notice('mfaNotice',message,type);}
   function loginMfaMessage(message,type=''){notice('mfaLoginNotice',message,type);}
