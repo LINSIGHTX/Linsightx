@@ -1610,7 +1610,7 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     resetButton.disabled = true;
     securityStatus.textContent = 'Sending reset email…';
     try {
-      const {error} = await client.auth.resetPasswordForEmail(activeUser.email);
+      const {error} = await client.auth.resetPasswordForEmail(activeUser.email, {redirectTo: window.location.origin + '/Linsightx/auth.html?mode=recovery'});
       if (error) throw error;
       securityStatus.textContent = 'If the email is registered, a password reset email will arrive shortly.';
     } catch (_) {
