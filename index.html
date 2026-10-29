@@ -1677,7 +1677,11 @@ html.sightx-reduce-motion *,html.sightx-reduce-motion *::before,html.sightx-redu
 (function(){
  'use strict';
  function openSettings(event){
-  if(event){event.preventDefault();event.stopPropagation();}
+  var button=event.target&&event.target.closest?event.target.closest('.side-nav [data-page="settings"],[data-account-page="settings"]'):null;
+  if(!button)return;
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation();
   var panel=document.getElementById('sidebarSettingsPanel');
   var page=document.getElementById('page-settings');
   if(!panel||!page)return;
@@ -1694,16 +1698,8 @@ html.sightx-reduce-motion *,html.sightx-reduce-motion *::before,html.sightx-redu
   page.classList.remove('active');
   page.style.setProperty('display','none','important');
  }
- function bindSettingsButtons(){
-  var buttons=document.querySelectorAll('.side-nav [data-page="settings"],[data-account-page="settings"]');
-  buttons.forEach(function(button){
-   if(button.dataset.sightxSettingsBound==='true')return;
-   button.dataset.sightxSettingsBound='true';
-   button.addEventListener('click',openSettings,true);
-  });
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindSettingsButtons,{once:true});else bindSettingsButtons();
- new MutationObserver(bindSettingsButtons).observe(document.documentElement,{childList:true,subtree:true});
+ /* Window capture runs before the legacy document-level capture handlers. */
+ window.addEventListener('click',openSettings,true);
 })();
 </script>
 </body></html>
