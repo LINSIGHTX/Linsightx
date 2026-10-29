@@ -1304,23 +1304,25 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     const isEmployerView = explicitRole
       ? explicitRole === 'employer'
       : (navLabelSaysEmployer || !!(employerHome && !employerHome.hidden && !employerHome.classList.contains('hidden')));
+    // In the applicant site, tapping My Profile while it is already open always closes it.
+    // Check the active page before role routing so stale employer state cannot block the toggle.
+    if(profileNav && document.getElementById('page-profile')?.classList.contains('active')){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if(typeof window.go === 'function') {
+        window.go('home');
+      } else {
+        document.querySelectorAll('.page').forEach(page=>page.classList.toggle('active',page.id==='page-home'));
+        document.querySelectorAll('.navitem, .toplink, .mobile-bottom-nav .nav-btn').forEach(button=>button.classList.toggle('active',button.dataset.page==='home'));
+        try { history.replaceState(null,'','#home'); } catch (_) {}
+      }
+      return;
+    }
     if(isEmployerView && profileNav){
       event.preventDefault();
       event.stopImmediatePropagation();
       try { sessionStorage.setItem('sightx_session_account_view','employer'); localStorage.setItem('sightx_active_account_view','employer'); } catch (_) {}
       window.location.href='auth.html?type=employer&view=companyprofile&v=20261029-employer-profile';
-      return;
-    }
-    // Let applicants toggle My Profile closed by tapping the active navigation item again.
-    if(profileNav && !isEmployerView && document.getElementById('page-profile')?.classList.contains('active')){
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      if(typeof window.go === 'function') window.go('home');
-      else {
-        document.querySelectorAll('.page').forEach(page=>page.classList.toggle('active',page.id==='page-home'));
-        document.querySelectorAll('.navitem, .toplink, .mobile-bottom-nav .nav-btn').forEach(button=>button.classList.toggle('active',button.dataset.page==='home'));
-        try { history.replaceState(null,'','#home'); } catch (_) {}
-      }
       return;
     }
     const role = document.body.dataset.accountView;
