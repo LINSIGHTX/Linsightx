@@ -1677,7 +1677,7 @@ html.sightx-reduce-motion *,html.sightx-reduce-motion *::before,html.sightx-redu
 (function(){
  'use strict';
  function openSettings(event){
-  var button=event.target&&event.target.closest?event.target.closest('.side-nav [data-page="settings"],[data-account-page="settings"]'):null;
+  var button=event.target&&event.target.closest?event.target.closest('.navitem[data-page="settings"],.side-nav [data-page="settings"],[data-account-page="settings"]'):null;
   if(!button)return;
   event.preventDefault();
   event.stopPropagation();
