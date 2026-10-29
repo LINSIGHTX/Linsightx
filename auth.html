@@ -102,6 +102,35 @@ html[data-theme="dark"] header.top .toplink.active{
  color:#8ce9dc!important;
 }
 
+
+/* Mobile navigation is a separate fixed bar; theme it explicitly as well. */
+html[data-theme="dark"] body .mobile-bottom-nav{
+ background:rgba(18,29,46,.98)!important;
+ background-image:linear-gradient(110deg,rgba(24,61,66,.22),rgba(18,29,46,.98) 42%,rgba(23,38,58,.98))!important;
+ border-top:1px solid #2a3a50!important;
+ box-shadow:0 -8px 26px rgba(0,0,0,.28)!important;
+ color:#c9d7e8!important;
+}
+html[data-theme="dark"] body .mobile-bottom-nav .nav-btn,
+html[data-theme="dark"] body .mobile-bottom-nav .mobile-notification-nav{
+ background:transparent!important;color:#a5b6ca!important;border-color:transparent!important;
+}
+html[data-theme="dark"] body .mobile-bottom-nav .nav-btn.active,
+html[data-theme="dark"] body .mobile-bottom-nav .mobile-notification-nav.active{
+ background:#183d42!important;color:#8ce9dc!important;
+}
+html[data-theme="dark"] body .mobile-bottom-nav .nav-btn:hover,
+html[data-theme="dark"] body .mobile-bottom-nav .mobile-notification-nav:hover{
+ background:#172b3e!important;color:#edf5ff!important;
+}
+html[data-theme="dark"] body .mobile-bottom-nav svg{stroke:currentColor!important}
+html[data-theme="dark"] body .mobile-bottom-nav .notification-dot{border-color:#121d2e!important}
+html[data-theme="dark"] body .mobile-menu,
+html[data-theme="dark"] body .mobile-profile-button,
+html[data-theme="dark"] body .mobile-account-link{
+ background:#17263a!important;border-color:#2a3a50!important;color:#edf5ff!important;
+}
+
 /* SIGHTX Aurora: midnight navy, crisp ice text, and a restrained mint signal color. */
 :root[data-theme="dark"]{
  color-scheme:dark;
