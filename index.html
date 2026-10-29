@@ -4,31 +4,10 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script>
 (function(){
-  function restoreAccountView(){
-    var previous='';
-    try {
-      previous=sessionStorage.getItem('sightx_return_account_view')||'';
-      if(previous!=='employer'&&previous!=='applicant')return false;
-      sessionStorage.removeItem('sightx_return_account_view');
-      sessionStorage.setItem('sightx_session_account_view',previous);
-      localStorage.setItem('sightx_active_account_view',previous);
-    } catch (_) { return false; }
-    document.documentElement.setAttribute('data-initial-account-view',previous);
-    // Reload a page restored from the back/forward cache so role-dependent UI
-    // is rendered again using the restored account selection.
-    if(performance.getEntriesByType('navigation')[0]?.type==='back_forward' && document.body){
-      window.location.reload();
-    }
-    return true;
-  }
   try {
-    restoreAccountView();
     var role=sessionStorage.getItem('sightx_session_account_view')||localStorage.getItem('sightx_active_account_view')||'';
     if(role==='employer'||role==='applicant')document.documentElement.setAttribute('data-initial-account-view',role);
   } catch (_) {}
-  window.addEventListener('pageshow',function(event){
-    if(event.persisted)restoreAccountView();
-  });
 })();
 </script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -646,24 +625,7 @@ html[data-initial-account-view="employer"] #employerHomeDashboard{display:block!
 <script>
 const toastEl=document.getElementById('toast');let toastTimer;
 function toast(message){toastEl.textContent=message;toastEl.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.classList.remove('show'),2600)}
-function go(page){const target=document.getElementById('page-'+page);if(!target){toast('This feature is coming soon.');return}if(page==='invite'){try{sessionStorage.setItem('sightx_session_account_view','applicant');localStorage.setItem('sightx_active_account_view','applicant');sessionStorage.removeItem('sightx_return_account_view');sessionStorage.setItem('sightx_applicant_invite_back','1');}catch(e){}document.body.dataset.accountView='applicant';const topbar=document.querySelector('.topbar');if(topbar)topbar.dataset.accountView='applicant';document.documentElement.setAttribute('data-initial-account-view','applicant');document.querySelectorAll('[data-page="profile"]').forEach(el=>{el.innerHTML='<span class="nav-ico" aria-hidden="true">👤</span> My Profile';el.setAttribute('aria-label','My Profile');});}document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+page));document.querySelectorAll('.navitem').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===page));document.querySelectorAll('.toplink').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===page));document.querySelectorAll('.mobile-bottom-nav .nav-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===page));const left=document.getElementById('leftcol');if(left)left.classList.remove('mobile-open');try{history.replaceState(null,'','#'+page);if(page==='invite'&&document.body.dataset.accountView==='applicant'){history.pushState({sightxApplicantInviteGuard:true},'','#invite');}}catch(e){}}function restorePageFromUrl(){const requested=(location.hash||'').slice(1);if(requested==='apply'||requested==='post-job'){if(typeof ensureWorkflowForms==='function')ensureWorkflowForms();if(document.getElementById('page-'+requested)){go(requested);return}}if(requested==='apply-now'){if(typeof ensureWorkflowForms==='function')ensureWorkflowForms();if(typeof window.__sightxEnsureSpecificApplicationPage==='function'){window.__sightxEnsureSpecificApplicationPage('Selected job');go('apply-now');return}}if(requested&&document.getElementById('page-'+requested)){go(requested)}else{go('home')}}window.addEventListener('DOMContentLoaded',restorePageFromUrl);window.addEventListener('hashchange',restorePageFromUrl);window.addEventListener('popstate',restorePageFromUrl);window.addEventListener('pageshow',function(){restorePageFromUrl()});
-// Keep the phone Back button inside the applicant flow when returning from Invite.
-// The Invite page adds a same-document history entry; this handler converts Back
-// into applicant Home instead of allowing a stale employer route to reappear.
-window.addEventListener('popstate',function(){
- try{
-  const role=sessionStorage.getItem('sightx_session_account_view')||localStorage.getItem('sightx_active_account_view')||'';
-  const current=(location.hash||'').slice(1);
-  if(role==='applicant'&&current==='invite'){
-   sessionStorage.removeItem('sightx_return_account_view');
-   sessionStorage.setItem('sightx_session_account_view','applicant');
-   localStorage.setItem('sightx_active_account_view','applicant');
-   document.body.dataset.accountView='applicant';
-   document.documentElement.setAttribute('data-initial-account-view','applicant');
-   go('home');
-  }
- }catch(_){}
-});
+function go(page){const target=document.getElementById('page-'+page);if(!target){toast('This feature is coming soon.');return}document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+page));document.querySelectorAll('.navitem').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===page));document.querySelectorAll('.toplink').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===page));document.querySelectorAll('.mobile-bottom-nav .nav-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===page));const left=document.getElementById('leftcol');if(left)left.classList.remove('mobile-open');try{history.replaceState(null,'','#'+page)}catch(e){}}function restorePageFromUrl(){const requested=(location.hash||'').slice(1);if(requested==='apply'||requested==='post-job'){if(typeof ensureWorkflowForms==='function')ensureWorkflowForms();if(document.getElementById('page-'+requested)){go(requested);return}}if(requested==='apply-now'){if(typeof ensureWorkflowForms==='function')ensureWorkflowForms();if(typeof window.__sightxEnsureSpecificApplicationPage==='function'){window.__sightxEnsureSpecificApplicationPage('Selected job');go('apply-now');return}}if(requested&&document.getElementById('page-'+requested)){go(requested)}else{go('home')}}window.addEventListener('DOMContentLoaded',restorePageFromUrl);window.addEventListener('hashchange',restorePageFromUrl);window.addEventListener('popstate',restorePageFromUrl);window.addEventListener('pageshow',function(){restorePageFromUrl()});
 document.addEventListener('click',e=>{const jobsAction=e.target.closest('[data-jobs-action]');if(jobsAction){e.preventDefault();const action=jobsAction.dataset.jobsAction;const jobsMenu=document.getElementById('jobsQuickMenu');jobsMenu.hidden=true;document.getElementById('jobsMenuTrigger').setAttribute('aria-expanded','false');if(action==='jobs'||action==='opportunities'){go('jobs');if(action==='opportunities'){const heading=document.querySelector('#page-jobs .jobs-header-row');if(heading)heading.scrollIntoView({behavior:'smooth',block:'start'});}return;}if(action==='saved'){go('saved');return;}if(action==='applications'){window.location.href='auth.html?type=applicant&view=applications&v=20261026-applications-hotfix2';return;}}const page=e.target.closest('[data-page]');if(page){if(page.id==='jobsMenuTrigger'){e.preventDefault();const menu=document.getElementById('jobsQuickMenu');const trigger=page;menu.hidden=!menu.hidden;trigger.setAttribute('aria-expanded',String(!menu.hidden));return;}e.preventDefault();go(page.dataset.page)}const msg=e.target.closest('[data-toast]');if(msg)toast(msg.dataset.toast);const close=e.target.closest('[data-close-form]');if(close){const box=document.getElementById(close.dataset.closeForm);if(box){if(box.id==='applyNowFormFields'){go('jobs')}else{box.hidden=true;if(box.id==='applicationForm'||box.id==='jobPostingForm')go('jobs')}}}});
 document.getElementById('mobileMenu').addEventListener('click',()=>document.getElementById('leftcol').classList.toggle('mobile-open'));
 (function setupAccountDropdown(){
@@ -731,14 +693,7 @@ window.addEventListener('sightx-auth-client-ready',bindAuth,{once:true});
   const metaRole=currentAccountUser.user_metadata&&currentAccountUser.user_metadata.account_type;
   const employer=effectiveRole==='employer'||(!effectiveRole&&metaRole==='employer');
   if(employer){
-   // Remember the current account view before entering the employer-only route.
-   try{
-    const storedRole=sessionStorage.getItem('sightx_session_account_view')||localStorage.getItem('sightx_active_account_view')||'';
-    const returnRole=storedRole==='applicant'||storedRole==='employer'?storedRole:(effectiveRole==='applicant'||effectiveRole==='employer'?effectiveRole:(metaRole==='applicant'?'applicant':'employer'));
-    sessionStorage.setItem('sightx_return_account_view',returnRole);
-    sessionStorage.setItem('sightx_session_account_view','employer');
-    localStorage.setItem('sightx_active_account_view','employer');
-   }catch(_){}
+   try{sessionStorage.setItem('sightx_session_account_view','employer');localStorage.setItem('sightx_active_account_view','employer');}catch(_){}
    window.location.href='auth.html?type=employer&view=companyprofile&v=20261029-employer-profile';
    return;
   }
