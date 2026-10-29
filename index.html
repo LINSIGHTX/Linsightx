@@ -1645,34 +1645,6 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
   button.addEventListener('click',function(){apply(theme==='dark'?'light':'dark',true)});
 })();
 </script>
-<script id="sightx-settings-dropdown-click-fix">
-(function(){
- function bindSettingsDropdown(){
-  var menu=document.getElementById('accountDropdown');
-  if(!menu||menu.dataset.settingsClickFix==='1')return;
-  menu.dataset.settingsClickFix='1';
-  menu.addEventListener('click',function(event){
-   var button=event.target.closest('[data-account-page="settings"]');
-   if(!button)return;
-   event.preventDefault();
-   event.stopImmediatePropagation();
-   menu.hidden=true;
-   document.querySelectorAll('.account-menu-trigger').forEach(function(trigger){trigger.setAttribute('aria-expanded','false');});
-   var panel=document.getElementById('sidebarSettingsPanel');
-   var page=document.getElementById('page-settings');
-   var grid=(page&&page.querySelector('.settings-grid'))||(panel&&panel.querySelector('.settings-grid'));
-   if(!panel)return;
-   if(grid&&!panel.contains(grid))panel.appendChild(grid);
-   panel.hidden=false;
-   panel.style.display='block';
-   var sidebarButton=document.querySelector('.side-nav [data-page="settings"]');
-   if(sidebarButton){sidebarButton.classList.add('active');sidebarButton.setAttribute('aria-expanded','true');}
-   panel.scrollIntoView({block:'nearest',behavior:'smooth'});
-  },true);
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindSettingsDropdown,{once:true});else bindSettingsDropdown();
-})();
-</script>
 <script id="sightx-settings-preferences">
 (function(){
  var defaults={settingCompactLayout:false,settingReduceMotion:false,settingEmailUpdates:true,settingInAppNotifications:true};
@@ -1695,36 +1667,42 @@ html.sightx-compact-layout .settings-grid{gap:8px!important}
 html.sightx-compact-layout .post{margin-bottom:10px!important}
 html.sightx-reduce-motion *,html.sightx-reduce-motion *::before,html.sightx-reduce-motion *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
 </style>
-<style id="sightx-settings-click-fix-css">
-.sightx-settings-nav-button{display:flex!important;visibility:visible!important;opacity:1!important;width:100%;min-height:46px;align-items:center;gap:11px;margin:4px 0;padding:10px 11px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font-weight:800;cursor:pointer;position:relative;z-index:10}
-.sightx-settings-nav-button:hover{background:var(--surface-soft)}
+<style id="sightx-settings-reliable-css">
 #sidebarSettingsPanel[hidden]{display:none!important}
-#sidebarSettingsPanel:not([hidden]){display:block!important}
+#sidebarSettingsPanel:not([hidden]){display:block!important;visibility:visible!important;opacity:1!important}
+#sidebarSettingsPanel .settings-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:8px!important}
+#sidebarSettingsPanel .settings-card{display:block!important;width:100%!important;box-sizing:border-box!important}
 </style>
-<script id="sightx-settings-click-fix-js">
+<script id="sightx-settings-reliable-js">
 (function(){
- function openSettings(){
+ function openSettings(event){
+  if(event){event.preventDefault();event.stopPropagation();}
   var panel=document.getElementById('sidebarSettingsPanel');
   var page=document.getElementById('page-settings');
-  if(!panel)return;
-  var grid=(page&&page.querySelector('.settings-grid'))||panel.querySelector('.settings-grid');
+  if(!panel||!page)return;
+  var grid=page.querySelector('.settings-grid')||panel.querySelector('.settings-grid');
   if(grid&&!panel.contains(grid))panel.appendChild(grid);
-  panel.hidden=false;panel.style.display='block';
-  var sideBtn=document.querySelector('.side-nav [data-page="settings"]');
-  if(sideBtn){sideBtn.classList.add('active');sideBtn.setAttribute('aria-expanded','true');}
-  var menu=document.getElementById('accountDropdown');if(menu)menu.hidden=true;
+  panel.hidden=false;
+  panel.style.setProperty('display','block','important');
+  panel.style.setProperty('visibility','visible','important');
+  panel.style.setProperty('opacity','1','important');
+  var menu=document.getElementById('accountDropdown');
+  if(menu)menu.hidden=true;
   document.querySelectorAll('.account-menu-trigger').forEach(function(t){t.setAttribute('aria-expanded','false');});
-  panel.scrollIntoView({block:'nearest',behavior:'smooth'});
+  document.querySelectorAll('[data-page="settings"]').forEach(function(b){b.classList.add('active');b.setAttribute('aria-expanded','true');});
+  page.classList.remove('active');
+  page.style.display='none';
+  try{panel.scrollIntoView({block:'nearest',behavior:'auto'});}catch(e){}
  }
- window.addEventListener('click',function(event){
-  var target=event.target&&event.target.closest?event.target.closest('[data-page="settings"],[data-account-page="settings"]'):null;
-  if(!target)return;event.preventDefault();event.stopImmediatePropagation();openSettings();
- },true);
- window.addEventListener('keydown',function(event){
-  if(event.key!=='Enter'&&event.key!==' ')return;
-  var target=event.target&&event.target.closest?event.target.closest('[data-page="settings"],[data-account-page="settings"]'):null;
-  if(!target)return;event.preventDefault();event.stopImmediatePropagation();openSettings();
- },true);
+ function bind(){
+  document.addEventListener('click',function(event){
+   var button=event.target&&event.target.closest?event.target.closest('[data-page="settings"],[data-account-page="settings"]'):null;
+   if(!button)return;
+   openSettings(event);
+   event.stopImmediatePropagation();
+  },true);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});else bind();
 })();
 </script>
 </body></html>
@@ -1983,34 +1961,3 @@ html.sightx-reduce-motion *,html.sightx-reduce-motion *::before,html.sightx-redu
 })();
 </script>
 
-<style id="sightx-settings-direct-open-final-css">#sidebarSettingsPanel[hidden]{display:none!important}#sidebarSettingsPanel:not([hidden]){display:block!important;visibility:visible!important;opacity:1!important}#sidebarSettingsPanel .settings-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:8px!important}#sidebarSettingsPanel .settings-card{display:block!important;width:100%!important;box-sizing:border-box!important}</style>
-<script id="sightx-settings-direct-open-final">
-window.sightxOpenSettings=function(event){
- if(event){event.preventDefault();event.stopPropagation();}
- var panel=document.getElementById('sidebarSettingsPanel');
- var page=document.getElementById('page-settings');
- if(!panel){alert('Settings panel is missing from this page. Please refresh the published site.');return false;}
- var grid=(page&&page.querySelector('.settings-grid'))||(panel.querySelector('.settings-grid'));
- if(grid&&!panel.contains(grid))panel.appendChild(grid);
- panel.hidden=false;
- panel.removeAttribute('hidden');
- panel.style.setProperty('display','block','important');
- panel.style.setProperty('visibility','visible','important');
- panel.style.setProperty('opacity','1','important');
- panel.style.setProperty('height','auto','important');
- panel.style.setProperty('max-height','65vh','important');
- panel.style.setProperty('overflow','auto','important');
- panel.style.setProperty('position','relative','important');
- panel.style.setProperty('z-index','100','important');
- if(grid){grid.style.setProperty('display','grid','important');grid.style.setProperty('grid-template-columns','minmax(0,1fr)','important');}
- var menu=document.getElementById('accountDropdown');if(menu)menu.hidden=true;
- document.querySelectorAll('.account-menu-trigger').forEach(function(t){t.setAttribute('aria-expanded','false');});
- document.querySelectorAll('[data-page="settings"]').forEach(function(b){b.classList.add('active');b.setAttribute('aria-expanded','true');});
- try{panel.scrollIntoView({block:'nearest',behavior:'auto'});}catch(e){}
- return false;
-};
-document.addEventListener('click',function(event){
- var b=event.target&&event.target.closest?event.target.closest('[data-page="settings"],[data-account-page="settings"]'):null;
- if(b&&typeof window.sightxOpenSettings==='function')window.sightxOpenSettings(event);
-},true);
-</script>
