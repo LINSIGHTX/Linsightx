@@ -1643,6 +1643,34 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
   button.addEventListener('click',function(){apply(theme==='dark'?'light':'dark',true)});
 })();
 </script>
+<script id="sightx-settings-dropdown-click-fix">
+(function(){
+ function bindSettingsDropdown(){
+  var menu=document.getElementById('accountDropdown');
+  if(!menu||menu.dataset.settingsClickFix==='1')return;
+  menu.dataset.settingsClickFix='1';
+  menu.addEventListener('click',function(event){
+   var button=event.target.closest('[data-account-page="settings"]');
+   if(!button)return;
+   event.preventDefault();
+   event.stopImmediatePropagation();
+   menu.hidden=true;
+   document.querySelectorAll('.account-menu-trigger').forEach(function(trigger){trigger.setAttribute('aria-expanded','false');});
+   var panel=document.getElementById('sidebarSettingsPanel');
+   var page=document.getElementById('page-settings');
+   var grid=(page&&page.querySelector('.settings-grid'))||(panel&&panel.querySelector('.settings-grid'));
+   if(!panel)return;
+   if(grid&&!panel.contains(grid))panel.appendChild(grid);
+   panel.hidden=false;
+   panel.style.display='block';
+   var sidebarButton=document.querySelector('.side-nav [data-page="settings"]');
+   if(sidebarButton){sidebarButton.classList.add('active');sidebarButton.setAttribute('aria-expanded','true');}
+   panel.scrollIntoView({block:'nearest',behavior:'smooth'});
+  },true);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindSettingsDropdown,{once:true});else bindSettingsDropdown();
+})();
+</script>
 </body></html>
 
 
