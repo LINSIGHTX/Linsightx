@@ -230,12 +230,17 @@
   function showAuth(mode){$('roleChoice').classList.add('hidden');$('authArea').classList.remove('hidden');$('dashboard').classList.add('hidden');const signup=mode==='signup';$('loginForm').classList.toggle('hidden',signup);$('signupForm').classList.toggle('hidden',!signup);$('showLogin').classList.toggle('active',!signup);$('showSignup').classList.toggle('active',signup);$('authHeading').textContent=signup?'Create your SIGHTX account':'Welcome to SIGHTX';$('selectedRoleLabel').textContent=selectedAccountType==='employer'?'Employer account':'Applicant / User account';}
   function showDashboard(){
     $('roleChoice').classList.add('hidden');$('authArea').classList.add('hidden');$('mfaLoginChallenge').classList.add('hidden');$('dashboard').classList.remove('hidden');
-    // Use the current login/selected account view, not stale browser storage from a previous session.
-    const storedView=(()=>{try{return sessionStorage.getItem('sightx_session_account_view')||localStorage.getItem('sightx_active_account_view')||'';}catch(_){return '';}})();
-    const accountView=admin()?'admin':(explicitAccountView||(user&&user.user_metadata&&user.user_metadata.account_type)||selectedAccountType||storedView||'applicant');
-    // Keep personal applicant details separate from the employer's company profile.
-    $('profileSection').classList.toggle('hidden',accountView==='employer'&&!admin());
-    $('employerArea').classList.toggle('hidden',accountView!=='employer'&&!admin());
+    // Match the same account-view resolution used by loadDashboard so the employer
+    // dashboard never renders the applicant profile alongside the company profile.
+    const requestedView=new URLSearchParams(window.location.search).get('view');
+    let storedView='';
+    try{storedView=sessionStorage.getItem('sightx_session_account_view')||localStorage.getItem('sightx_active_account_view')||'';}catch(_){}
+    const employerRoute=['postjob','employerjobs','employerapplications'].includes(requestedView);
+    const accountView=admin()?'admin':(explicitAccountView||(employerRoute?'employer':null)||(user&&user.user_metadata&&user.user_metadata.account_type==='employer'?'employer':null)||selectedAccountType||storedView||'applicant');
+    const isEmployerView=accountView==='employer'&&!admin();
+    document.documentElement.classList.toggle('employer-dashboard-view',isEmployerView);
+    $('profileSection').classList.toggle('hidden',isEmployerView);
+    $('employerArea').classList.toggle('hidden',!isEmployerView&&!admin());
   }
   function mfaMessage(message,type=''){notice('mfaNotice',message,type);}
   function loginMfaMessage(message,type=''){notice('mfaLoginNotice',message,type);}
