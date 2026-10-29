@@ -187,6 +187,28 @@
       </form>
     </section>
     <section id="myApplicationsSection" class="section card"><div class="section-head"><div><h2>My applications</h2><p class="sub">Track the status of every application you have submitted.</p></div><button class="btn" id="refreshApplications" type="button">Refresh applications</button></div><div id="myApplications" class="list"><div class="empty">Sign in to load your applications.</div></div></section>
+    <section id="employerProfileSection" class="section card hidden">
+      <div class="section-head"><div><h2>Employer Profile</h2><p class="sub">Manage your contact and company details. These fields are separate from your applicant profile.</p></div></div>
+      <form id="employerProfileDetailsForm" class="form">
+        <div class="two">
+          <div class="field"><label for="employerContactName">Contact person name *</label><input id="employerContactName" maxlength="120" autocomplete="organization-title" required></div>
+          <div class="field"><label for="employerContactPhone">Mobile number *</label><input id="employerContactPhone" type="tel" maxlength="40" autocomplete="tel" required></div>
+        </div>
+        <div class="field"><label for="employerAccountEmail">Login / account email</label><input id="employerAccountEmail" type="email" readonly aria-readonly="true"></div>
+        <div class="two">
+          <div class="field"><label for="employerProfileCompanyName">Company name *</label><input id="employerProfileCompanyName" maxlength="180" autocomplete="organization" required></div>
+          <div class="field"><label for="employerProfileCompanyEmail">Company email *</label><input id="employerProfileCompanyEmail" type="email" maxlength="254" autocomplete="email" required></div>
+        </div>
+        <div class="two">
+          <div class="field"><label for="employerProfileWebsite">Company website</label><input id="employerProfileWebsite" type="url" maxlength="300" placeholder="https://company.example"></div>
+          <div class="field"><label for="employerProfileBusinessPhone">Company contact number</label><input id="employerProfileBusinessPhone" type="tel" maxlength="40"></div>
+        </div>
+        <div class="field"><label for="employerProfileAddress">Company address</label><input id="employerProfileAddress" maxlength="240" autocomplete="street-address"></div>
+        <div class="field"><label for="employerProfileRegistration">Registration details (if applicable)</label><input id="employerProfileRegistration" maxlength="240" placeholder="Registration number / business registry"></div>
+        <div id="employerProfileNotice" class="notice hidden" role="status"></div>
+        <div class="actions"><button class="btn primary" id="saveEmployerProfile" type="submit">Save company profile</button></div>
+      </form>
+    </section>
     <section id="adminArea" class="section hidden">
       <article class="card"><div class="eyebrow">Restricted tools</div><h2>SIGHTX Admin Review</h2><p class="sub">Visible only when your authenticated account carries a trusted <code>app_metadata.role = admin</code> claim.</p><div class="notice">Verify company identity and recruiter authorization before approval. Publish jobs only after the employer is verified.</div></article>
       <section class="section card"><div class="section-head"><div><h2>Employer verification queue</h2><p>Review business evidence and recruiter association.</p></div><button class="btn" type="button" id="refreshAdmin">Refresh queues</button></div><div id="adminEmployers" class="list"></div></section>
@@ -494,6 +516,15 @@
     if(error)throw error;
     if(loadVersion!==employerLoadVersion||!user||user.id!==loadUserId)return;
     employer=data;
+    $('employerContactName').value=employer?.contact_name||'';
+    $('employerContactPhone').value=employer?.contact_phone||'';
+    $('employerAccountEmail').value=user.email||'';
+    $('employerProfileCompanyName').value=employer?.company_name||'';
+    $('employerProfileCompanyEmail').value=employer?.company_email||'';
+    $('employerProfileWebsite').value=employer?.company_website||'';
+    $('employerProfileBusinessPhone').value=employer?.business_phone||'';
+    $('employerProfileAddress').value=employer?.business_address||'';
+    $('employerProfileRegistration').value=employer?.registration_details||'';
     const status=$('employerStatus'),form=$('employerForm'),post=$('jobForm'),lock=$('postJobLock');
     if(!employer){employerEditedFields.clear();status.innerHTML='<div class="notice">No employer application submitted yet.</div>';form.classList.remove('hidden');form.reset();post.classList.add('hidden');lock.classList.remove('hidden');lock.textContent='Complete employer verification first. Your employer status will appear here.';return;}
     status.innerHTML='<div class="status-line"><strong>Status:</strong> '+statusBadge(employer.verification_status)+'</div>'+(employer.review_notes?'<p class="meta">Reviewer note: '+escapeHtml(employer.review_notes)+'</p>':'')+'<p class="meta">Submitted '+escapeHtml(new Date(employer.created_at).toLocaleDateString())+'.</p>';
@@ -594,18 +625,20 @@
     const focusedEmployerJobs=requestedView==='employerjobs';
     const focusedEmployerApplications=requestedView==='employerapplications';
     const focusedPostJob=requestedView==='postjob'&&isEmployer;
+    const focusedCompanyProfile=requestedView==='companyprofile'&&isEmployer;
     $('postJobDashboardBanner').classList.toggle('hidden',!focusedPostJob);
     const focusedEmployerView=isEmployer&&(focusedEmployerJobs||focusedEmployerApplications||focusedPostJob);
     // Dedicated Jobs menu views should show only the requested list, not the general profile/sign-out dashboard.
     const showOpportunities=focusedOpportunities||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
     const showApplications=focusedApplications||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
     $('accountHeader').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedEmployerView);
-    $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedEmployerView||isEmployer&&!admin());
+    $('employerProfileSection').classList.toggle('hidden',!focusedCompanyProfile);
+    $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedEmployerView||focusedCompanyProfile||isEmployer&&!admin());
     $('accountSecurity').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
     $('applicationComposer').classList.add('hidden');
     applicationsSection.classList.toggle('hidden',!showApplications||isEmployer&&!admin());
     opportunitiesSection.classList.toggle('hidden',!showOpportunities||isEmployer&&!admin());
-    $('employerArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||!isEmployer&&!admin());
+    $('employerArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedCompanyProfile||!isEmployer&&!admin());
     if(focusedEmployerView){
       const employerCards=$('employerArea').querySelectorAll(':scope > article');
       employerCards.forEach((card,index)=>card.classList.toggle('hidden',index===0));
@@ -653,7 +686,7 @@
       if(workspace){workspace.querySelectorAll('.divider,.section-head,h3,#myJobs,#employerApplications').forEach(el=>el.classList.remove('hidden'));}
     }
     $('adminArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
-    $('employerArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||!isEmployer&&!admin());
+    $('employerArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedCompanyProfile||!isEmployer&&!admin());
     $('applicationComposer').classList.add('hidden');
     // Keep authenticator enrollment controls administrator-only. Do not weaken login MFA checks for accounts that already have a factor enrolled.
     $('accountSecurity').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
@@ -703,6 +736,46 @@
   $('signupForm').addEventListener('submit',async e=>{e.preventDefault();clearNotice('authNotice');const button=e.submitter;button.disabled=true;try{const {data,error}=await client.auth.signUp({email:$('signupEmail').value.trim(),password:$('signupPassword').value,options:{data:{full_name:$('signupName').value.trim(),account_type:selectedAccountType||'applicant'},emailRedirectTo:window.location.href.split('?')[0]}});if(error)throw error;if(data.session){await routeSession(data.session);}else{notice('authNotice','Account created. Check your email to confirm your address, then return here and sign in.','success');$('signupForm').reset();}}catch(err){notice('authNotice',friendlyError(err),'error')}finally{button.disabled=false;}});
   $('resetPassword').addEventListener('click',async()=>{const email=$('loginEmail').value.trim();if(!email){notice('authNotice','Enter your email address first.');return;}try{const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:window.location.href.split('?')[0]});if(error)throw error;notice('authNotice','If that address has an account, a password-reset email will be sent.','success');}catch(err){notice('authNotice',friendlyError(err),'error')}});
   $('signOut').addEventListener('click',async()=>{await client.auth.signOut();session=null;user=null;employer=null;showAuth('login');notice('authNotice','You have signed out.','success');});
+  $('employerProfileDetailsForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    if(!user)return;
+    const button=$('saveEmployerProfile');button.disabled=true;
+    const noticeEl=$('employerProfileNotice');noticeEl.className='notice hidden';noticeEl.textContent='';
+    const values={
+      owner_id:user.id,
+      contact_name:$('employerContactName').value.trim(),
+      contact_phone:$('employerContactPhone').value.trim(),
+      company_name:$('employerProfileCompanyName').value.trim(),
+      company_email:$('employerProfileCompanyEmail').value.trim(),
+      company_website:$('employerProfileWebsite').value.trim()||null,
+      business_phone:$('employerProfileBusinessPhone').value.trim()||null,
+      business_address:$('employerProfileAddress').value.trim()||null,
+      registration_details:$('employerProfileRegistration').value.trim()||null,
+      evidence_notes:employer?.evidence_notes||null,
+      verification_status:employer?.verification_status||'pending'
+    };
+    try{
+      let result;
+      if(employer){
+        result=await client.from('sightx_employers').update({
+          contact_name:values.contact_name,contact_phone:values.contact_phone,
+          company_name:values.company_name,company_email:values.company_email,
+          company_website:values.company_website,business_phone:values.business_phone,
+          business_address:values.business_address,registration_details:values.registration_details,
+          updated_at:new Date().toISOString()
+        }).eq('owner_id',user.id).select().single();
+      }else{
+        result=await client.from('sightx_employers').insert(values).select().single();
+      }
+      if(result.error)throw result.error;
+      employer=result.data;
+      noticeEl.textContent='Employer profile saved successfully.';
+      noticeEl.className='notice success';
+    }catch(err){
+      noticeEl.textContent='Could not save employer profile: '+friendlyError(err);
+      noticeEl.className='notice error';
+    }finally{button.disabled=false;}
+  });
   $('employerForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('submitEmployer');btn.disabled=true;clearNotice('dashboardNotice');const values={owner_id:user.id,company_name:$('companyName').value.trim(),company_website:$('companyWebsite').value.trim()||null,company_email:$('companyEmail').value.trim(),business_phone:$('businessPhone').value.trim()||null,business_address:$('businessAddress').value.trim()||null,registration_details:$('registrationDetails').value.trim()||null,evidence_notes:$('evidenceNotes').value.trim()||null,verification_status:employer&&employer.verification_status!=='rejected'?employer.verification_status:'pending',reviewed_by:null,reviewed_at:null,review_notes:null};try{let result;if(employer){result=await client.from('sightx_employers').update(values).eq('id',employer.id).select().single();}else{result=await client.from('sightx_employers').insert(values).select().single();}if(result.error)throw result.error;notice('dashboardNotice','Employer information saved. Your status remains pending until SIGHTX reviews the evidence.','success');await loadEmployer();await loadMyJobs();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}finally{btn.disabled=false;}});
   $('jobForm').addEventListener('submit',async e=>{e.preventDefault();if(!employer||employer.verification_status!=='verified'){notice('dashboardNotice','Only verified employers can submit jobs.','error');return;}const btn=e.submitter;btn.disabled=true;try{const {error}=await client.from('sightx_job_listings').insert({employer_id:employer.id,title:$('jobTitle').value.trim(),location:$('jobLocation').value.trim(),employment_type:$('jobType').value,description:$('jobDescription').value.trim(),experience_text:$('jobExperience').value.trim()||null,salary_text:$('jobSalary').value.trim()||null,application_email:$('applicationEmail').value.trim(),status:'pending_review'});if(error)throw error;$('jobForm').reset();notice('dashboardNotice','Job submitted for SIGHTX review. It will not appear publicly until approved.','success');await loadMyJobs();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}finally{btn.disabled=false;}});
   $('refreshJobs').addEventListener('click',loadPublicJobs);$('refreshAdmin').addEventListener('click',loadAdmin);
