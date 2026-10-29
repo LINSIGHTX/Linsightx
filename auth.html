@@ -551,7 +551,7 @@
     const showOpportunities=focusedOpportunities||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
     const showApplications=focusedApplications||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
     $('accountHeader').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedEmployerView);
-    $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedEmployerView);
+    $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedEmployerView||isEmployer&&!admin());
     $('accountSecurity').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
     $('applicationComposer').classList.add('hidden');
     applicationsSection.classList.toggle('hidden',!showApplications||isEmployer&&!admin());
