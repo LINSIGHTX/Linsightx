@@ -68,6 +68,31 @@
     html.employer-dashboard-view #profileSection { display: none !important; }
     html.employer-dashboard-view #employerArea { display: grid !important; }
   </style>
+<script>(function(){var theme='light';try{var saved=localStorage.getItem('sightx_theme');if(saved==='dark'||saved==='light')theme=saved}catch(_){}document.documentElement.setAttribute('data-theme',theme);var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',theme==='dark'?'#111c2e':'#edf5ff')})();</script><style id="sightx-theme-system">
+/* SIGHTX theme system: professional surfaces with persistent light/dark modes. */
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0b1220;--surface:#111c2e;--surface-soft:#16243a;--ink:#e7eefb;--muted:#a5b4ca;--line:#2b3b53;--blue:#78a5ff;--blue-dark:#a8c5ff;--blue-soft:#1b2e50;--teal:#5bd4ca;--teal-soft:#163b3b;--green:#6ee7b7;--green-soft:#15392f;--purple:#c4a5ff;--purple-soft:#302449;--shadow:0 8px 26px rgba(0,0,0,.22);--shadow-hover:0 16px 34px rgba(0,0,0,.34)}
+html[data-theme="dark"] body{background:#0b1220!important;color:#e7eefb!important}
+html[data-theme="dark"] .topbar,html[data-theme="dark"] .top,html[data-theme="dark"] .account-dropdown,html[data-theme="dark"] .account-modal-panel,html[data-theme="dark"] .account-modal-head{background:#111c2e!important;border-color:#2b3b53!important;color:#e7eefb!important}
+html[data-theme="dark"] .searchbox,html[data-theme="dark"] .compose-input,html[data-theme="dark"] .feed-tabs,html[data-theme="dark"] .side-nav,html[data-theme="dark"] .card,html[data-theme="dark"] .workflow-form,html[data-theme="dark"] .insight-item,html[data-theme="dark"] .saved-item,html[data-theme="dark"] .post,html[data-theme="dark"] .job-card,html[data-theme="dark"] .right-panel,html[data-theme="dark"] .profile-card,html[data-theme="dark"] .settings-card,html[data-theme="dark"] .settings-grid,html[data-theme="dark"] .profile-settings-card,html[data-theme="dark"] .applications-view,html[data-theme="dark"] .section,html[data-theme="dark"] .role-choice,html[data-theme="dark"] .hero,html[data-theme="dark"] .auth-card,html[data-theme="dark"] .grid>.card{background:#111c2e!important;border-color:#2b3b53!important;color:#e7eefb!important}
+html[data-theme="dark"] .page-heading{background:linear-gradient(120deg,#111c2e,#16243a)!important;border-color:#2b3b53!important}
+html[data-theme="dark"] .page-heading h1,html[data-theme="dark"] .page-heading h2,html[data-theme="dark"] .page-heading h3,html[data-theme="dark"] .post-person strong,html[data-theme="dark"] .panel-title h3,html[data-theme="dark"] .jobs-header-row h2,html[data-theme="dark"] .job-title-row h3,html[data-theme="dark"] .profile-info h3,html[data-theme="dark"] .hero h1,html[data-theme="dark"] .hero h2,html[data-theme="dark"] .card h1,html[data-theme="dark"] .card h2,html[data-theme="dark"] .card h3,html[data-theme="dark"] .section h1,html[data-theme="dark"] .section h2,html[data-theme="dark"] .section h3,html[data-theme="dark"] .role-choice strong,html[data-theme="dark"] .brand{color:#edf4ff!important}
+html[data-theme="dark"] .page-heading p,html[data-theme="dark"] .profile-info p,html[data-theme="dark"] .post-body,html[data-theme="dark"] .trending strong,html[data-theme="dark"] .sub,html[data-theme="dark"] .hero p,html[data-theme="dark"] .role-choice span,html[data-theme="dark"] label,html[data-theme="dark"] .muted{color:#a5b4ca!important}
+html[data-theme="dark"] .toplink,html[data-theme="dark"] .toplinks a,html[data-theme="dark"] .navitem,html[data-theme="dark"] .post-actions button,html[data-theme="dark"] .account-option{color:#c2d0e5!important}
+html[data-theme="dark"] .toplink:hover,html[data-theme="dark"] .toplink.active,html[data-theme="dark"] .navitem:hover,html[data-theme="dark"] .account-option:hover{background:#1b2e50!important;color:#c8dcff!important}
+html[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),html[data-theme="dark"] textarea,html[data-theme="dark"] select,html[data-theme="dark"] .search-field,html[data-theme="dark"] .select-field{background:#0b1424!important;border-color:#344760!important;color:#e7eefb!important}
+html[data-theme="dark"] input::placeholder,html[data-theme="dark"] textarea::placeholder{color:#8294af!important}
+html[data-theme="dark"] .small-cta,html[data-theme="dark"] .jobs-header-row button,html[data-theme="dark"] .feed-tabs button.active,html[data-theme="dark"] .tabs button.active{background:#1b2e50!important;border-color:#365783!important;color:#c8dcff!important}
+html[data-theme="dark"] .topbar,html[data-theme="dark"] .top{box-shadow:0 4px 22px rgba(0,0,0,.25)!important}
+html[data-theme="dark"] .page-heading:after{opacity:.35}
+html[data-theme="dark"] .account-dropdown .account-option:hover,html[data-theme="dark"] .account-dropdown .account-option:focus-visible{background:#1b2e50!important}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;gap:7px;flex:0 0 auto;min-width:40px;height:38px;padding:0 11px;border:1px solid #dce6f5;border-radius:12px;background:#fff;color:#244b83;font-size:13px;font-weight:800;line-height:1;box-shadow:0 2px 7px rgba(24,50,91,.06);transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.theme-toggle:hover{transform:translateY(-1px);border-color:#9cbcff;background:#f2f6ff}
+.theme-toggle .theme-icon{font-size:17px}
+html[data-theme="dark"] .theme-toggle{background:#17263b!important;border-color:#344760!important;color:#d7e5ff!important;box-shadow:none}
+html[data-theme="dark"] .theme-toggle:hover{background:#203653!important}
+@media(max-width:800px){.theme-toggle{min-width:36px;width:36px;height:36px;padding:0;gap:0;border-radius:11px}.theme-toggle .theme-label{display:none}}
+@media(prefers-reduced-motion:reduce){.theme-toggle{transition:none}}
+</style>
 </head>
 <body>
 <header class="top">
@@ -921,6 +946,32 @@
   });
   client.auth.onAuthStateChange((_event,newSession)=>{setTimeout(()=>routeSession(newSession).catch(err=>{if($('mfaLoginChallenge').classList.contains('hidden'))notice('authNotice',friendlyError(err),'error');else loginMfaMessage(friendlyError(err),'error');}),0);});
   (async()=>{const {data,error}=await client.auth.getSession();if(error){notice('authNotice',friendlyError(error),'error');return;}await routeSession(data.session);})();
+})();
+</script>
+<script>
+(function(){
+  var root=document.documentElement;
+  var theme=root.getAttribute('data-theme')==='dark'?'dark':'light';
+  var button=document.createElement('button');
+  button.type='button';button.className='theme-toggle';button.id='themeToggle';
+  button.innerHTML='<span class="theme-icon" aria-hidden="true">☾</span><span class="theme-label">Dark mode</span>';
+  button.setAttribute('aria-label','Switch to dark theme');
+  var header=document.querySelector('.topbar, .top');
+  if(!header)return;
+  var nav=header.querySelector('.toplinks');
+  if(header.classList.contains('topbar')&&nav)header.insertBefore(button,nav);
+  else if(nav)nav.appendChild(button);
+  else header.appendChild(button);
+  function apply(next,save){
+    theme=next;root.setAttribute('data-theme',theme);
+    button.innerHTML=theme==='dark'?'<span class="theme-icon" aria-hidden="true">☀</span><span class="theme-label">Light mode</span>':'<span class="theme-icon" aria-hidden="true">☾</span><span class="theme-label">Dark mode</span>';
+    button.setAttribute('aria-label','Switch to '+(theme==='dark'?'light':'dark')+' theme');
+    button.setAttribute('aria-pressed',String(theme==='dark'));
+    var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',theme==='dark'?'#111c2e':'#edf5ff');
+    if(save){try{localStorage.setItem('sightx_theme',theme)}catch(_){}}
+  }
+  apply(theme,false);
+  button.addEventListener('click',function(){apply(theme==='dark'?'light':'dark',true)});
 })();
 </script>
 </body>
