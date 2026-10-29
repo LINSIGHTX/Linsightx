@@ -4,10 +4,31 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script>
 (function(){
+  function restoreAccountView(){
+    var previous='';
+    try {
+      previous=sessionStorage.getItem('sightx_return_account_view')||'';
+      if(previous!=='employer'&&previous!=='applicant')return false;
+      sessionStorage.removeItem('sightx_return_account_view');
+      sessionStorage.setItem('sightx_session_account_view',previous);
+      localStorage.setItem('sightx_active_account_view',previous);
+    } catch (_) { return false; }
+    document.documentElement.setAttribute('data-initial-account-view',previous);
+    // Reload a page restored from the back/forward cache so role-dependent UI
+    // is rendered again using the restored account selection.
+    if(performance.getEntriesByType('navigation')[0]?.type==='back_forward' && document.body){
+      window.location.reload();
+    }
+    return true;
+  }
   try {
+    restoreAccountView();
     var role=sessionStorage.getItem('sightx_session_account_view')||localStorage.getItem('sightx_active_account_view')||'';
     if(role==='employer'||role==='applicant')document.documentElement.setAttribute('data-initial-account-view',role);
   } catch (_) {}
+  window.addEventListener('pageshow',function(event){
+    if(event.persisted)restoreAccountView();
+  });
 })();
 </script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -693,7 +714,14 @@ window.addEventListener('sightx-auth-client-ready',bindAuth,{once:true});
   const metaRole=currentAccountUser.user_metadata&&currentAccountUser.user_metadata.account_type;
   const employer=effectiveRole==='employer'||(!effectiveRole&&metaRole==='employer');
   if(employer){
-   try{sessionStorage.setItem('sightx_session_account_view','employer');localStorage.setItem('sightx_active_account_view','employer');}catch(_){}
+   // Remember the current account view before entering the employer-only route.
+   try{
+    const storedRole=sessionStorage.getItem('sightx_session_account_view')||localStorage.getItem('sightx_active_account_view')||'';
+    const returnRole=storedRole==='applicant'||storedRole==='employer'?storedRole:(effectiveRole==='applicant'||effectiveRole==='employer'?effectiveRole:(metaRole==='applicant'?'applicant':'employer'));
+    sessionStorage.setItem('sightx_return_account_view',returnRole);
+    sessionStorage.setItem('sightx_session_account_view','employer');
+    localStorage.setItem('sightx_active_account_view','employer');
+   }catch(_){}
    window.location.href='auth.html?type=employer&view=companyprofile&v=20261029-employer-profile';
    return;
   }
