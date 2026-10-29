@@ -669,7 +669,20 @@ window.addEventListener('sightx-auth-client-ready',bindAuth,{once:true});
  });
  triggers.forEach(trigger=>trigger.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();if(!menu.hidden&&trigger.getAttribute('aria-expanded')==='true')close();else open(trigger);}));
  const mobileProfileButton=document.getElementById('mobileProfileButton');
- if(mobileProfileButton)mobileProfileButton.addEventListener('click',()=>{if(currentAccountUser){close();if(typeof go==='function')go('profile');}else{const accountTrigger=document.getElementById('mobileAccountToggle');if(accountTrigger)accountTrigger.click();}});
+ if(mobileProfileButton)mobileProfileButton.addEventListener('click',()=>{
+  if(!currentAccountUser){const accountTrigger=document.getElementById('mobileAccountToggle');if(accountTrigger)accountTrigger.click();return;}
+  close();
+  let selectedRole='';
+  try{selectedRole=sessionStorage.getItem('sightx_session_account_view')||localStorage.getItem('sightx_active_account_view')||'';}catch(_){}
+  const metaRole=currentAccountUser.user_metadata&&currentAccountUser.user_metadata.account_type;
+  const employer=selectedRole==='employer'||(selectedRole!=='applicant'&&metaRole==='employer');
+  if(employer){
+   try{sessionStorage.setItem('sightx_session_account_view','employer');localStorage.setItem('sightx_active_account_view','employer');}catch(_){}
+   window.location.href='auth.html?type=employer&view=verification&v=20261029-employer-profile-nav';
+   return;
+  }
+  if(typeof go==='function')go('profile');
+ });
  triggers.forEach(trigger=>{
   trigger.addEventListener('mouseenter',()=>{if(window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 801px)').matches){clearTimeout(hoverCloseTimer);open(trigger);}});
   trigger.addEventListener('mouseleave',()=>{if(window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 801px)').matches)hoverCloseTimer=setTimeout(()=>{if(!menu.matches(':hover'))close()},180);});
