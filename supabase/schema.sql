@@ -160,7 +160,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $sightx$
 begin
   if new.verification_status <> 'verified' then
     update public.sightx_job_listings
@@ -172,7 +172,7 @@ begin
   end if;
   return new;
 end;
-$;
+$sightx$;
 revoke all on function private.sightx_suspend_jobs_when_employer_unverified() from public, anon, authenticated;
 drop trigger if exists sightx_suspend_jobs_when_employer_unverified on public.sightx_employers;
 create trigger sightx_suspend_jobs_when_employer_unverified
@@ -188,7 +188,7 @@ returns trigger
 language plpgsql
 security invoker
 set search_path = ''
-as $
+as $sightx$
 begin
   if new.status = 'published' and not exists (
     select 1
@@ -201,7 +201,7 @@ begin
   end if;
   return new;
 end;
-$;
+$sightx$;
 
 drop trigger if exists sightx_require_verified_employer_for_published_job
   on public.sightx_job_listings;
