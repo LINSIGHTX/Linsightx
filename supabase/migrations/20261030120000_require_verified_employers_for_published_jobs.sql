@@ -1,4 +1,9 @@
 -- Keep public job visibility synchronized with employer verification.
+-- Create the non-exposed helper schema before defining any private functions.
+create schema if not exists private;
+revoke all on schema private from public, anon, authenticated;
+grant usage on schema private to authenticated;
+
 
 -- Keep the full application-time profile snapshot available on fresh and existing databases.
 alter table public.sightx_applications
@@ -36,10 +41,6 @@ grant execute on function private.sightx_can_apply_to_job(uuid, uuid) to authent
 -- RLS on sightx_employers intentionally hides employer rows from anonymous visitors.
 -- Therefore, do not query that table from the public SELECT policy. Instead, use a
 -- private trigger to suspend listings whenever an employer loses verified status.
-create schema if not exists private;
-revoke all on schema private from public, anon, authenticated;
-grant usage on schema private to authenticated;
-
 -- A listing may only be published while its employer remains verified.
 create or replace function public.sightx_require_verified_employer_for_published_job()
 returns trigger
