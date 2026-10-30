@@ -57,6 +57,9 @@
     if (sightxInitialView === 'opportunities') {
       document.documentElement.classList.add('opportunities-view');
     }
+    if (sightxInitialView === 'recommendations') {
+      document.documentElement.classList.add('recommendations-view');
+    }
   </script>
   <style>
     /* Keep the dedicated All Available Jobs route focused on the listings only. */
@@ -71,6 +74,18 @@
     html.opportunities-view #employerProfileSection,
     html.opportunities-view #employerArea { display: none !important; }
     html.opportunities-view #allJobsSection { display: block !important; }
+    /* Dedicated return route for the applicant's recommendations panel. */
+    html.recommendations-view #roleChoice,
+    html.recommendations-view main.wrap > .hero,
+    html.recommendations-view #accountHeader,
+    html.recommendations-view #profileSection,
+    html.recommendations-view #accountSecurity,
+    html.recommendations-view #allJobsSection,
+    html.recommendations-view #applicationComposer,
+    html.recommendations-view #myApplicationsSection,
+    html.recommendations-view #employerProfileSection,
+    html.recommendations-view #employerArea { display: none !important; }
+    html.recommendations-view #jobDiscoverySection { display: block !important; }
     html.applications-view #roleChoice { display: none !important; }
     html.applications-view .hero { display: none !important; }
     /* The dedicated My Applications route must not show profile or account/sign-out controls. */
@@ -441,15 +456,16 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     const companyProfileRoute=requestedView==='companyprofile'&&isEmployerView;
     const focusedApplications=requestedView==='applications';
     const focusedOpportunities=requestedView==='opportunities';
+    const focusedRecommendations=requestedView==='recommendations';
     const focusedEmployerView=isEmployerView&&['postjob','employerjobs','employerapplications'].includes(requestedView);
     document.documentElement.classList.toggle('employer-dashboard-view',isEmployerView);
     document.documentElement.classList.toggle('company-profile-only',companyProfileRoute);
     // Keep the dedicated applicant jobs/applications routes focused: don't re-show
     // the account banner (including Sign out) or profile form after loadDashboard hides them.
-    $('accountHeader').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedEmployerView||companyProfileRoute);
-    $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities||isEmployerView||companyProfileRoute);
+    $('accountHeader').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||focusedEmployerView||companyProfileRoute);
+    $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||isEmployerView||companyProfileRoute);
     $('employerProfileSection').classList.toggle('hidden',!companyProfileRoute);
-    $('employerArea').classList.toggle('hidden',(!isEmployerView&&!admin())||focusedApplications||focusedOpportunities||companyProfileRoute);
+    $('employerArea').classList.toggle('hidden',(!isEmployerView&&!admin())||focusedApplications||focusedOpportunities||focusedRecommendations||companyProfileRoute);
   }
   function mfaMessage(message,type=''){notice('mfaNotice',message,type);}
   function loginMfaMessage(message,type=''){notice('mfaLoginNotice',message,type);}
@@ -833,6 +849,7 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     const applicationsSection=$('myApplicationsSection');
     const focusedApplications=requestedView==='applications';
     const focusedOpportunities=requestedView==='opportunities';
+    const focusedRecommendations=requestedView==='recommendations';
     const focusedEmployerJobs=requestedView==='employerjobs';
     const focusedEmployerApplications=requestedView==='employerapplications';
     const focusedPostJob=requestedView==='postjob'&&isEmployer;
@@ -843,17 +860,17 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     // Dedicated Jobs menu views should show only the requested list, not the general profile/sign-out dashboard.
     const showOpportunities=focusedOpportunities;
     const showApplications=focusedApplications||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
-    const showJobDiscovery=!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer&&!admin();
-    $('accountHeader').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedEmployerView);
+    const showJobDiscovery=focusedRecommendations||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer&&!admin());
+    $('accountHeader').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||focusedEmployerView);
     $('employerProfileSection').classList.toggle('hidden',!focusedCompanyProfile);
-    $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedEmployerView||focusedCompanyProfile||isEmployer&&!admin());
+    $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||focusedEmployerView||focusedCompanyProfile||isEmployer&&!admin());
     $('accountSecurity').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
     $('applicationComposer').classList.add('hidden');
     applicationsSection.classList.toggle('hidden',!showApplications||isEmployer&&!admin());
     opportunitiesSection.classList.toggle('hidden',!showOpportunities||isEmployer&&!admin());
     $('jobDiscoverySection').classList.toggle('hidden',!showJobDiscovery);
     $('allJobsSection').classList.toggle('hidden',!showOpportunities||isEmployer&&!admin());
-    $('employerArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedCompanyProfile||!isEmployer&&!admin());
+    $('employerArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||focusedCompanyProfile||!isEmployer&&!admin());
     if(focusedEmployerView){
       const employerCards=$('employerArea').querySelectorAll(':scope > article');
       employerCards.forEach((card,index)=>card.classList.toggle('hidden',index===0));
@@ -1000,7 +1017,7 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     // This page is opened on the dedicated ?view=opportunities route, where the
     // recommendations panel is intentionally hidden. Return to the normal
     // applicant dashboard instead of hiding the only visible section.
-    window.location.href='auth.html';
+    window.location.href='auth.html?view=recommendations';
   });
   $('refreshEmployerApplications').addEventListener('click',loadEmployerApplications);
   $('cancelApplication').addEventListener('click',()=>{$('applicationComposer').classList.add('hidden');currentApplicationJob=null;});
