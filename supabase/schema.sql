@@ -150,14 +150,36 @@ for all to authenticated using (coalesce((select auth.jwt() -> 'app_metadata' ->
 drop policy if exists "SIGHTX public read published jobs" on public.sightx_job_listings;
 drop policy if exists "public can view approved published jobs" on public.sightx_job_listings;
 create policy "public can view approved published jobs" on public.sightx_job_listings
-for select to anon, authenticated using (
-  status = 'published'
-  and exists (
-    select 1 from public.sightx_employers e
-    where e.id = sightx_job_listings.employer_id
-      and e.verification_status = 'verified'
-  )
-);
+for select to anon, authenticated using (status = 'published');
+
+-- Employer status changes automatically suspend existing public/pending listings.
+create schema if not exists private;
+revoke all on schema private from public, anon, authenticated;
+create or replace function private.sightx_suspend_jobs_when_employer_unverified()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $
+begin
+  if new.verification_status <> 'verified' then
+    update public.sightx_job_listings
+       set status = 'suspended',
+           reviewed_by = new.reviewed_by,
+           reviewed_at = new.reviewed_at
+     where employer_id = new.id
+       and status in ('published', 'pending_review');
+  end if;
+  return new;
+end;
+$;
+revoke all on function private.sightx_suspend_jobs_when_employer_unverified() from public, anon, authenticated;
+drop trigger if exists sightx_suspend_jobs_when_employer_unverified on public.sightx_employers;
+create trigger sightx_suspend_jobs_when_employer_unverified
+after update of verification_status on public.sightx_employers
+for each row
+when (old.verification_status is distinct from new.verification_status)
+execute function private.sightx_suspend_jobs_when_employer_unverified();
 
 -- A listing may only be published while its employer remains verified.
 -- This protects against both premature admin approval and later employer suspension.
