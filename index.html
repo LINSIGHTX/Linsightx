@@ -1543,6 +1543,7 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     const submit = profileForm.querySelector('button[type="submit"]');
     const file = resumeFile && resumeFile.files && resumeFile.files[0];
     let uploadedPath = '';
+    const previousResumePath = activeUser.user_metadata?.resume_path || '';
     saveStatus.textContent = 'Saving your profile…';
     if(resumeStatus)resumeStatus.textContent=file?'Uploading resume…':(activeUser.user_metadata?.resume_path?'Keeping your saved resume.':'Resume required before applying.');
     submit.disabled = true;
@@ -1582,12 +1583,22 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
       }
       const {error} = await client.auth.updateUser({data});
       if (error) throw error;
+      // Remove an older resume only after the profile points to the replacement.
+      // Storage RLS prevents deletion if an existing application still references it.
+      if(previousResumePath && previousResumePath !== data.resume_path){
+        try { await client.storage.from('resumes').remove([previousResumePath]); } catch (_) {}
+      }
       saveStatus.textContent = 'Profile saved successfully.';
       if(resumeStatus)resumeStatus.textContent='Resume uploaded and saved privately.';
       if(resumeCurrent){resumeCurrent.hidden=false;resumeCurrent.textContent='✓ '+(data.resume_name||'Resume')+' saved to private storage.';}
       const initials = nameField.value.trim().split(/\s+/).slice(0,2).map(part => part[0]).join('').toUpperCase();
       avatar.textContent = initials || 'LX';
     } catch (error) {
+      // If the upload succeeded but saving profile metadata failed, remove the
+      // unlinked file so repeated retries do not leave private orphaned resumes.
+      if(uploadedPath){
+        try { await client.storage.from('resumes').remove([uploadedPath]); } catch (_) {}
+      }
       saveStatus.textContent = error && error.message ? 'Could not save: ' + error.message : 'Could not save profile. Please try again.';
       if(resumeStatus && file)resumeStatus.textContent='Resume upload/save did not finish. Please try again.';
     } finally { submit.disabled = false; }
