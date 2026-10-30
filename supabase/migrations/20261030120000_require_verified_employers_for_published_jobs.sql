@@ -1,5 +1,11 @@
 -- Keep public job visibility synchronized with employer verification.
 
+-- Keep the full application-time profile snapshot available on fresh and existing databases.
+alter table public.sightx_applications
+  add column if not exists applicant_profile jsonb not null default '{}'::jsonb;
+comment on column public.sightx_applications.applicant_profile is
+  'Snapshot of the applicant profile intentionally shared with the employer for this specific application.';
+
 -- Applicants cannot SELECT employer verification rows under employer-table RLS.
 -- This private SECURITY DEFINER helper performs only the application eligibility
 -- check and explicitly binds the check to the caller's authenticated user id.
