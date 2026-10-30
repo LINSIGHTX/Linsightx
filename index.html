@@ -1212,7 +1212,10 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
  }
  async function loadJobs(){
   loading=true;renderJobs();
-  const {data,error}=await client.from('sightx_job_listings').select('id,title,location,employment_type,description,salary_text,experience_text,status,employer_id,sightx_employers!inner(verification_status)').eq('status','published').eq('sightx_employers.verification_status','verified').order('created_at',{ascending:false});
+  // Employer rows are intentionally private under RLS. Public job visibility is
+  // controlled by the published status; the database migration suspends listings
+  // whenever an employer loses verified status.
+  const {data,error}=await client.from('sightx_job_listings').select('id,title,location,employment_type,description,salary_text,experience_text,status,employer_id').eq('status','published').order('created_at',{ascending:false});
   loading=false;
   if(error){liveJobs=[];root.innerHTML='<div class="sightx-live-error">Published jobs could not be loaded right now. Please refresh and try again.</div>';console.error('SIGHTX live job loading failed:',error.message);return}
   liveJobs=data||[];renderJobs();
