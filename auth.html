@@ -191,7 +191,7 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
   <nav class="toplinks" aria-label="Site navigation"><a href="index.html">Home</a><a href="index.html#jobs">Find jobs</a><a href="#account">Account</a></nav>
 </header>
 <main class="wrap">
-  <section class="hero"><div class="eyebrow">Your next opportunity starts here</div><h1>How would you like to use SIGHTX?</h1><p>Choose the account path that fits you. Applicants can discover jobs and track applications; employers can submit their company for verification and manage hiring.</p></section>
+  <section id="authIntroHero" class="hero"><div class="eyebrow">Your next opportunity starts here</div><h1>How would you like to use SIGHTX?</h1><p>Choose the account path that fits you. Applicants can discover jobs and track applications; employers can submit their company for verification and manage hiring.</p></section>
   <section id="roleChoice" aria-labelledby="roleChoiceHeading">
     <h2 id="roleChoiceHeading" style="margin:0 0 8px;letter-spacing:-.03em">Choose your account type</h2>
     <p class="sub">You can sign in to an existing account after choosing a path. Employer features remain locked until company verification is approved.</p>
@@ -408,12 +408,12 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
   function showRoleChoice(){
     // Never display the account-type chooser from the dedicated My Applications route.
     if(focusedApplicationsView||focusedPostJobView){showAuth('login');return;}
-    $('roleChoice').classList.remove('hidden');$('authArea').classList.add('hidden');$('dashboard').classList.add('hidden');
+    $('authIntroHero').classList.remove('hidden');$('roleChoice').classList.remove('hidden');$('authArea').classList.add('hidden');$('dashboard').classList.add('hidden');
   }
-  function showRecoveryForm(){$('roleChoice').classList.add('hidden');$('authArea').classList.remove('hidden');$('dashboard').classList.add('hidden');$('mfaLoginChallenge').classList.add('hidden');$('loginForm').classList.add('hidden');$('signupForm').classList.add('hidden');$('recoveryForm').classList.remove('hidden');$('showLogin').classList.add('hidden');$('showSignup').classList.add('hidden');$('authHeading').textContent='Set a new password';$('selectedRoleLabel').textContent='Account recovery';}
-  function showAuth(mode){$('recoveryForm').classList.add('hidden');$('showLogin').classList.remove('hidden');$('showSignup').classList.remove('hidden');$('roleChoice').classList.add('hidden');$('authArea').classList.remove('hidden');$('dashboard').classList.add('hidden');const signup=mode==='signup';$('loginForm').classList.toggle('hidden',signup);$('signupForm').classList.toggle('hidden',!signup);$('showLogin').classList.toggle('active',!signup);$('showSignup').classList.toggle('active',signup);$('authHeading').textContent=signup?'Create your SIGHTX account':'Welcome to SIGHTX';$('selectedRoleLabel').textContent=selectedAccountType==='employer'?'Employer account':'Applicant / User account';}
+  function showRecoveryForm(){$('authIntroHero').classList.add('hidden');$('roleChoice').classList.add('hidden');$('authArea').classList.remove('hidden');$('dashboard').classList.add('hidden');$('mfaLoginChallenge').classList.add('hidden');$('loginForm').classList.add('hidden');$('signupForm').classList.add('hidden');$('recoveryForm').classList.remove('hidden');$('showLogin').classList.add('hidden');$('showSignup').classList.add('hidden');$('authHeading').textContent='Set a new password';$('selectedRoleLabel').textContent='Account recovery';}
+  function showAuth(mode){$('authIntroHero').classList.add('hidden');$('recoveryForm').classList.add('hidden');$('showLogin').classList.remove('hidden');$('showSignup').classList.remove('hidden');$('roleChoice').classList.add('hidden');$('authArea').classList.remove('hidden');$('dashboard').classList.add('hidden');const signup=mode==='signup';$('loginForm').classList.toggle('hidden',signup);$('signupForm').classList.toggle('hidden',!signup);$('showLogin').classList.toggle('active',!signup);$('showSignup').classList.toggle('active',signup);$('authHeading').textContent=signup?'Create your SIGHTX account':'Welcome to SIGHTX';$('selectedRoleLabel').textContent=selectedAccountType==='employer'?'Employer account':'Applicant / User account';}
   function showDashboard(){
-    $('roleChoice').classList.add('hidden');$('authArea').classList.add('hidden');$('mfaLoginChallenge').classList.add('hidden');$('dashboard').classList.remove('hidden');
+    $('authIntroHero').classList.add('hidden');$('roleChoice').classList.add('hidden');$('authArea').classList.add('hidden');$('mfaLoginChallenge').classList.add('hidden');$('dashboard').classList.remove('hidden');
     // Match the same account-view resolution used by loadDashboard so the employer
     // dashboard never renders the applicant profile alongside the company profile.
     const requestedView=new URLSearchParams(window.location.search).get('view');
@@ -749,7 +749,7 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
       return;
     }
     const jobs=data||[];
-    box.innerHTML=jobs.length?jobs.map(jobCardMarkup).join(''):'<div class="empty">No approved jobs are published yet. Please check back soon.</div>';
+    box.innerHTML=jobs.length?jobs.map(jobCardMarkup).join(''):'<div class="empty">There are currently no published job listings in SIGHTX. Jobs will appear here after an employer submits a listing and SIGHTX approves and publishes it.</div>';
     if(!recommendedBox)return;
     const terms=getProfileJobTerms();
     if(!terms.length){
