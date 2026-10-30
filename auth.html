@@ -313,19 +313,9 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
       <div id="recommendedJobs" class="list"><div class="empty">Loading recommendations…</div></div>
     </section>
     <section id="allJobsSection" class="section card hidden"><div class="section-head"><div><h2>All Available Jobs</h2><p>Every job published and approved by SIGHTX.</p></div><div class="actions"><button class="btn" id="hideAllJobs" type="button">Back to recommendations</button><button class="btn" id="refreshJobs" type="button">Refresh</button></div></div><div id="publicJobs" class="list"><div class="empty">Loading published jobs…</div></div></section>
-    <section id="applicationComposer" class="section card hidden">
-      <div class="section-head"><div><h2>Apply for <span id="applicationJobTitle">this opportunity</span></h2><p>Submit your details and resume securely to the hiring team.</p></div><button class="btn" id="cancelApplication" type="button">Cancel</button></div>
-      <form id="applicationForm" class="form">
-        <input id="applicationJobId" type="hidden">
-        <div class="two">
-          <div class="field"><label for="applicantFullName">Full name</label><input id="applicantFullName" maxlength="120" autocomplete="name" required></div>
-          <div class="field"><label for="applicantEmailAddress">Email address</label><input id="applicantEmailAddress" type="email" autocomplete="email" required></div>
-        </div>
-        <div class="field"><label for="applicantResumeFile">Resume file (PDF, DOC, or DOCX; max 5 MB)</label><input id="applicantResumeFile" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required><small class="muted">Your resume is uploaded to private storage. Access is restricted by SIGHTX storage policies.</small></div>
-        <div class="field"><label for="applicantCoverMessage">Cover message</label><textarea id="applicantCoverMessage" maxlength="5000" required placeholder="Briefly explain why you're a good fit."></textarea></div>
-        <div id="applicationNotice" class="notice hidden" role="status"></div>
-        <div class="actions"><button class="btn primary" id="submitApplication" type="submit">Submit application</button></div>
-      </form>
+    <section id="applicationComposer" class="section card hidden" aria-live="polite">
+      <div class="section-head"><div><h2>Applying for <span id="applicationJobTitle">this opportunity</span></h2><p>Your saved SIGHTX profile and resume will be attached automatically.</p></div><button class="btn" id="cancelApplication" type="button">Close</button></div>
+      <div id="applicationNotice" class="notice" role="status">Preparing your application…</div>
     </section>
     <section id="myApplicationsSection" class="section card"><div class="section-head"><div><h2>My applications</h2><p class="sub">Track the status of every application you have submitted.</p></div><button class="btn" id="refreshApplications" type="button">Refresh applications</button></div><div id="myApplications" class="list"><div class="empty">Sign in to load your applications.</div></div></section>
     <section id="employerProfileSection" class="section card hidden">
@@ -987,88 +977,67 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
   $('showAllJobs').addEventListener('click',()=>{$('allJobsSection').classList.remove('hidden');$('allJobsSection').scrollIntoView({behavior:'smooth',block:'start'});});
   $('hideAllJobs').addEventListener('click',()=>{$('allJobsSection').classList.add('hidden');$('jobDiscoverySection').scrollIntoView({behavior:'smooth',block:'start'});});
   $('refreshEmployerApplications').addEventListener('click',loadEmployerApplications);
-  $('cancelApplication').addEventListener('click',()=>{$('applicationComposer').classList.add('hidden');$('applicationForm').reset();currentApplicationJob=null;});
-  $('applicationForm').addEventListener('submit',async event=>{
-    event.preventDefault();
-    if(!user||!currentApplicationJob){notice('applicationNotice','Your session or selected job is no longer available. Please reopen the job and try again.','error');return;}
-    const button=$('submitApplication');button.disabled=true;clearNotice('applicationNotice');
-    let uploadedPath=null;
+  $('cancelApplication').addEventListener('click',()=>{$('applicationComposer').classList.add('hidden');currentApplicationJob=null;});
+  async function submitApplicationFromSavedProfile(job){
+    if(!user||!job)return;
+    const box=$('applicationComposer');
+    const meta=user.user_metadata||{};
+    const applicantName=String(meta.full_name||meta.name||'').trim();
+    const applicantEmail=String(user.email||'').trim();
+    const applicantPhone=String(meta.phone||$('profilePhone').value||'').trim();
+    const resumePath=String(meta.resume_path||'').trim();
+    if(!applicantName||!applicantEmail||!resumePath){
+      notice('applicationNotice','Your saved profile is missing your name or resume. Open My Profile, complete it and save once, then try applying again.','error');
+      return;
+    }
+    $('applicationJobTitle').textContent=job.title||'this opportunity';
+    box.classList.remove('hidden');
+    notice('applicationNotice','Submitting with your saved profile and resume…');
     try{
-      const file=$('applicantResumeFile').files[0];
-      if(!file)throw new Error('Choose a resume file before submitting.');
-      if(file.size>5*1024*1024)throw new Error('Resume files must be 5 MB or smaller.');
-      const allowedTypes=['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-      const ext=(file.name.split('.').pop()||'').toLowerCase();
-      if(!allowedTypes.includes(file.type)||!['pdf','doc','docx'].includes(ext))throw new Error('Use a PDF, DOC, or DOCX resume file.');
-      const cover=$('applicantCoverMessage').value.trim();
-      if(!cover)throw new Error('Enter a short cover message.');
-      const safeName=file.name.normalize('NFKD').replace(/[^a-zA-Z0-9._-]/g,'_').slice(-100)||('resume.'+ext);
-      uploadedPath=user.id+'/'+crypto.randomUUID()+'-'+safeName;
-      const {error:uploadError}=await client.storage.from('resumes').upload(uploadedPath,file,{contentType:file.type,upsert:false});
-      if(uploadError)throw uploadError;
-      const meta=user.user_metadata||{};
-      const applicantName=$('applicantFullName').value.trim();
-      const applicantEmail=$('applicantEmailAddress').value.trim();
-      const applicantPhone=$('profilePhone').value.trim()||String(meta.phone||'').trim();
+      const {data:existing,error:existingError}=await client.from('sightx_applications').select('id').eq('job_id',job.id).eq('applicant_id',user.id).maybeSingle();
+      if(existingError)throw existingError;
+      if(existing){
+        notice('applicationNotice','You have already applied for this job. Check My applications for its status.','error');
+        return;
+      }
       const applicantProfile={
-        full_name:applicantName,email:applicantEmail,phone:applicantPhone,
+        full_name:applicantName,email:applicantEmail,phone:applicantPhone||null,
         location:String(meta.location||''),headline:String(meta.headline||''),
         linkedin_url:String(meta.linkedin_url||''),portfolio_url:String(meta.portfolio_url||''),
         education:String(meta.education||''),field_of_study:String(meta.field_of_study||''),
         institution:String(meta.institution||''),graduation_year:String(meta.graduation_year||''),
         experience:String(meta.experience||''),current_role:String(meta.current_role||''),
-        skills:String(meta.skills||''),summary:String(meta.summary||''),resume_name:file.name
+        skills:String(meta.skills||''),summary:String(meta.summary||''),
+        resume_name:String(meta.resume_name||'')
       };
       const {error:insertError}=await client.from('sightx_applications').insert({
-        job_id:currentApplicationJob.id,applicant_id:user.id,
-        full_name:applicantName,applicant_phone:applicantPhone||null,email:applicantEmail,
-        applicant_profile:applicantProfile,
-        resume_path:uploadedPath,cover_message:cover,status:'new'
+        job_id:job.id,applicant_id:user.id,full_name:applicantName,
+        applicant_phone:applicantPhone||null,email:applicantEmail,
+        applicant_profile:applicantProfile,resume_path:resumePath,
+        cover_message:'',status:'new'
       });
       if(insertError)throw insertError;
-      // The resume is now referenced by a saved application; do not clean it up
-      // if a later UI refresh fails.
-      uploadedPath=null;
-      notice('dashboardNotice','Application submitted successfully. Your resume is stored privately.','success');
-      $('applicationComposer').classList.add('hidden');$('applicationForm').reset();currentApplicationJob=null;
+      notice('applicationNotice','Application submitted successfully using your saved profile and resume.','success');
+      notice('dashboardNotice','Application submitted successfully. Your saved profile and resume were sent to the hiring team.','success');
       await loadMyApplications();
     }catch(err){
-      let message=friendlyError(err);
-      if(uploadedPath){
-        // Remove a resume uploaded for an application that was not saved.
-        // Storage RLS permits this only for the applicant's own unlinked file.
-        try{
-          const {error:cleanupError}=await client.storage.from('resumes').remove([uploadedPath]);
-          if(cleanupError)throw cleanupError;
-        }catch(_){
-          message+=' The unused resume could not be cleaned up automatically; it remains private in storage.';
-        }
-      }
-      notice('applicationNotice',message,'error');
-    }finally{button.disabled=false;}
-  });
+      notice('applicationNotice',friendlyError(err),'error');
+    }
+  }
   $('profileForm').addEventListener('submit',saveProfile);
   $('refreshApplications').addEventListener('click',async()=>{const button=$('refreshApplications');button.disabled=true;try{await loadMyApplications();}finally{button.disabled=false;}});
   document.addEventListener('click',async e=>{
     const apply=e.target.closest('[data-apply]');if(apply){
       if(!user){showAuth('login');notice('authNotice','Sign in or create an account to apply.');window.scrollTo({top:0,behavior:'smooth'});return;}
       const jobId=apply.dataset.apply;
+      apply.disabled=true;
       try{
         const {data:job,error}=await client.from('sightx_job_listings').select('id,title,status').eq('id',jobId).eq('status','published').single();
         if(error)throw error;
-        const {data:existing,error:existingError}=await client.from('sightx_applications').select('id').eq('job_id',jobId).eq('applicant_id',user.id).maybeSingle();
-        if(existingError)throw existingError;
-        if(existing){notice('dashboardNotice','You have already applied for this job. Check My applications for its status.','error');return;}
         currentApplicationJob=job;
-        $('applicationForm').reset();
-        $('applicationJobId').value=job.id;
-        $('applicationJobTitle').textContent=job.title;
-        $('applicantFullName').value=(user.user_metadata&&user.user_metadata.full_name)||'';
-        $('applicantEmailAddress').value=user.email||'';
-        clearNotice('applicationNotice');
-        $('applicationComposer').classList.remove('hidden');
-        $('applicationComposer').scrollIntoView({behavior:'smooth',block:'start'});
+        await submitApplicationFromSavedProfile(job);
       }catch(err){notice('dashboardNotice',friendlyError(err),'error');}
+      finally{apply.disabled=false;}
       return;
     }
     const adminResume=e.target.closest('[data-admin-resume]');if(adminResume){
