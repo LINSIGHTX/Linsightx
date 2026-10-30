@@ -1065,6 +1065,12 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
   const trigger=event.target.closest('#postJobCta,#jobsApplyCta,#page-jobs a.apply-btn,#page-jobs [data-open-form]');
   if(!trigger)return;
   event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
+  // The main "Apply for a Job" CTA is a job-discovery action, not an application form.
+  // Send applicants to the authenticated dashboard's published-jobs view.
+  if(trigger.id==='jobsApplyCta'){
+   window.location.href='auth.html?type=applicant&view=opportunities&v=20261031-job-discovery';
+   return;
+  }
   let signedIn=false;
   try{const client=window.sightxSupabase;if(client){const result=await client.auth.getSession();signedIn=!!(result&&result.data&&result.data.session&&result.data.session.user);}}catch(_){signedIn=false;}
   if(!signedIn){if(typeof window.sightxOpenLoginModal==='function')window.sightxOpenLoginModal(trigger.id==='postJobCta'?'employer':'applicant');return;}
