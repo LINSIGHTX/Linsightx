@@ -70,6 +70,7 @@ create table if not exists public.sightx_applications (
   applicant_id uuid not null references auth.users(id) on delete cascade,
   full_name text not null,
   applicant_phone text,
+  applicant_profile jsonb not null default '{}'::jsonb,
   email text not null,
   resume_path text,
   cover_message text not null,
