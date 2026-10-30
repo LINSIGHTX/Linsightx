@@ -38,6 +38,21 @@ $sightx$;
 revoke all on function private.sightx_can_apply_to_job(uuid, uuid) from public, anon, authenticated;
 grant usage on schema private to authenticated;
 grant execute on function private.sightx_can_apply_to_job(uuid, uuid) to authenticated;
+
+-- Replace the original INSERT rule, whose direct employer-table lookup is hidden
+-- by employer RLS from ordinary applicants and can incorrectly block valid applications.
+drop policy if exists "applicants can submit own applications" on public.sightx_applications;
+create policy "applicants can submit own applications" on public.sightx_applications
+for insert to authenticated with check (
+  applicant_id = (select auth.uid())
+  and status = 'new'
+  and employer_notes is null
+  and (
+    resume_path is null
+    or split_part(resume_path, '/', 1) = (select auth.uid())::text
+  )
+  and private.sightx_can_apply_to_job(job_id, applicant_id)
+);
 -- RLS on sightx_employers intentionally hides employer rows from anonymous visitors.
 -- Therefore, do not query that table from the public SELECT policy. Instead, use a
 -- private trigger to suspend listings whenever an employer loses verified status.
