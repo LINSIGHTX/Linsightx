@@ -340,6 +340,34 @@ with check (
 
 -- Replace the original application policies with the live, least-privilege rules.
 drop policy if exists "applicants can submit own applications" on public.sightx_applications;
+-- Applicants cannot SELECT employer verification rows under employer-table RLS.
+-- This private SECURITY DEFINER helper performs only the application eligibility
+-- check and explicitly binds the check to the caller's authenticated user id.
+create or replace function private.sightx_can_apply_to_job(
+  target_job_id uuid,
+  target_applicant_id uuid
+)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $sightx$
+  select auth.uid() is not null
+    and auth.uid() = target_applicant_id
+    and exists (
+      select 1
+      from public.sightx_job_listings j
+      join public.sightx_employers e on e.id = j.employer_id
+      where j.id = target_job_id
+        and j.status = 'published'
+        and e.verification_status = 'verified'
+    );
+$sightx$;
+revoke all on function private.sightx_can_apply_to_job(uuid, uuid) from public, anon, authenticated;
+grant usage on schema private to authenticated;
+grant execute on function private.sightx_can_apply_to_job(uuid, uuid) to authenticated;
+
 create policy "applicants can submit own applications" on public.sightx_applications
 for insert to authenticated with check (
   applicant_id = (select auth.uid())
@@ -349,14 +377,7 @@ for insert to authenticated with check (
     resume_path is null
     or split_part(resume_path, '/', 1) = (select auth.uid())::text
   )
-  and exists (
-    select 1
-    from public.sightx_job_listings j
-    join public.sightx_employers e on e.id = j.employer_id
-    where j.id = sightx_applications.job_id
-      and j.status = 'published'
-      and e.verification_status = 'verified'
-  )
+  and private.sightx_can_apply_to_job(job_id, applicant_id)
 );
 
 drop policy if exists "applicants and job owners can read applications" on public.sightx_applications;
