@@ -1146,7 +1146,7 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
  function addRecord(key,record){const records=read(key);records.push(record);return write(key,records)}
  document.addEventListener('submit',function(event){
   const form=event.target;
-  if(!form||!['jobPostingFields','applicationFormFields','applyNowFormFields'].includes(form.id))return;
+  if(!form||!['jobPostingFields','applicationFormFields'].includes(form.id))return;
   event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
   if(!form.reportValidity())return;
   const fields=form.elements;
@@ -1173,7 +1173,7 @@ window.addEventListener('DOMContentLoaded',()=>{syncSaveButtons();renderSavedJob
  function init(){
   notice($('jobPostingFields'),'Prototype notice: jobs are saved only in this browser and are not visible to other visitors.');
   notice($('applicationFormFields'),'Privacy note: this demo saves application details locally in this browser. Resume files are selected but not uploaded.');
-  const specific=$('applyNowFormFields');if(specific)notice(specific,'Privacy note: this demo saves application details locally in this browser. Resume files are selected but not uploaded.');
+  // The live apply form is handled by the authenticated Supabase application flow below.
   renderCommunityJobs();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
