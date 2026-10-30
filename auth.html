@@ -963,9 +963,14 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     }catch(err){
       let message=friendlyError(err);
       if(uploadedPath){
-        // The live Storage policy currently grants no DELETE permission, so
-        // keep the file private and tell the user how to request cleanup.
-        message+=' The resume upload remains in private storage because automatic deletion is not enabled; contact SIGHTX support if cleanup is needed.';
+        // Remove a resume uploaded for an application that was not saved.
+        // Storage RLS permits this only for the applicant's own unlinked file.
+        try{
+          const {error:cleanupError}=await client.storage.from('resumes').remove([uploadedPath]);
+          if(cleanupError)throw cleanupError;
+        }catch(_){
+          message+=' The unused resume could not be cleaned up automatically; it remains private in storage.';
+        }
       }
       notice('applicationNotice',message,'error');
     }finally{button.disabled=false;}
