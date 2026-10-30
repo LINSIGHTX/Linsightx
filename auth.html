@@ -305,7 +305,14 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
         <div class="divider"></div><div class="section-head"><div><h3>Applications to your jobs</h3><p>Review candidate details and retrieve resumes for your listings.</p></div><button class="btn" id="refreshEmployerApplications" type="button">Refresh applications</button></div><div id="employerApplications" class="list"><div class="empty">Sign in to load applications for your jobs.</div></div>
       </article>
     </section>
-    <section class="section card"><div class="section-head"><div><h2>Open opportunities</h2><p>Only administrator-published jobs are shown here.</p></div><button class="btn" id="refreshJobs" type="button">Refresh</button></div><div id="publicJobs" class="list"><div class="empty">Loading published jobs…</div></div></section>
+    <section id="jobDiscoverySection" class="section card">
+      <div class="section-head"><div><h2>Find your next opportunity</h2><p>Browse all published jobs or explore roles matched to your profile.</p></div></div>
+      <div class="actions" style="margin:0 0 16px"><button class="btn primary" id="showAllJobs" type="button">Apply for a Job · View All Jobs</button></div>
+      <div class="divider"></div>
+      <div class="section-head"><div><h3>Recommended Jobs for You</h3><p>Based on the skills, experience, education and location in your saved profile.</p></div><button class="btn" id="refreshRecommendations" type="button">Refresh</button></div>
+      <div id="recommendedJobs" class="list"><div class="empty">Loading recommendations…</div></div>
+    </section>
+    <section id="allJobsSection" class="section card hidden"><div class="section-head"><div><h2>All Available Jobs</h2><p>Every job published and approved by SIGHTX.</p></div><div class="actions"><button class="btn" id="hideAllJobs" type="button">Back to recommendations</button><button class="btn" id="refreshJobs" type="button">Refresh</button></div></div><div id="publicJobs" class="list"><div class="empty">Loading published jobs…</div></div></section>
     <section id="applicationComposer" class="section card hidden">
       <div class="section-head"><div><h2>Apply for <span id="applicationJobTitle">this opportunity</span></h2><p>Submit your details and resume securely to the hiring team.</p></div><button class="btn" id="cancelApplication" type="button">Cancel</button></div>
       <form id="applicationForm" class="form">
@@ -714,10 +721,56 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     if(!apps||!apps.length){box.innerHTML='<div class="empty">No applications have been submitted to your jobs yet.</div>';return;}
     box.innerHTML=apps.map(app=>{const p=app.applicant_profile||{};const detail=(label,value)=>value?'<div class="meta"><strong>'+label+':</strong> '+escapeHtml(String(value))+'</div>':'';return '<article class="item"><div class="item-head"><div><h3>'+escapeHtml(app.full_name)+'</h3><div class="meta">'+escapeHtml(app.email)+(app.applicant_phone?' · '+escapeHtml(app.applicant_phone):'')+' · '+escapeHtml(titleByJob.get(app.job_id)||'Your job')+'</div><div class="meta">Submitted '+escapeHtml(new Date(app.created_at).toLocaleDateString())+'</div></div>'+statusBadge(app.status)+'</div><details style="margin-top:10px"><summary class="btn">View applicant profile</summary><div style="display:grid;gap:5px;margin-top:10px">'+detail('Location',p.location)+detail('Professional headline',p.headline)+detail('Education',p.education)+detail('Field of study',p.field_of_study)+detail('Institution',p.institution)+detail('Graduation year',p.graduation_year)+detail('Experience',p.experience)+detail('Current / recent role',p.current_role)+detail('Skills',p.skills)+detail('Professional summary',p.summary)+detail('LinkedIn',p.linkedin_url)+detail('Portfolio',p.portfolio_url)+'</div></details><details style="margin-top:10px"><summary class="btn">View cover message</summary><p>'+escapeHtml(app.cover_message||'No cover message provided.')+'</p></details>'+(app.resume_path?'<div class="actions"><button class="btn" type="button" data-employer-resume-application="'+escapeHtml(app.id)+'">Secure resume download</button></div>':'<p class="meta">No resume attached.</p>')+'</article>';}).join('');
   }
+  function jobCardMarkup(j){
+    return '<article class="item"><div class="item-head"><div><h3>'+escapeHtml(j.title)+'</h3><div class="meta">'+escapeHtml(j.location||'Location not specified')+' · '+escapeHtml(j.employment_type||'Employment type not specified')+(j.experience_text?' · '+escapeHtml(j.experience_text):'')+'</div></div><span class="badge published">SIGHTX reviewed</span></div>'+(j.salary_text?'<p class="meta">'+escapeHtml(j.salary_text)+'</p>':'')+'<p>'+escapeHtml(j.description||'')+'</p><div class="actions"><button class="btn primary" data-apply="'+escapeHtml(j.id)+'" type="button">Apply Now</button><button class="btn" data-report="'+escapeHtml(j.id)+'" type="button">Report job</button></div></article>';
+  }
+  function getProfileJobTerms(){
+    const meta=user&&user.user_metadata?user.user_metadata:{};
+    const keys=['skills','current_role','headline','field_of_study','education','experience','location','summary'];
+    const terms=[];
+    keys.forEach(key=>{
+      String(meta[key]||'').toLowerCase().split(/[^a-z0-9+#.]+/).forEach(term=>{
+        if(term.length>=3&&!['the','and','for','with','from','years','year','other','degree','experience'].includes(term))terms.push({term,source:key});
+      });
+    });
+    return terms;
+  }
+  function scoreJobForProfile(job,terms){
+    const title=String(job.title||'').toLowerCase();
+    const description=[job.description,job.employment_type,job.experience_text].join(' ').toLowerCase();
+    const location=String(job.location||'').toLowerCase();
+    let score=0;const matched=[];
+    terms.forEach(({term,source})=>{
+      const inTitle=title.includes(term),inDescription=description.includes(term),inLocation=location.includes(term);
+      if(inTitle||inDescription||inLocation){
+        const points=inTitle?4:(source==='location'&&inLocation?3:(inLocation?1:2));
+        score+=points;
+        if(!matched.includes(term))matched.push(term);
+      }
+    });
+    return {score,matched};
+  }
   async function loadPublicJobs(){
-    const box=$('publicJobs');const {data,error}=await client.from('sightx_job_listings').select('id,title,location,employment_type,description,salary_text,experience_text,created_at').eq('status','published').order('created_at',{ascending:false});
-    if(error){box.innerHTML='<div class="notice error">'+escapeHtml(friendlyError(error))+'</div>';return;}
-    box.innerHTML=data.length?data.map(j=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(j.title)+'</h3><div class="meta">'+escapeHtml(j.location)+' · '+escapeHtml(j.employment_type)+(j.experience_text?' · '+escapeHtml(j.experience_text):'')+'</div></div><span class="badge published">SIGHTX reviewed</span></div>'+(j.salary_text?'<p class="meta">'+escapeHtml(j.salary_text)+'</p>':'')+'<p>'+escapeHtml(j.description)+'</p><div class="actions"><button class="btn primary" data-apply="'+escapeHtml(j.id)+'" type="button">Apply</button><button class="btn" data-report="'+escapeHtml(j.id)+'" type="button">Report job</button></div></article>').join(''):'<div class="empty">No approved jobs are published yet. Please check back soon.</div>';
+    const box=$('publicJobs'),recommendedBox=$('recommendedJobs');
+    const {data,error}=await client.from('sightx_job_listings').select('id,title,location,employment_type,description,salary_text,experience_text,created_at').eq('status','published').order('created_at',{ascending:false});
+    if(error){
+      box.innerHTML='<div class="notice error">'+escapeHtml(friendlyError(error))+'</div>';
+      if(recommendedBox)recommendedBox.innerHTML='<div class="notice error">'+escapeHtml(friendlyError(error))+'</div>';
+      return;
+    }
+    const jobs=data||[];
+    box.innerHTML=jobs.length?jobs.map(jobCardMarkup).join(''):'<div class="empty">No approved jobs are published yet. Please check back soon.</div>';
+    if(!recommendedBox)return;
+    const terms=getProfileJobTerms();
+    if(!terms.length){
+      recommendedBox.innerHTML='<div class="empty">Complete your professional profile (skills, education, experience and location) to receive recommendations. You can browse all jobs using the button above.</div>';
+      return;
+    }
+    const recommendations=jobs.map(job=>({job,...scoreJobForProfile(job,terms)}))
+      .filter(item=>item.score>0)
+      .sort((a,b)=>b.score-a.score||new Date(b.job.created_at)-new Date(a.job.created_at))
+      .slice(0,5);
+    recommendedBox.innerHTML=recommendations.length?recommendations.map(item=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(item.job.title)+'</h3><div class="meta">'+escapeHtml(item.job.location||'Location not specified')+' · '+escapeHtml(item.job.employment_type||'Employment type not specified')+'</div></div><span class="badge">Recommended match</span></div><p class="meta">Profile matches: '+escapeHtml(item.matched.slice(0,5).join(', '))+'</p><div class="actions"><button class="btn primary" data-apply="'+escapeHtml(item.job.id)+'" type="button">Apply Now</button></div></article>').join(''):'<div class="empty">No published jobs currently match your profile. Browse all available jobs and check again when new roles are published.</div>';
   }
   async function loadMyApplications(){
     const box=$('myApplications');
@@ -777,8 +830,9 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     $('accountHeader').classList.toggle('hidden',focusedCompanyProfile);
     const focusedEmployerView=isEmployer&&(focusedEmployerJobs||focusedEmployerApplications||focusedPostJob);
     // Dedicated Jobs menu views should show only the requested list, not the general profile/sign-out dashboard.
-    const showOpportunities=focusedOpportunities||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
+    const showOpportunities=focusedOpportunities;
     const showApplications=focusedApplications||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
+    const showJobDiscovery=!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer&&!admin();
     $('accountHeader').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedEmployerView);
     $('employerProfileSection').classList.toggle('hidden',!focusedCompanyProfile);
     $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedEmployerView||focusedCompanyProfile||isEmployer&&!admin());
@@ -786,6 +840,8 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     $('applicationComposer').classList.add('hidden');
     applicationsSection.classList.toggle('hidden',!showApplications||isEmployer&&!admin());
     opportunitiesSection.classList.toggle('hidden',!showOpportunities||isEmployer&&!admin());
+    $('jobDiscoverySection').classList.toggle('hidden',!showJobDiscovery);
+    $('allJobsSection').classList.toggle('hidden',!showOpportunities||isEmployer&&!admin());
     $('employerArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedCompanyProfile||!isEmployer&&!admin());
     if(focusedEmployerView){
       const employerCards=$('employerArea').querySelectorAll(':scope > article');
@@ -927,7 +983,9 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
   });
   $('employerForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('submitEmployer');btn.disabled=true;clearNotice('dashboardNotice');const values={owner_id:user.id,company_name:$('companyName').value.trim(),company_website:$('companyWebsite').value.trim()||null,company_email:$('companyEmail').value.trim(),business_phone:$('businessPhone').value.trim()||null,business_address:$('businessAddress').value.trim()||null,registration_details:$('registrationDetails').value.trim()||null,evidence_notes:$('evidenceNotes').value.trim()||null,verification_status:employer&&employer.verification_status!=='rejected'?employer.verification_status:'pending',reviewed_by:null,reviewed_at:null,review_notes:null};try{let result;if(employer){result=await client.from('sightx_employers').update(values).eq('id',employer.id).select().single();}else{result=await client.from('sightx_employers').insert(values).select().single();}if(result.error)throw result.error;notice('dashboardNotice','Employer information saved. Your status remains pending until SIGHTX reviews the evidence.','success');await loadEmployer();await loadMyJobs();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}finally{btn.disabled=false;}});
   $('jobForm').addEventListener('submit',async e=>{e.preventDefault();if(!employer||employer.verification_status!=='verified'){notice('dashboardNotice','Only verified employers can submit jobs.','error');return;}const btn=e.submitter;btn.disabled=true;try{const {error}=await client.from('sightx_job_listings').insert({employer_id:employer.id,title:$('jobTitle').value.trim(),location:$('jobLocation').value.trim(),employment_type:$('jobType').value,description:$('jobDescription').value.trim(),experience_text:$('jobExperience').value.trim()||null,salary_text:$('jobSalary').value.trim()||null,application_email:$('applicationEmail').value.trim(),status:'pending_review'});if(error)throw error;$('jobForm').reset();notice('dashboardNotice','Job submitted for SIGHTX review. It will not appear publicly until approved.','success');await loadMyJobs();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}finally{btn.disabled=false;}});
-  $('refreshJobs').addEventListener('click',loadPublicJobs);$('refreshAdmin').addEventListener('click',loadAdmin);
+  $('refreshJobs').addEventListener('click',loadPublicJobs);$('refreshRecommendations').addEventListener('click',loadPublicJobs);$('refreshAdmin').addEventListener('click',loadAdmin);
+  $('showAllJobs').addEventListener('click',()=>{$('allJobsSection').classList.remove('hidden');$('allJobsSection').scrollIntoView({behavior:'smooth',block:'start'});});
+  $('hideAllJobs').addEventListener('click',()=>{$('allJobsSection').classList.add('hidden');$('jobDiscoverySection').scrollIntoView({behavior:'smooth',block:'start'});});
   $('refreshEmployerApplications').addEventListener('click',loadEmployerApplications);
   $('cancelApplication').addEventListener('click',()=>{$('applicationComposer').classList.add('hidden');$('applicationForm').reset();currentApplicationJob=null;});
   $('applicationForm').addEventListener('submit',async event=>{
