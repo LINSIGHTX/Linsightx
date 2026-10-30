@@ -1543,6 +1543,7 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     const submit = profileForm.querySelector('button[type="submit"]');
     const file = resumeFile && resumeFile.files && resumeFile.files[0];
     let uploadedPath = '';
+    let profileMetadataSaved = false;
     const previousResumePath = activeUser.user_metadata?.resume_path || '';
     saveStatus.textContent = 'Saving your profile…';
     if(resumeStatus)resumeStatus.textContent=file?'Uploading resume…':(activeUser.user_metadata?.resume_path?'Keeping your saved resume.':'Resume required before applying.');
@@ -1583,6 +1584,7 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
       }
       const {error} = await client.auth.updateUser({data});
       if (error) throw error;
+      profileMetadataSaved = true;
       // Remove an older resume only after the profile points to the replacement.
       // Storage RLS prevents deletion if an existing application still references it.
       if(previousResumePath && previousResumePath !== data.resume_path){
@@ -1596,7 +1598,7 @@ body[data-account-view="applicant"] [data-page="post-job"] { display:none!import
     } catch (error) {
       // If the upload succeeded but saving profile metadata failed, remove the
       // unlinked file so repeated retries do not leave private orphaned resumes.
-      if(uploadedPath){
+      if(uploadedPath && !profileMetadataSaved){
         try { await client.storage.from('resumes').remove([uploadedPath]); } catch (_) {}
       }
       saveStatus.textContent = error && error.message ? 'Could not save: ' + error.message : 'Could not save profile. Please try again.';
