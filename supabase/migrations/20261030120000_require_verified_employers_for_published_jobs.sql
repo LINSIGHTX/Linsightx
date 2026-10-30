@@ -1,9 +1,38 @@
 -- Keep public job visibility synchronized with employer verification.
+
+-- Applicants cannot SELECT employer verification rows under employer-table RLS.
+-- This private SECURITY DEFINER helper performs only the application eligibility
+-- check and explicitly binds the check to the caller's authenticated user id.
+create or replace function private.sightx_can_apply_to_job(
+  target_job_id uuid,
+  target_applicant_id uuid
+)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $sightx$
+  select auth.uid() is not null
+    and auth.uid() = target_applicant_id
+    and exists (
+      select 1
+      from public.sightx_job_listings j
+      join public.sightx_employers e on e.id = j.employer_id
+      where j.id = target_job_id
+        and j.status = 'published'
+        and e.verification_status = 'verified'
+    );
+$sightx$;
+revoke all on function private.sightx_can_apply_to_job(uuid, uuid) from public, anon, authenticated;
+grant usage on schema private to authenticated;
+grant execute on function private.sightx_can_apply_to_job(uuid, uuid) to authenticated;
 -- RLS on sightx_employers intentionally hides employer rows from anonymous visitors.
 -- Therefore, do not query that table from the public SELECT policy. Instead, use a
 -- private trigger to suspend listings whenever an employer loses verified status.
 create schema if not exists private;
 revoke all on schema private from public, anon, authenticated;
+grant usage on schema private to authenticated;
 
 -- A listing may only be published while its employer remains verified.
 create or replace function public.sightx_require_verified_employer_for_published_job()
