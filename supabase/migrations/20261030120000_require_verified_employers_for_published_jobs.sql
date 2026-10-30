@@ -115,6 +115,19 @@ for each row
 when (old.verification_status is distinct from new.verification_status)
 execute function private.sightx_suspend_jobs_when_employer_unverified();
 
+-- Bring existing data into compliance when this migration is first applied.
+-- A trigger alone only handles future employer-status changes.
+update public.sightx_job_listings j
+   set status = 'suspended',
+       reviewed_at = coalesce(j.reviewed_at, now())
+ where j.status in ('published', 'pending_review')
+   and not exists (
+     select 1
+       from public.sightx_employers e
+      where e.id = j.employer_id
+        and e.verification_status = 'verified'
+   );
+
 -- Private resume bucket: 5 MB maximum, with only supported document formats.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
