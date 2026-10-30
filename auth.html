@@ -423,12 +423,17 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     const accountView=admin()?'admin':(explicitAccountView||(employerRoute?'employer':null)||(user&&user.user_metadata&&user.user_metadata.account_type==='employer'?'employer':null)||selectedAccountType||storedView||'applicant');
     const isEmployerView=accountView==='employer'&&!admin();
     const companyProfileRoute=requestedView==='companyprofile'&&isEmployerView;
+    const focusedApplications=requestedView==='applications';
+    const focusedOpportunities=requestedView==='opportunities';
+    const focusedEmployerView=isEmployerView&&['postjob','employerjobs','employerapplications'].includes(requestedView);
     document.documentElement.classList.toggle('employer-dashboard-view',isEmployerView);
     document.documentElement.classList.toggle('company-profile-only',companyProfileRoute);
-    $('accountHeader').classList.toggle('hidden',companyProfileRoute);
-    $('profileSection').classList.toggle('hidden',isEmployerView||companyProfileRoute);
+    // Keep the dedicated applicant jobs/applications routes focused: don't re-show
+    // the account banner (including Sign out) or profile form after loadDashboard hides them.
+    $('accountHeader').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedEmployerView||companyProfileRoute);
+    $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities||isEmployerView||companyProfileRoute);
     $('employerProfileSection').classList.toggle('hidden',!companyProfileRoute);
-    $('employerArea').classList.toggle('hidden',(!isEmployerView&&!admin())||companyProfileRoute);
+    $('employerArea').classList.toggle('hidden',(!isEmployerView&&!admin())||focusedApplications||focusedOpportunities||companyProfileRoute);
   }
   function mfaMessage(message,type=''){notice('mfaNotice',message,type);}
   function loginMfaMessage(message,type=''){notice('mfaLoginNotice',message,type);}
