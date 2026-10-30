@@ -34,6 +34,8 @@ create table if not exists public.sightx_employers (
   business_address text,
   registration_details text,
   evidence_notes text,
+  contact_name text,
+  contact_phone text,
   verification_status text not null default 'pending'
     check (verification_status in ('pending','under_review','verified','rejected','suspended')),
   reviewed_by uuid references auth.users(id) on delete set null,
@@ -148,7 +150,45 @@ for all to authenticated using (coalesce((select auth.jwt() -> 'app_metadata' ->
 drop policy if exists "SIGHTX public read published jobs" on public.sightx_job_listings;
 drop policy if exists "public can view approved published jobs" on public.sightx_job_listings;
 create policy "public can view approved published jobs" on public.sightx_job_listings
-for select to anon, authenticated using (status = 'published');
+for select to anon, authenticated using (
+  status = 'published'
+  and exists (
+    select 1 from public.sightx_employers e
+    where e.id = sightx_job_listings.employer_id
+      and e.verification_status = 'verified'
+  )
+);
+
+-- A listing may only be published while its employer remains verified.
+-- This protects against both premature admin approval and later employer suspension.
+create or replace function public.sightx_require_verified_employer_for_published_job()
+returns trigger
+language plpgsql
+security invoker
+set search_path = ''
+as $
+begin
+  if new.status = 'published' and not exists (
+    select 1
+    from public.sightx_employers e
+    where e.id = new.employer_id
+      and e.verification_status = 'verified'
+  ) then
+    raise exception 'Only jobs belonging to verified employers can be published.'
+      using errcode = '23514';
+  end if;
+  return new;
+end;
+$;
+
+drop trigger if exists sightx_require_verified_employer_for_published_job
+  on public.sightx_job_listings;
+create trigger sightx_require_verified_employer_for_published_job
+before insert or update of status, employer_id
+on public.sightx_job_listings
+for each row
+execute function public.sightx_require_verified_employer_for_published_job();
+
 drop policy if exists "employer can view own jobs" on public.sightx_job_listings;
 create policy "employer can view own jobs" on public.sightx_job_listings
 for select to authenticated using (
