@@ -63,6 +63,10 @@
   </script>
   <style>
     /* Keep the dedicated All Available Jobs route focused on the listings only. */
+    /* Focused applicant job pages are content-only: hide the shared account-page
+       navigation (Home / Find jobs / Account) and its injected theme control. */
+    html.opportunities-view header.top,
+    html.recommendations-view header.top { display: none !important; }
     html.opportunities-view #roleChoice,
     html.opportunities-view main.wrap > .hero,
     html.opportunities-view #accountHeader,
