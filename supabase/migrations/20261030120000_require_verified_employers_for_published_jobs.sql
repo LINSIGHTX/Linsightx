@@ -99,6 +99,32 @@ for each row
 when (old.verification_status is distinct from new.verification_status)
 execute function private.sightx_suspend_jobs_when_employer_unverified();
 
+-- Private resume bucket: 5 MB maximum, with only supported document formats.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'resumes',
+  'resumes',
+  false,
+  5242880,
+  array[
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ]::text[]
+)
+on conflict (id) do update set
+  public = false,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+-- Applicants may upload only into their own user-id folder.
+drop policy if exists "Authenticated users upload own resumes" on storage.objects;
+create policy "Authenticated users upload own resumes" on storage.objects
+for insert to authenticated with check (
+  bucket_id = 'resumes'
+  and (storage.foldername(name))[1] = (select auth.uid())::text
+);
+
 drop policy if exists "public can view approved published jobs" on public.sightx_job_listings;
 create policy "public can view approved published jobs" on public.sightx_job_listings
 for select to anon, authenticated using (status = 'published');
