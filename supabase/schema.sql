@@ -397,6 +397,32 @@ for select to authenticated using (
   or coalesce((select auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
 );
 
+-- Private resume bucket: 5 MB maximum, with only supported document formats.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'resumes',
+  'resumes',
+  false,
+  5242880,
+  array[
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ]::text[]
+)
+on conflict (id) do update set
+  public = false,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+-- Applicants may upload only into their own user-id folder.
+drop policy if exists "Authenticated users upload own resumes" on storage.objects;
+create policy "Authenticated users upload own resumes" on storage.objects
+for insert to authenticated with check (
+  bucket_id = 'resumes'
+  and (storage.foldername(name))[1] = (select auth.uid())::text
+);
+
 -- Resume objects are private. Applicants can read their own folder, verified
 -- hiring teams can read resumes attached to applications for their own jobs,
 -- and admins require trusted role metadata plus AAL2.
