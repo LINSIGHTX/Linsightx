@@ -948,9 +948,23 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
       uploadedPath=user.id+'/'+crypto.randomUUID()+'-'+safeName;
       const {error:uploadError}=await client.storage.from('resumes').upload(uploadedPath,file,{contentType:file.type,upsert:false});
       if(uploadError)throw uploadError;
+      const meta=user.user_metadata||{};
+      const applicantName=$('applicantFullName').value.trim();
+      const applicantEmail=$('applicantEmailAddress').value.trim();
+      const applicantPhone=$('profilePhone').value.trim()||String(meta.phone||'').trim();
+      const applicantProfile={
+        full_name:applicantName,email:applicantEmail,phone:applicantPhone,
+        location:String(meta.location||''),headline:String(meta.headline||''),
+        linkedin_url:String(meta.linkedin_url||''),portfolio_url:String(meta.portfolio_url||''),
+        education:String(meta.education||''),field_of_study:String(meta.field_of_study||''),
+        institution:String(meta.institution||''),graduation_year:String(meta.graduation_year||''),
+        experience:String(meta.experience||''),current_role:String(meta.current_role||''),
+        skills:String(meta.skills||''),summary:String(meta.summary||''),resume_name:file.name
+      };
       const {error:insertError}=await client.from('sightx_applications').insert({
         job_id:currentApplicationJob.id,applicant_id:user.id,
-        full_name:$('applicantFullName').value.trim(),email:$('applicantEmailAddress').value.trim(),
+        full_name:applicantName,applicant_phone:applicantPhone||null,email:applicantEmail,
+        applicant_profile:applicantProfile,
         resume_path:uploadedPath,cover_message:cover,status:'new'
       });
       if(insertError)throw insertError;
