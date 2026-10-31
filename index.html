@@ -818,7 +818,7 @@ window.addEventListener('sightx-auth-client-ready',bindAuth,{once:true});
  triggers.forEach(trigger=>trigger.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();if(!menu.hidden&&trigger.getAttribute('aria-expanded')==='true')close();else open(trigger);}));
  const mobileProfileButton=document.getElementById('mobileProfileButton');
  if(mobileProfileButton)mobileProfileButton.addEventListener('click',()=>{
-  if(!currentAccountUser){const accountTrigger=document.getElementById('mobileAccountToggle');if(accountTrigger)accountTrigger.click();return;}
+  if(!currentAccountUser){close();if(typeof window.sightxOpenLoginModal==='function')window.sightxOpenLoginModal('applicant');return;}
   close();
   // Use the effective role rendered for the signed-in user; do not let stale localStorage
   // from a previous employer session send an applicant to the employer portal.
