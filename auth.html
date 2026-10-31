@@ -571,7 +571,7 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     }
     $('mfaLoginChallenge').classList.add('hidden');
     if(pageParams.get('embed')==='1'&&window.parent!==window){
-      window.parent.postMessage({type:'sightx-login-success',account:admin()?'applicant':(explicitAccountView||selectedAccountType||'applicant')},window.location.origin);
+      window.parent.postMessage({type:'sightx-login-success',account:admin()?'admin':(explicitAccountView||selectedAccountType||'applicant')},window.location.origin);
       return;
     }
     await loadDashboard(run);
