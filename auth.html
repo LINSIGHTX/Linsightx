@@ -347,7 +347,7 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
       <div class="section-head"><div><h3>Recommended Jobs for You</h3><p>Based on the skills, experience, education and location in your saved profile.</p></div><button class="btn" id="refreshRecommendations" type="button">Refresh</button></div>
       <div id="recommendedJobs" class="list"><div class="empty">Loading recommendations…</div></div>
     </section>
-    <section id="allJobsSection" class="section card hidden"><div class="section-head"><div><h2>All Available Jobs</h2><p>Every job published and approved by SIGHTX.</p></div><div class="actions"><button class="btn" id="hideAllJobs" type="button">Back to recommendations</button><button class="btn" id="refreshJobs" type="button">Refresh</button></div></div><div id="publicJobs" class="list"><div class="empty">Loading published jobs…</div></div></section>
+    <section id="allJobsSection" class="section card hidden"><div class="section-head"><div><h2>All Available Jobs</h2><p>Every job published and approved by SIGHTX.</p></div><div class="actions"><a class="btn" id="hideAllJobs" href="https://linsightx.github.io/Linsightx/index.html#jobs">Back to recommendations</a><button class="btn" id="refreshJobs" type="button">Refresh</button></div></div><div id="publicJobs" class="list"><div class="empty">Loading published jobs…</div></div></section>
     <section id="applicationComposer" class="section card hidden" aria-live="polite">
       <div class="section-head"><div><h2>Applying for <span id="applicationJobTitle">this opportunity</span></h2><p>Your saved SIGHTX profile and resume will be attached automatically.</p></div><button class="btn" id="cancelApplication" type="button">Close</button></div>
       <div id="applicationNotice" class="notice" role="status">Preparing your application…</div>
@@ -1017,10 +1017,6 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
   $('jobForm').addEventListener('submit',async e=>{e.preventDefault();if(!employer||employer.verification_status!=='verified'){notice('dashboardNotice','Only verified employers can submit jobs.','error');return;}const btn=e.submitter;btn.disabled=true;try{const {error}=await client.from('sightx_job_listings').insert({employer_id:employer.id,title:$('jobTitle').value.trim(),location:$('jobLocation').value.trim(),employment_type:$('jobType').value,description:$('jobDescription').value.trim(),experience_text:$('jobExperience').value.trim()||null,salary_text:$('jobSalary').value.trim()||null,application_email:$('applicationEmail').value.trim(),status:'pending_review'});if(error)throw error;$('jobForm').reset();notice('dashboardNotice','Job submitted for SIGHTX review. It will not appear publicly until approved.','success');await loadMyJobs();}catch(err){notice('dashboardNotice',friendlyError(err),'error')}finally{btn.disabled=false;}});
   $('refreshJobs').addEventListener('click',loadPublicJobs);$('refreshRecommendations').addEventListener('click',loadPublicJobs);$('refreshAdmin').addEventListener('click',loadAdmin);
   $('showAllJobs').addEventListener('click',()=>{$('allJobsSection').classList.remove('hidden');$('allJobsSection').scrollIntoView({behavior:'smooth',block:'start'});});
-  $('hideAllJobs').addEventListener('click',()=>{
-    // Return to the main Jobs page; do not open the separate recommendations view.
-    window.location.href='index.html#jobs';
-  });
   $('refreshEmployerApplications').addEventListener('click',loadEmployerApplications);
   $('cancelApplication').addEventListener('click',()=>{$('applicationComposer').classList.add('hidden');currentApplicationJob=null;});
   async function submitApplicationFromSavedProfile(job){
