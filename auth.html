@@ -863,11 +863,11 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     const focusedEmployerView=isEmployer&&(focusedEmployerJobs||focusedEmployerApplications||focusedPostJob);
     // Dedicated Jobs menu views should show only the requested list, not the general profile/sign-out dashboard.
     const showOpportunities=focusedOpportunities;
-    const showApplications=focusedApplications||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer);
+    const showApplications=focusedApplications||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer&&!admin());
     const showJobDiscovery=focusedRecommendations||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer&&!admin());
     $('accountHeader').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||focusedEmployerView);
     $('employerProfileSection').classList.toggle('hidden',!focusedCompanyProfile);
-    $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||focusedEmployerView||focusedCompanyProfile||isEmployer&&!admin());
+    $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||focusedEmployerView||focusedCompanyProfile||isEmployer&&!admin()||admin());
     $('accountSecurity').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
     $('applicationComposer').classList.add('hidden');
     applicationsSection.classList.toggle('hidden',!showApplications||isEmployer&&!admin());
