@@ -467,7 +467,7 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     // Keep the dedicated applicant jobs/applications routes focused: don't re-show
     // the account banner (including Sign out) or profile form after loadDashboard hides them.
     $('accountHeader').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||focusedEmployerView||companyProfileRoute);
-    $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||isEmployerView||companyProfileRoute);
+    $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||isEmployerView||companyProfileRoute||admin());
     $('employerProfileSection').classList.toggle('hidden',!companyProfileRoute);
     $('employerArea').classList.toggle('hidden',(!isEmployerView&&!admin())||focusedApplications||focusedOpportunities||focusedRecommendations||companyProfileRoute);
   }
