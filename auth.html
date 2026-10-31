@@ -478,6 +478,29 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     if(recoveryMode){session=nextSession||null;user=session&&session.user?session.user:null;showRecoveryForm();return;}
     session=nextSession||null;user=session&&session.user?session.user:null;
     if(user){
+      // Resolve authorization from Supabase's server-side user record, not only a possibly stale JWT.
+      try{
+        const verified=await client.auth.getUser();
+        if(run!==sessionRouting)return;
+        if(verified.error)throw verified.error;
+        if(verified.data&&verified.data.user){
+          const verifiedUser=verified.data.user;
+          if(verifiedUser.app_metadata&&verifiedUser.app_metadata.role==='admin'&&!(user.app_metadata&&user.app_metadata.role==='admin')){
+            const refreshed=await client.auth.refreshSession();
+            if(run!==sessionRouting)return;
+            if(refreshed.error)throw refreshed.error;
+            if(refreshed.data&&refreshed.data.session){
+              session=refreshed.data.session;
+              user=refreshed.data.session.user;
+            }else user=verifiedUser;
+          }else user=verifiedUser;
+        }
+      }catch(error){
+        if(run!==sessionRouting)return;
+        console.error('SIGHTX account-role refresh failed:',error);
+      }
+    }
+    if(user){
       // If an applicant follows the Post link, do not reuse that applicant session as an employer
       // session or send them into employer verification. Keep the employer login form visible.
       let previousView='';
