@@ -926,7 +926,7 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     const showJobDiscovery=focusedRecommendations||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer&&!admin());
     $('accountHeader').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||focusedEmployerView);
     $('employerProfileSection').classList.toggle('hidden',!focusedCompanyProfile);
-    $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||focusedEmployerView||focusedCompanyProfile||isEmployer&&!admin());
+    $('profileSection').classList.toggle('hidden',!admin()&&(focusedApplications||focusedOpportunities||focusedRecommendations||focusedEmployerView||focusedCompanyProfile||isEmployer));
     $('accountSecurity').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
     $('applicationComposer').classList.add('hidden');
     applicationsSection.classList.toggle('hidden',!showApplications||isEmployer&&!admin());
