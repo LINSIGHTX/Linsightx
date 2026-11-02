@@ -480,15 +480,16 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     const focusedApplications=requestedView==='applications';
     const focusedOpportunities=requestedView==='opportunities';
     const focusedRecommendations=requestedView==='recommendations';
+    const focusedPersonalProfile=requestedView==='profile';
     const focusedEmployerView=isEmployerView&&['postjob','employerjobs','employerapplications'].includes(requestedView);
     document.documentElement.classList.toggle('employer-dashboard-view',isEmployerView);
     document.documentElement.classList.toggle('company-profile-only',companyProfileRoute);
     // Keep the dedicated applicant jobs/applications routes focused: don't re-show
     // the account banner (including Sign out) or profile form after loadDashboard hides them.
     $('accountHeader').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||focusedEmployerView||companyProfileRoute);
-    $('profileSection').classList.toggle('hidden',!admin()&&(focusedApplications||focusedOpportunities||focusedRecommendations||isEmployerView||companyProfileRoute));
+    $('profileSection').classList.toggle('hidden',!admin()&&!focusedPersonalProfile&&(focusedApplications||focusedOpportunities||focusedRecommendations||isEmployerView||companyProfileRoute));
     $('employerProfileSection').classList.toggle('hidden',!companyProfileRoute);
-    $('employerArea').classList.toggle('hidden',(!isEmployerView&&!admin())||focusedApplications||focusedOpportunities||focusedRecommendations||companyProfileRoute);
+    $('employerArea').classList.toggle('hidden',!isEmployerView||focusedApplications||focusedOpportunities||focusedRecommendations||companyProfileRoute||focusedPersonalProfile);
   }
   function mfaMessage(message,type=''){notice('mfaNotice',message,type);}
   function loginMfaMessage(message,type=''){notice('mfaLoginNotice',message,type);}
@@ -913,12 +914,12 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     const focusedApplications=requestedView==='applications';
     const focusedOpportunities=requestedView==='opportunities';
     const focusedRecommendations=requestedView==='recommendations';
+    const focusedPersonalProfile=requestedView==='profile';
     const focusedEmployerJobs=requestedView==='employerjobs';
     const focusedEmployerApplications=requestedView==='employerapplications';
     const focusedPostJob=requestedView==='postjob'&&isEmployer;
     const focusedCompanyProfile=requestedView==='companyprofile'&&isEmployer;
     document.documentElement.classList.toggle('company-profile-only',focusedCompanyProfile);
-    $('accountHeader').classList.toggle('hidden',focusedCompanyProfile);
     const focusedEmployerView=isEmployer&&(focusedEmployerJobs||focusedEmployerApplications||focusedPostJob);
     // Dedicated Jobs menu views should show only the requested list, not the general profile/sign-out dashboard.
     const showOpportunities=focusedOpportunities;
@@ -926,14 +927,14 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     const showJobDiscovery=focusedRecommendations||(!window.location.search.includes('embed=1')&&!requestedView&&!isEmployer&&!admin());
     $('accountHeader').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||focusedEmployerView);
     $('employerProfileSection').classList.toggle('hidden',!focusedCompanyProfile);
-    $('profileSection').classList.toggle('hidden',!admin()&&(focusedApplications||focusedOpportunities||focusedRecommendations||focusedEmployerView||focusedCompanyProfile||isEmployer));
+    $('profileSection').classList.toggle('hidden',!admin()&&!focusedPersonalProfile&&(focusedApplications||focusedOpportunities||focusedRecommendations||focusedEmployerView||focusedCompanyProfile||isEmployer));
     $('accountSecurity').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
     $('applicationComposer').classList.add('hidden');
     applicationsSection.classList.toggle('hidden',!showApplications||isEmployer&&!admin());
     opportunitiesSection.classList.toggle('hidden',!showOpportunities||isEmployer&&!admin());
     $('jobDiscoverySection').classList.toggle('hidden',!showJobDiscovery);
     $('allJobsSection').classList.toggle('hidden',!showOpportunities||isEmployer&&!admin());
-    $('employerArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||focusedCompanyProfile||!isEmployer&&!admin());
+    $('employerArea').classList.toggle('hidden',!isEmployer||admin()||focusedApplications||focusedOpportunities||focusedRecommendations||focusedCompanyProfile||focusedPersonalProfile);
     if(focusedEmployerView){
       const employerCards=$('employerArea').querySelectorAll(':scope > article');
       employerCards.forEach((card,index)=>card.classList.toggle('hidden',index===0));
@@ -981,14 +982,10 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
       if(workspace){workspace.querySelectorAll('.divider,.section-head,h3,#myJobs,#employerApplications').forEach(el=>el.classList.remove('hidden'));}
     }
     $('adminArea').classList.toggle('hidden',!admin());
-    $('employerArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedCompanyProfile||!isEmployer&&!admin());
-    $('applicationComposer').classList.add('hidden');
     // Keep authenticator enrollment controls administrator-only. Do not weaken login MFA checks for accounts that already have a factor enrolled.
-    $('accountSecurity').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
     $('accountSecurity').querySelector('h2').textContent='Administrator account security';
     const securityDescription=$('accountSecurity').querySelector('.sub');
     if(securityDescription)securityDescription.textContent='Set up and verify an authenticator app to protect administrator access.';
-    $('adminArea').classList.toggle('hidden',!admin());
     // Show lightweight loading states immediately so the dashboard never looks blank while data is fetched.
     $('publicJobs').innerHTML='<div class="empty">Loading opportunities…</div>';
     $('myApplications').innerHTML='<div class="empty">Loading your applications…</div>';
