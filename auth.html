@@ -967,7 +967,7 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
       showDashboard();
       await Promise.all([loadMyJobs(),loadEmployerApplications(),loadPublicJobs(),loadMyApplications(),...(admin()?[refreshMfaStatus()]:[])]);
       if(routingRun!==sessionRouting)return;
-      if(admin())await loadAdmin();
+      if(admin()&&!focusedApplications&&!focusedOpportunities&&!focusedRecommendations)await loadAdmin();
       if(routingRun!==sessionRouting)return;
     }catch(error){
       if(routingRun!==sessionRouting)return;
