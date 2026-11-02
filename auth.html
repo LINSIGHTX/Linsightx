@@ -448,6 +448,10 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
   function showRecoveryForm(){$('authIntroHero').classList.add('hidden');$('roleChoice').classList.add('hidden');$('authArea').classList.remove('hidden');$('dashboard').classList.add('hidden');$('mfaLoginChallenge').classList.add('hidden');$('loginForm').classList.add('hidden');$('signupForm').classList.add('hidden');$('recoveryForm').classList.remove('hidden');$('showLogin').classList.add('hidden');$('showSignup').classList.add('hidden');$('authHeading').textContent='Set a new password';$('selectedRoleLabel').textContent='Account recovery';}
   function showAuth(mode){$('authIntroHero').classList.add('hidden');$('recoveryForm').classList.add('hidden');$('showLogin').classList.remove('hidden');$('showSignup').classList.remove('hidden');$('roleChoice').classList.add('hidden');$('authArea').classList.remove('hidden');$('dashboard').classList.add('hidden');const signup=mode==='signup';$('loginForm').classList.toggle('hidden',signup);$('signupForm').classList.toggle('hidden',!signup);$('showLogin').classList.toggle('active',!signup);$('showSignup').classList.toggle('active',signup);$('authHeading').textContent=signup?'Create your SIGHTX account':'Welcome to SIGHTX';$('selectedRoleLabel').textContent=selectedAccountType==='employer'?'Employer account':'Applicant / User account';}
   function showDashboard(){
+    const profileHeading=$('profileSection').querySelector('h2');
+    const profileDescription=$('profileSection').querySelector('.section-head p');
+    if(profileHeading)profileHeading.textContent=admin()?'Admin profile':'Your profile';
+    if(profileDescription)profileDescription.textContent='Manage your personal contact details for your SIGHTX account.';
     $('authIntroHero').classList.add('hidden');$('roleChoice').classList.add('hidden');$('authArea').classList.add('hidden');$('mfaLoginChallenge').classList.add('hidden');$('dashboard').classList.remove('hidden');
     // Match the same account-view resolution used by loadDashboard so the employer
     // dashboard never renders the applicant profile alongside the company profile.
