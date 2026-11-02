@@ -486,7 +486,7 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     // Keep the dedicated applicant jobs/applications routes focused: don't re-show
     // the account banner (including Sign out) or profile form after loadDashboard hides them.
     $('accountHeader').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||focusedEmployerView||companyProfileRoute);
-    $('profileSection').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedRecommendations||isEmployerView||companyProfileRoute);
+    $('profileSection').classList.toggle('hidden',!admin()&&(focusedApplications||focusedOpportunities||focusedRecommendations||isEmployerView||companyProfileRoute));
     $('employerProfileSection').classList.toggle('hidden',!companyProfileRoute);
     $('employerArea').classList.toggle('hidden',(!isEmployerView&&!admin())||focusedApplications||focusedOpportunities||focusedRecommendations||companyProfileRoute);
   }
@@ -980,7 +980,7 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
       const workspace=$('employerArea').querySelectorAll(':scope > article')[1];
       if(workspace){workspace.querySelectorAll('.divider,.section-head,h3,#myJobs,#employerApplications').forEach(el=>el.classList.remove('hidden'));}
     }
-    $('adminArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
+    $('adminArea').classList.toggle('hidden',!admin());
     $('employerArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||focusedCompanyProfile||!isEmployer&&!admin());
     $('applicationComposer').classList.add('hidden');
     // Keep authenticator enrollment controls administrator-only. Do not weaken login MFA checks for accounts that already have a factor enrolled.
@@ -988,7 +988,7 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     $('accountSecurity').querySelector('h2').textContent='Administrator account security';
     const securityDescription=$('accountSecurity').querySelector('.sub');
     if(securityDescription)securityDescription.textContent='Set up and verify an authenticator app to protect administrator access.';
-    $('adminArea').classList.toggle('hidden',focusedApplications||focusedOpportunities||!admin());
+    $('adminArea').classList.toggle('hidden',!admin());
     // Show lightweight loading states immediately so the dashboard never looks blank while data is fetched.
     $('publicJobs').innerHTML='<div class="empty">Loading opportunities…</div>';
     $('myApplications').innerHTML='<div class="empty">Loading your applications…</div>';
@@ -1003,7 +1003,7 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
       showDashboard();
       await Promise.all([loadMyJobs(),loadEmployerApplications(),loadPublicJobs(),loadMyApplications(),...(admin()?[refreshMfaStatus()]:[])]);
       if(routingRun!==sessionRouting)return;
-      if(admin()&&!focusedApplications&&!focusedOpportunities&&!focusedRecommendations)await loadAdmin();
+      if(admin())await loadAdmin();
       if(routingRun!==sessionRouting)return;
     }catch(error){
       if(routingRun!==sessionRouting)return;
