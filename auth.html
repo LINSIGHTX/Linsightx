@@ -383,6 +383,21 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
     </section>
     <section id="adminArea" class="section hidden">
       <article class="card"><div class="eyebrow">Restricted tools</div><h2>SIGHTX Admin Review</h2><p class="sub">Visible only when your authenticated account carries a trusted <code>app_metadata.role = admin</code> claim.</p><div class="notice">Verify company identity and recruiter authorization before approval. Publish jobs only after the employer is verified.</div></article>
+      <section class="section card">
+        <div class="section-head"><div><h2>Platform overview</h2><p>Live counts from the SIGHTX review queues.</p></div></div>
+        <div id="adminOverview" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:12px">
+          <div class="item"><div class="meta">Employers</div><strong id="adminStatEmployers">—</strong></div>
+          <div class="item"><div class="meta">Jobs</div><strong id="adminStatJobs">—</strong></div>
+          <div class="item"><div class="meta">Applications</div><strong id="adminStatApplications">—</strong></div>
+          <div class="item"><div class="meta">Open reports</div><strong id="adminStatReports">—</strong></div>
+          <div class="item"><div class="meta">Member profiles</div><strong id="adminStatMembers">—</strong></div>
+        </div>
+      </section>
+      <section class="section card">
+        <div class="section-head"><div><h2>Member profile directory</h2><p>Search saved member profile details. Account access controls are not changed here.</p></div></div>
+        <div class="field"><label for="adminMemberSearch">Search by name, phone or profile ID</label><input id="adminMemberSearch" type="search" placeholder="Start typing to search"></div>
+        <div id="adminMembers" class="list"><div class="empty">Loading member profiles…</div></div>
+      </section>
       <section class="section card"><div class="section-head"><div><h2>Employer verification queue</h2><p>Review business evidence and recruiter association.</p></div><button class="btn" type="button" id="refreshAdmin">Refresh queues</button></div><div id="adminEmployers" class="list"></div></section>
       <section class="section card"><h2>Job moderation queue</h2><div id="adminJobs" class="list"></div></section>
       <section class="section card"><h2>Application status management</h2><div id="adminApplications" class="list"></div></section>
@@ -850,12 +865,29 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
   async function loadAdmin(){
     if(!admin())return;
     $('adminArea').classList.remove('hidden');
-    const [er,jr,ar,rr]=await Promise.all([
+    const [er,jr,ar,rr,pr]=await Promise.all([
       client.from('sightx_employers').select('*').order('created_at',{ascending:false}),
       client.from('sightx_job_listings').select('*').order('created_at',{ascending:false}),
       client.from('sightx_applications').select('*').order('created_at',{ascending:false}),
-      client.from('sightx_job_reports').select('*').order('created_at',{ascending:false})
+      client.from('sightx_job_reports').select('*').order('created_at',{ascending:false}),
+      client.from('sightx_profiles').select('id,full_name,phone')
     ]);
+    const stat=(id,value)=>{const el=$(id);if(el)el.textContent=String(value);};
+    stat('adminStatEmployers',er.error?'Unavailable':(er.data||[]).length);
+    stat('adminStatJobs',jr.error?'Unavailable':(jr.data||[]).length);
+    stat('adminStatApplications',ar.error?'Unavailable':(ar.data||[]).length);
+    stat('adminStatReports',rr.error?'Unavailable':(rr.data||[]).filter(x=>!['resolved','dismissed'].includes(x.status)).length);
+    stat('adminStatMembers',pr.error?'Unavailable':(pr.data||[]).length);
+    const memberRows=pr.error?[]:(pr.data||[]);
+    const renderMembers=(query='')=>{
+      const target=$('adminMembers');if(!target)return;
+      if(pr.error){target.innerHTML='<div class="notice error">Member profiles could not be loaded: '+escapeHtml(friendlyError(pr.error))+'</div>';return;}
+      const term=query.trim().toLowerCase();
+      const filtered=memberRows.filter(m=>[m.full_name,m.phone,m.id].some(v=>String(v||'').toLowerCase().includes(term)));
+      target.innerHTML=filtered.length?filtered.map(m=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(m.full_name||'Name not provided')+'</h3><div class="meta">'+escapeHtml(m.phone||'No phone number')+'</div></div><span class="badge">Member</span></div><div class="meta" style="overflow-wrap:anywhere">Profile ID: '+escapeHtml(m.id)+'</div></article>').join(''):'<div class="empty">No matching member profiles.</div>';
+    };
+    renderMembers($('adminMemberSearch')?.value||'');
+    $('adminMemberSearch').oninput=event=>renderMembers(event.target.value);
     $('adminEmployers').innerHTML=er.error?'<div class="notice error">'+escapeHtml(friendlyError(er.error))+'</div>':(er.data.length?er.data.map(e=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(e.company_name)+'</h3><div class="meta">'+escapeHtml(e.company_email)+' · Owner '+escapeHtml(e.owner_id)+'</div></div>'+statusBadge(e.verification_status)+'</div><details class="employer-details" style="margin-top:12px"><summary class="btn">View full details</summary><div class="notice"><p><strong>Organization:</strong> '+escapeHtml(e.company_name||'Not provided')+'</p><p><strong>Website:</strong> '+escapeHtml(e.company_website||'Not provided')+'</p><p><strong>Company email:</strong> '+escapeHtml(e.company_email||'Not provided')+'</p><p><strong>Business phone:</strong> '+escapeHtml(e.business_phone||'Not provided')+'</p><p><strong>Business address:</strong> '+escapeHtml(e.business_address||'Not provided')+'</p><p><strong>Registration details:</strong> '+escapeHtml(e.registration_details||'Not provided')+'</p><p><strong>Evidence / reviewer context:</strong><br>'+escapeHtml(e.evidence_notes||'No additional evidence notes.')+'</p><p><strong>Submitted:</strong> '+escapeHtml(e.created_at?new Date(e.created_at).toLocaleString():'Not available')+'</p><p><strong>Current status:</strong> '+escapeHtml(e.verification_status||'pending')+'</p></div></details><div class="actions"><button class="btn good" data-employer-status="verified" data-id="'+escapeHtml(e.id)+'">Approve verification</button><button class="btn" data-employer-status="rejected" data-id="'+escapeHtml(e.id)+'">Reject</button><button class="btn danger" data-employer-status="suspended" data-id="'+escapeHtml(e.id)+'">Suspend</button></div></article>').join(''):'<div class="empty">No employer applications to review.</div>');
     $('adminJobs').innerHTML=jr.error?'<div class="notice error">'+escapeHtml(friendlyError(jr.error))+'</div>':(jr.data.length?jr.data.map(j=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(j.title)+'</h3><div class="meta">'+escapeHtml(j.location)+' · Employer '+escapeHtml(j.employer_id)+'</div></div>'+statusBadge(j.status)+'</div><p>'+escapeHtml(j.description.slice(0,240))+'</p><div class="actions"><button class="btn good" data-job-status="published" data-id="'+escapeHtml(j.id)+'">Publish</button><button class="btn" data-job-status="rejected" data-id="'+escapeHtml(j.id)+'">Reject</button><button class="btn danger" data-job-status="suspended" data-id="'+escapeHtml(j.id)+'">Suspend</button><button class="btn" data-job-status="closed" data-id="'+escapeHtml(j.id)+'">Close</button></div></article>').join(''):'<div class="empty">No job listings yet.</div>');
     $('adminApplications').innerHTML=ar.error?'<div class="notice error">'+escapeHtml(friendlyError(ar.error))+'</div>':(ar.data.length?ar.data.map(a=>'<article class="item"><div class="item-head"><div><h3>'+escapeHtml(a.full_name)+' · '+escapeHtml(a.email)+'</h3><div class="meta">Job '+escapeHtml(a.job_id)+' · Applicant '+escapeHtml(a.applicant_id)+'</div></div>'+statusBadge(a.status)+'</div><p>'+escapeHtml(a.cover_message)+'</p><div class="actions">'+(a.resume_path?'<button class="btn" type="button" data-admin-resume="'+escapeHtml(a.id)+'">Secure resume download</button>':'')+['under_review','shortlisted','interview','hired','rejected'].map(st=>'<button class="btn" data-application-status="'+st+'" data-id="'+escapeHtml(a.id)+'">'+st.replaceAll('_',' ')+'</button>').join('')+'</div></article>').join(''):'<div class="empty">No applications yet.</div>');
