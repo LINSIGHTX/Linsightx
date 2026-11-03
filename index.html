@@ -503,7 +503,8 @@ html[data-initial-account-view="employer"] #page-home > .page-heading{display:no
 html[data-initial-account-view="employer"] #employerHomeDashboard{display:block!important}
 /* Keep the applicant Apply pages on the shared site background. */
 #page-apply,#page-apply-now{background:transparent!important}
-#page-apply .workflow-promo,#page-apply-now .workflow-promo{background:transparent!important;border-color:transparent!important}
+#page-apply .workflow-form{max-width:100%;background:var(--surface)!important}
+#page-apply-now .workflow-promo{background:transparent!important;border-color:transparent!important}
 </style>
 <script>(function(){var theme='light';try{var saved=localStorage.getItem('sightx_theme');if(saved==='dark'||saved==='light')theme=saved}catch(_){}document.documentElement.setAttribute('data-theme',theme);var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',theme==='dark'?'#0b1220':'#edf5ff')})();</script><style id="sightx-theme-system">
 
@@ -710,10 +711,9 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
  </section>
 <section class="page" id="page-messages"><div class="page-heading"><span class="linsightx-heading-badge" aria-label="Sight X" style="position:absolute;top:12px;right:14px;z-index:5;display:inline-flex;align-items:center;justify-content:center;padding:7px 13px;border:1px solid rgba(56,116,210,.22);border-radius:999px;background:linear-gradient(135deg,rgba(222,237,255,.94),rgba(211,246,244,.94));color:#234b86;font:900 13px/1.35 Inter,system-ui,sans-serif;letter-spacing:.04em;box-shadow:0 3px 10px rgba(40,91,150,.10);white-space:nowrap">Sight X</span><div><div class="eyebrow">Keep the conversation going</div><h1>Messages.</h1><p>Professional conversations, all in one place.</p></div></div><div class="card post"><div class="post-head"><div class="mini-avatar" style="background:linear-gradient(135deg,#dbeafe,#bdd6ff);color:#1848b6">MS</div><div class="post-person"><strong>Marcus Stone</strong><span>@marcusstone · last active 8 min ago</span></div></div><div class="post-body"><div class="post-tag">New message</div><div>Wanted to reconnect about the product research brief. I think your perspective would be a strong fit for the team.</div></div></div></section>
 
-<section class="page workflow-page" id="page-apply">
-  <div class="workflow-layout">
-    <div class="workflow-promo"><span class="linsightx-banner-badge" aria-label="Sight X" style="position:absolute!important;top:10px!important;right:10px!important;z-index:99!important;display:inline-flex!important;align-items:center!important;padding:5px 10px!important;border:1px solid #d4e2fa!important;border-radius:999px!important;background:#fff!important;color:#245bea!important;font:900 11px/1.3 Inter,system-ui,sans-serif!important;letter-spacing:.03em!important;box-shadow:0 2px 8px rgba(15,40,80,.14)!important;opacity:1!important;visibility:visible!important;pointer-events:none!important">Sight X</span><div class="workflow-brand"><span class="workflow-brand-mark">S</span><span>SIGHTX</span></div><div class="eyebrow">TAKE THE NEXT STEP</div><h1>Make your next move.</h1><p>Share a few details and let your experience speak for itself. Your next opportunity could start here.</p><div class="workflow-promo-note"><span>✦</span> Your next chapter starts with one application.</div></div>
-    <section id="applicationForm" class="workflow-form"><div class="workflow-form-heading"><h3>Apply for a Job</h3><p class="form-help" id="applicationRole">Role: Your application</p></div>
+<section class="page" id="page-apply">
+  <div class="page-heading"><span class="linsightx-heading-badge" aria-label="Sight X" style="position:absolute;top:12px;right:14px;z-index:5;display:inline-flex;align-items:center;justify-content:center;padding:7px 13px;border:1px solid rgba(56,116,210,.22);border-radius:999px;background:linear-gradient(135deg,rgba(222,237,255,.94),rgba(211,246,244,.94));color:#234b86;font:900 13px/1.35 Inter,system-ui,sans-serif;letter-spacing:.04em;box-shadow:0 3px 10px rgba(40,91,150,.10);white-space:nowrap">Sight X</span><div><div class="eyebrow">TAKE THE NEXT STEP</div><h1>Apply for a Job</h1><p>Share your details and tell the hiring team why you are a great fit.</p></div></div>
+  <section id="applicationForm" class="workflow-form"><div class="workflow-form-heading"><h3>Job application</h3><p class="form-help" id="applicationRole">Role: Your application</p></div>
     <form id="applicationFormFields">
       <label>Full name<input name="name" type="text" autocomplete="name" placeholder="Enter your full name" required></label><label>Mobile number<input name="mobile" type="tel" autocomplete="tel" inputmode="tel" placeholder="Enter your mobile number" required></label>
       <label>Email address<input name="email" type="email" autocomplete="email" placeholder="Enter your email address" required></label>
@@ -721,8 +721,7 @@ html[data-theme="dark"] .page-heading:after{opacity:.22}
       <label>Cover message<textarea name="message" placeholder="Tell us a little about yourself and your experience." required></textarea></label>
       <div class="form-row"><button type="button" class="secondary-btn" data-close-form="applicationForm">Cancel</button><button type="submit">Submit Application</button></div>
     </form>
-    </section>
-  </div>
+  </section>
 </section>
 <section class="page workflow-page" id="page-post-job">
   <div class="workflow-layout">
